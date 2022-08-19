@@ -70,9 +70,16 @@ public:
         *m_pInt = value;
     }
 
+    void SetValue(float) = delete; // float is not allowed
+
     ~Integer()
     {
-        std::cout << "~Integer(): destructor" << std::endl;
+        if (m_pInt)
+        {
+            std::cout << "~Integer(" << *m_pInt << "): destructor" << std::endl;
+        }
+        else
+            std::cout << "~Integer(nullptr): destructor" << std::endl;
         delete m_pInt;
     }
 };
@@ -103,7 +110,7 @@ Number CreateNumber(int num)
 
 void TestMove(Integer &&intObj)
 {
-    std::cout << intObj.GetValue() << std::endl;
+    std::cout << "TestMove::intObj.GetValue(): " << intObj.GetValue() << std::endl;
 }
 
 int main()
@@ -117,21 +124,55 @@ int main()
     // copy assignment
     n2 = n1;
 
+    std::cout << "---calling auto n3{CreateNumber(2)};" << std::endl;
     // parameterized constructor
-    auto n3{CreateNumber(3)};
+    auto n3{CreateNumber(2)};
 
+    std::cout << "---calling n3 = CreateNumber(3);" << std::endl;
     // move assignment: operator=(Integer&& obj)
     n3 = CreateNumber(3);
 
-    Integer i1(100);
+    std::cout << "---calling Integer i1(100)" << std::endl;
+    Integer i1(4);
 
+    std::cout << "---calling auto i2 = std::move<Integer&>(i1);" << std::endl;
     // move constructor
     auto i2 = std::move<Integer &>(i1);
-    i2.SetValue(240);
-    std::cout << i2.GetValue() << std::endl;
-    std::cout << i1.GetValue() << std::endl; //<-- this will cause error
+    i2.SetValue(5);
+    std::cout << "i2.GetValue(): " << i2.GetValue() << std::endl;
+    // std::cout << i1.GetValue() << std::endl; //<-- this will cause error
 
     std::cout << "\nCalling TestMove" << std::endl;
     TestMove(std::move<Integer &>(i2)); // no constructor or op called
     std::cout << "\Done TestMove" << std::endl;
+
+    // error: note: candidate: 'void Integer::SetValue(float)' <deleted>
+    // i2.SetValue(240.1);
+
+    /*
+    OUTPUT:
+    Integer(): default cons
+    Integer(const Integer&): copy cons
+    operator=(const Integer& obj): copy assignment
+    ---calling auto n3{CreateNumber(2)};
+    Integer(int): parametrized cons
+    ---calling n3 = CreateNumber(3);
+    Integer(int): parametrized cons
+    operator=(Integer&& obj): move assignment
+    ~Integer(nullptr): destructor
+    ---calling Integer i1(100)
+    Integer(int): parametrized cons
+    ---calling auto i2 = std::move<Integer&>(i1);
+    Integer(Integer&&): move cons
+    i2.GetValue(): 5
+
+    Calling TestMove
+    TestMove::intObj.GetValue(): 5
+    Done TestMove
+    ~Integer(5): destructor
+    ~Integer(nullptr): destructor
+    ~Integer(3): destructor
+    ~Integer(0): destructor
+    ~Integer(0): destructor
+    */
 }
