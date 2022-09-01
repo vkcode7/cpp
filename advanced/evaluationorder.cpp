@@ -5,23 +5,23 @@ class EvaluationOrder
 public:
     EvaluationOrder &First(int)
     {
-        std::cout << __FUNCSIG__ << std::endl;
+        std::cout << "EvaluationOrder &First(int)" << std::endl;
         return *this;
     }
     EvaluationOrder &Second(int)
     {
-        std::cout << __FUNCSIG__ << std::endl;
+        std::cout << "EvaluationOrder &Second(int)" << std::endl;
         return *this;
     }
 };
 int FirstSubExpression(int)
 {
-    std::cout << __FUNCSIG__ << std::endl;
+    std::cout << "FirstSubExpression(int)" << std::endl;
     return 0;
 }
 int SecondSubExpression(int)
 {
-    std::cout << __FUNCSIG__ << std::endl;
+    std::cout << "SecondSubExpression(int)" << std::endl;
     return 0;
 }
 int main()
