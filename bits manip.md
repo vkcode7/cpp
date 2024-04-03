@@ -158,13 +158,11 @@
             PrintBits(125);
             PrintBits(-125);
 
-        int num1 = 0b1010;  // Binary literal representation of 10
-
-        // Bitwise complement
-        int resultComplement = ~num1; // resultComplement = 0b11111111111111111111111111110101 (-11 in decimal)
-        Console.WriteLine($"Bitwise Complement: {Convert.ToString(resultComplement, 2)}");
-
-
+            int num1 = 0b1010;  // Binary literal representation of 10
+    
+            // Bitwise complement
+            int resultComplement = ~num1; // resultComplement = 0b11111111111111111111111111110101 (-11 in decimal)
+            Console.WriteLine($"Bitwise Complement: {Convert.ToString(resultComplement, 2)}");
         }
     }
 ```
