@@ -1,4 +1,5 @@
-# CPP
+# CPP - Containers and Algorithms
+
 ## Containers library
 The Containers library is a generic collection of class templates and algorithms that allow programmers to easily implement common data structures like queues, lists and stacks. There are two(until C++11)three(since C++11) classes of containers:
 sequence containers,
@@ -350,3 +351,378 @@ std::unordered_multimap is an unordered associative container that supports equi
 4. Iterator operations (e.g. incrementing an iterator) read, but do not modify the underlying container, and may be executed concurrently with operations on other iterators on the same container, with the const member functions, or reads from the elements. Container operations that invalidate any iterators modify the container and cannot be executed concurrently with any operations on existing iterators even if those iterators are not invalidated.
 5. Elements of the same container can be modified concurrently with those member functions that are not specified to access these elements. More generally, the C++ standard library functions do not read objects indirectly accessible through their arguments (including other elements of a container) except when required by its specification.
 6. In any case, container operations (as well as algorithms, or any other C++ standard library functions) may be parallelized internally as long as this does not change the user-visible results (e.g. std::transform may be parallelized, but not std::for_each which is specified to visit each element of a sequence in order).
+
+
+## Algorithms
+If you use raw loops and you understand the containers, you don’t have to deal with these. A surprising “advantage” of using raw loops - please, prefer algorithms!
+Otherwise, most probably you understand what standard algorithms do. Think about them and you’ll be able to come up with their complexities in most cases. Let’s have a look at some algorithms:
+- ***all_of/ any_of / none_of*** have at most O(n) complexity where n is the size of the range the algorithm is applied on
+- ***count_if*** has a complexity of O(n) where n is the size of the range the algorithm is applied on
+- ***find / find_if*** have a complexity of O(n). They need at most n applications of operator== or a predicate where n is the length of the range passed in
+- ***replace / replace_if*** have a complexity of O(n). They need n applications of operator== or of a predicate where n is the length of the range passed in and at most n assignments
+- ***copy / copy_if*** have a complexity of O(n). copy does n assignments where n is the length of the passed-in range, for copy_if we also have to think about the application of the predicate, while the number of assignments might be smaller.
+- ***transform*** also has a complexity of O(n). It performs exactly n applications of the operation, where n is the length of the passed-in range.
+- ***generate*** has a complexity of O(n) as it invokes n times the generator function and also performs the same amount of assignments.
+- ***remove_if*** has a complexity of O(n) as it performs n applications of operator== or of a predicate where n is the length of the range passed in.
+- ***swap*** has a complexity of O(1) if applied on single values and O(n) if applied on arrays where n is the size of the arrays to be swapped
+- ***reverse*** performs exactly half as many swaps as the size of the range to be reversed, therefore the complexity is O(n)
+- ***rotate*** also has a complexity of O(n).
+
+Quite boring, right? But boredom brings simplicity to your calculations.
+
+### adjacent_find
+Searches for two adjacent elements that are either equal or satisfy a specified condition.
+
+```c++
+// alg_adj_fnd.cpp
+// compile with: /EHsc
+#include <list>
+#include <algorithm>
+#include <iostream>
+
+// Returns whether second element is twice the first
+bool twice (int elem1, int elem2 )
+{
+    return elem1 * 2 == elem2;
+}
+
+int main()
+{
+    using namespace std;
+    list<int> L;
+    list<int>::iterator Iter;
+    list<int>::iterator result1, result2;
+
+    L.push_back( 50 );
+    L.push_back( 40 );
+    L.push_back( 10 );
+    L.push_back( 20 );
+    L.push_back( 20 );
+
+    result2 = adjacent_find( L.begin( ), L.end( ), twice );
+    if ( result2 == L.end( ) )
+        cout << "There are not two adjacent elements where the "
+            << "second is twice the first." << endl;
+    else
+    {
+        cout << "There are two adjacent elements where "
+            << "the second is twice the first.\n"
+            << "They have values of " << *(result2++)
+            << " & " << *result2 << "." << endl;
+    }
+}
+```
+
+### all_of
+Returns true when a condition is present at each element in the given range.
+```c++
+int main()
+{
+    using namespace std;
+
+    list<int> li { 50, 40, 10, 20, 20 };
+    list<int>::iterator iter;
+
+    cout << "li = ( ";
+    for (iter = li.begin(); iter != li.end(); iter++)
+        cout << *iter << " ";
+    cout << ")" << endl;
+
+    // Check if all elements in li are even.
+    auto is_even = [](int elem){ return !(elem % 2); };
+    if (all_of(li.begin(), li.end(), is_even))
+        cout << "All the elements are even numbers.\n";
+    else
+        cout << "Not all the elements are even numbers.\n";
+}
+```
+
+### any_of
+Returns true when a condition is present at least once in the specified range of elements.
+```c++
+   // Check if there's an even element in li.
+    auto is_even = [](int const elem){ return !(elem % 2); };
+    if (any_of(li.begin(), li.end(), is_even))
+        cout << "There's an even element in li.\n";
+```
+
+### binary_search
+Tests whether there's an element in a sorted range that is equal to a specified value or that is equivalent to it in a sense specified by a binary predicate.
+```c++
+   list<int> List1;
+
+    List1.push_back( 50 );
+    List1.push_back( 10 );
+    List1.push_back( 30 );
+    List1.push_back( 20 );
+    List1.push_back( 25 );
+    List1.push_back( 5 );
+
+    List1.sort();
+
+   // default binary search for 10
+    if ( binary_search(List1.begin(), List1.end(), 10) )
+        cout << "There is an element in list with a value equal to 10."
+```
+      
+### copy
+Assigns the values of elements from a source range to a destination range, iterating through the source sequence of elements and assigning them new positions in a forward direction.
+```c++
+    vector<int> v1, v2; //v2 has 11 elements
+
+    // To copy the first 3 elements of v1 into the middle of v2
+    copy( v1.begin( ), v1.begin( ) + 3, v2.begin( ) + 4 );
+```
+
+ ### copy_backward
+Assigns the values of elements from a source range to a destination range, iterating through the source sequence of elements and assigning them new positions in a backward direction.
+```c++
+   // To copy_backward the first 3 elements of v1 into the middle of v2
+    copy_backward( v1.begin( ), v1.begin( ) + 3, v2.begin( ) + 7 );
+```
+
+### copy_if
+In a range of elements, copies the elements that are true for the specified condition.
+```c++
+   list<int> li{ 46, 59, 88, 72, 79, 71, 60, 5, 40, 84 };
+   list<int> lo(li.size()); // lo = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+
+   // is_odd checks if the element is odd.
+    auto is_odd = [](int const elem) { return (elem % 2); };
+    // use copy_if to select only odd elements from li
+    // and copy them to lo, starting from lo's begin position
+    auto oc = copy_if(li.begin(), li.end(), lo.begin(), is_odd);
+    lo.resize(std::distance(lo.begin(), oc));  // shrink lo to new size
+```
+
+### copy_n
+Copies a specified number of elements.
+```c++
+int main()
+{
+    using namespace std;
+    string s1{"dandelion"};
+    string s2{"badger"};
+
+    cout << s1 << " + " << s2 << " = ";
+
+    // Copy the first 3 letters from s1
+    // to the first 3 positions in s2
+    copy_n(s1.begin(), 3, s2.begin());
+
+    cout << s2 << endl;
+}
+```
+
+### count
+Returns the number of elements in a range whose values match a specified value.
+```c++
+    vector<int>::iterator::difference_type result;
+    result = count(v1.begin(), v1.end(), 10);
+    cout << "The number of 10s in v2 is: " << result << "." << endl;
+```
+
+### count_if
+Returns the number of elements in a range whose values satisfy a specified condition.
+```c++
+    vector<int>::iterator::difference_type result1;
+    result1 = count_if(v1.begin(), v1.end(), [](auto x) {return x > 10;});
+    cout << "The number of elements in v1 greater than 10 is: "
+         << result1 << "." << endl;
+```
+
+### equal
+Compares two ranges element by element for equality or equivalence in a sense specified by a binary predicate.
+```c++
+bool   b = equal(v1.begin(), v1.end(), v3.begin(), v3.end());
+```
+
+### fill
+Assigns the same new value to every element in a specified range.
+```c++
+   // Fill the last 5 positions with a value of 2
+    fill( v1.begin( ) + 5, v1.end( ), 2 );
+```
+
+### fill_n
+Assigns a new value to a specified number of elements in a range beginning with a particular element.
+```c++
+   // Fill the first 3 positions with a value of 1, saving position.
+    auto pos = fill_n( v.begin(), 3, 1 );
+```
+
+### find
+Locates the position of the first occurrence of an element in a range that has a specified value.
+
+### find_first_of
+Searches for the first occurrence of any of several values within a target range.
+```c++
+   // Searching v1 for a match to L1 under the binary predicate twice
+    vector<int>::iterator result2;
+    vector<int> v1, v2;
+    result2 = find_first_of ( v1.begin( ), v1.end( ), v2.begin( ), v2.end(), twice );
+   
+    // Return whether second element is twice the first
+    bool twice ( int elem1, int elem2 )
+    {
+        return 2 * elem1 == elem2;
+    }
+```
+
+### find_if
+Locates the position of the first occurrence of an element in a range that satisfies a specified condition.
+```c++
+   // Function to use as the UnaryPredicate argument to find_if() in this example
+   bool is_odd_int(int i) {
+       return ((i % 2) != 0);
+   }
+
+   // call <algorithm> std::find_if()
+    auto p = find_if(first, last, is_odd_int);
+```
+
+### for_each
+Applies a specified function object to each element in a forward order within a range and returns the function object.
+```c++
+#include <vector>
+#include <algorithm>
+#include <iostream>
+
+// The function object multiplies an element by a Factor
+template <class Type>
+class MultValue
+{
+private:
+    Type Factor;   // The value to multiply by
+public:
+    // Constructor initializes the value to multiply by
+    MultValue ( const Type& value ) : Factor ( value ) {
+    }
+
+    // The function call for the element to be multiplied
+    void operator( ) ( Type& elem ) const
+    {
+        elem *= Factor;
+    }
+};
+
+int main()
+{
+    using namespace std;
+    vector<int> v1;
+    vector<int>::iterator Iter1;
+
+    // Constructing vector v1
+    int i;
+    for ( i = -4 ; i <= 2 ; i++ )
+    {
+        v1.push_back( i );
+    }
+
+    cout << "Original vector v1 = ( " ;
+    for ( Iter1 = v1.begin( ) ; Iter1 != v1.end( ) ; Iter1++ )
+        cout << *Iter1 << " ";
+    cout << ")." << endl;
+
+    // Using for_each to multiply each element by a Factor
+    //for_each ( v1.begin( ), v1.end( ), MultValue<int> ( -2 ) );
+    for_each ( v1.begin( ), v1.end( ), [](int& k) { k = k * -2;} );
+    
+    cout << "Multiplying the elements of the vector v1\n "
+            << "by the factor -2 gives:\n v1mod1 = ( " ;
+    for ( Iter1 = v1.begin( ) ; Iter1 != v1.end( ) ; Iter1++ )
+        cout << *Iter1 << " ";
+    cout << ")." << endl;
+}
+
+/*
+Original vector v1 = ( -4 -3 -2 -1 0 1 2 ).
+Multiplying the elements of the vector v1
+ by the factor -2 gives:
+ v1mod1 = ( 8 6 4 2 0 -2 -4 ).
+*/
+```
+
+### generate
+Assigns the values generated by a function object to each element in a range.
+The function object is invoked for each element in the range and doesn't need to return the same value each time it's called. It is called with no arguments to generate the values to be assigned to each of the elements in the range.
+```c++
+#include <vector>
+#include <algorithm>
+#include <iostream>
+
+int main()
+{
+    using namespace std;
+
+    // Assigning random values to vector integer elements
+    vector<int> v1 ( 5 );
+    vector<int>::iterator Iter1;
+
+    generate ( v1.begin( ), v1.end( ), rand );
+
+    cout << "Vector v1 is ( " ;
+    for ( Iter1 = v1.begin( ) ; Iter1 != v1.end( ) ; Iter1++ )
+        cout << *Iter1 << " ";
+    cout << ")." << endl;
+}
+```
+
+### is_sorted
+Returns true if the elements in the specified range are in sorted order.
+
+### remove
+Eliminates a specified value from a given range without disturbing the order of the remaining elements. Returns the end of a new range free of the specified value.
+```c++
+   // Remove elements with a value of 7
+    auto new_end = remove ( v1.begin( ), v1.end( ), 7 );
+
+    // To change the sequence size, use erase
+    v1.erase (new_end, v1.end( ) );
+```
+Always use erase() after remove() to resize.
+
+### replace/replace_if
+Examines each element in a range and replaces it if it matches a specified value.
+```c++
+   replace_if(v.begin(), v.end(), [](int k){ return k > 6; }, 70);
+```
+
+### reverse
+Reverses the order of the elements within a range.
+```c++
+   // Reverse the elements in the vector
+    reverse (v1.begin( ), v1.end( ) );
+```
+
+### sort
+Arranges the elements in a specified range into a nondescending order or according to an ordering criterion specified by a binary predicate.
+```c++
+    // To sort in descending order. specify binary predicate
+    sort( v1.begin( ), v1.end( ), greater<int>( ) );
+
+    // Return whether first element is greater than the second
+    bool UDgreater ( int elem1, int elem2 )
+    {
+        return elem1 > elem2;
+    }
+
+    // A user-defined (UD) binary predicate can also be used
+    //sorts in Desc order as above
+    sort( v1.begin( ), v1.end( ), UDgreater );
+```
+
+### swap
+This exchanges the values of two objects. = swap( v1, v2 );
+
+### transform
+Applies a specified function object to each element in a source range or to a pair of elements from two source ranges. Then, it copies the return values of the function object into a destination range.
+```c++
+   // Using transform to multiply each element by a factor of 5
+   transform ( v1.begin( ), v1.end( ), v2.begin( ), MultValue<int> ( 5 ) );
+```
+
+### unique
+Removes duplicate elements that are next to each other in a specified range.
+
+
