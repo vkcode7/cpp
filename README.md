@@ -725,4 +725,523 @@ Applies a specified function object to each element in a source range or to a pa
 ### unique
 Removes duplicate elements that are next to each other in a specified range.
 
+## Conclusion
+In this article, we talked about the complexity analysis of operations on containers and of algorithms which are so often make important part of a software developer job interview. We discussed some hints on how to approach such questions if you neglected complexity analysis during most of your preparation for interviews. Finally, we quickly went through the most important complexities of C++ containers and standard algorithms so that you can have the most basic characteristics that you’d need at a job interview. Good luck!
+
+
+# Lambdas
+https://learn.microsoft.com/en-us/cpp/cpp/lambda-expressions-in-cpp?view=msvc-170
+```c++
+//(1)   (2)  (3)      (4)      (5)
+//===   ===  =======  ======   =======
+  [=]   ()   mutable  throw()   -> int
+  { //<== lambda body starts here (6)
+    int n = x+y;
+    x = y;
+    y = n;
+    return n;
+  } //<== lambda body ends here
+```
+1. capture clause (Also known as the lambda-introducer in the C++ specification.) [&, =]
+2. parameter list Optional. (Also known as the lambda declarator)
+3. mutable specification Optional.
+4. exception-specification Optional.
+5. trailing-return-type Optional.
+6. lambda body.
+
+```c++
+struct S { void f(int i); };
+
+void S::f(int i) {
+    [&, i]{};      // OK
+    [&, &i]{};     // ERROR: i preceded by & when & is the default
+    [=, this]{};   // ERROR: this when = is the default
+    [=, *this]{ }; // OK: captures this by value. See below.
+    [i, i]{};      // ERROR: i repeated
+}
+```
+
+A capture followed by an ellipsis is a pack expansion, as shown in this variadic template example:
+```c++
+template<class... Args>
+void f(Args... args) {
+    auto x = [args...] { return g(args...); };
+    x();
+}
+```
+
+To use lambda expressions in the body of a class member function, pass the this pointer to the capture clause to provide access to the member functions and data members of the enclosing class.
+
+When you use the capture clause, we recommend that you keep these points in mind, particularly when you use lambdas with multi-threading:
+- Reference captures can be used to modify variables outside, but value captures can't. (mutable allows copies to be modified, but not originals.)
+- Reference captures reflect updates to variables outside, but value captures don't.
+- Reference captures introduce a lifetime dependency, but value captures have no lifetime dependencies. It's especially important when the lambda runs asynchronously. If you capture a local by reference in an async lambda, that local could easily be gone by the time the lambda runs. Your code could cause an access violation at run time.
+
+##$ Generalized capture (C++14)
+In C++14, you can introduce and initialize new variables in the capture clause, without the need to have those variables exist in the lambda function's enclosing scope. The initialization can be expressed as any arbitrary expression; the type of the new variable is deduced from the type produced by the expression. This feature lets you capture move-only variables (such as std::unique_ptr) from the surrounding scope and use them in a lambda.
+```c++
+pNums = make_unique<vector<int>>(nums);
+//...
+      auto a = [ptr = move(pNums)]()
+        {
+           // use ptr
+        };
+```
+
+Examples:
+```c++
+// declaring_lambda_expressions1.cpp
+// compile with: /EHsc /W4
+#include <functional>
+#include <iostream>
+
+int main()
+{
+    using namespace std;
+
+    // Assign the lambda expression that adds two numbers to an auto variable.
+    auto f1 = [](int x, int y) { return x + y; };
+
+    cout << f1(2, 3) << endl;
+
+    // Assign the same lambda expression to a function object.
+    function<int(int, int)> f2 = [](int x, int y) { return x + y; };
+
+    cout << f2(3, 4) << endl;
+}
+```
+
+The Microsoft C++ compiler binds a lambda expression to its captured variables when the expression is declared instead of when the expression is called. 
+```c++
+// declaring_lambda_expressions2.cpp
+// compile with: /EHsc /W4
+#include <functional>
+#include <iostream>
+
+int main()
+{
+   using namespace std;
+
+   int i = 3;
+   int j = 5;
+
+   // The following lambda expression captures i by value and
+   // j by reference.
+   function<int (void)> f = [i, &j] { return i + j; };
+
+   // Change the values of i and j.
+   i = 22;
+   j = 44;
+
+   // Call f and print its result.
+   cout << f() << endl;
+}
+```
+Output is: 47 <<<< 3 + 44
+
+This example declares a lambda expression that returns the sum of two integers and calls the expression immediately with the arguments 5 and 4:
+```c++
+// calling_lambda_expressions1.cpp
+// compile with: /EHsc
+#include <iostream>
+
+int main()
+{
+   using namespace std;
+   int n = [] (int x, int y) { return x + y; }(5, 4);
+   cout << n << endl;
+}
+```
+
+This example passes a lambda expression as an argument to the find_if function. The lambda expression returns true if its parameter is an even number.
+```c++
+// calling_lambda_expressions2.cpp
+// compile with: /EHsc /W4
+#include <list>
+#include <algorithm>
+#include <iostream>
+
+int main()
+{
+    using namespace std;
+
+    // Create a list of integers with a few initial elements.
+    list<int> numbers;
+    numbers.push_back(13);
+    numbers.push_back(17);
+    numbers.push_back(42);
+    numbers.push_back(46);
+    numbers.push_back(99);
+
+    // Use the find_if function and a lambda expression to find the
+    // first even number in the list.
+    const list<int>::const_iterator result =
+        find_if(numbers.begin(), numbers.end(),[](int n) { return (n % 2) == 0; });
+
+    // Print the result.
+    if (result != numbers.end()) {
+        cout << "The first even number in the list is " << *result << "." << endl;
+    } else {
+        cout << "The list contains no even numbers." << endl;
+    }
+}
+```
+Output: The first even number in the list is 42.
+
+
+#### Nested Lambda
+You can nest a lambda expression inside another one, as shown in this example. The inner lambda expression multiplies its argument by 2 and returns the result. The outer lambda expression calls the inner lambda expression with its argument and adds 3 to the result.
+```c++
+// nesting_lambda_expressions.cpp
+// compile with: /EHsc /W4
+#include <iostream>
+
+int main()
+{
+    using namespace std;
+
+    // The following lambda expression contains a nested lambda
+    // expression.
+    int timestwoplusthree = [](int x) { return [](int y) { return y * 2; }(x) + 3; }(5);
+
+    // Print the result.
+    cout << timestwoplusthree << endl;
+}
+```
+
+#### Higher order Lambda Functions
+Many programming languages support the concept of a higher-order function. A higher-order function is a lambda expression that takes another lambda expression as its argument or returns a lambda expression. You can use the function class to enable a C++ lambda expression to behave like a higher-order function. The following example shows a lambda expression that returns a function object and a lambda expression that takes a function object as its argument.
+```c++
+// higher_order_lambda_expression.cpp
+// compile with: /EHsc /W4
+#include <iostream>
+#include <functional>
+
+int main()
+{
+    using namespace std;
+
+    // The following code declares a lambda expression that returns
+    // another lambda expression that adds two numbers.
+    // The returned lambda expression captures parameter x by value.
+    auto addtwointegers = [](int x) -> function<int(int)> {
+        return [=](int y) { return x + y; };
+    };
+
+    // The following code declares a lambda expression that takes another
+    // lambda expression as its argument.
+    // The lambda expression applies the argument z to the function f
+    // and multiplies by 2.
+    auto higherorder = [](const function<int(int)>& f, int z) {
+        return f(z) * 2;
+    };
+
+    // Call the lambda expression that is bound to higherorder.
+    auto answer = higherorder(addtwointegers(7), 8);
+
+    // Print the result, which is (7+8)*2.
+    cout << answer << endl;
+}
+```
+
+#### Lambda in a Function
+You can use lambda expressions in the body of a function. The lambda expression can access any function or data member that the enclosing function can access. You can explicitly or implicitly capture the this pointer to provide access to functions and data members of the enclosing class.
+```c++
+// capture "this" by reference
+void ApplyScale(const vector<int>& v) const
+{
+   for_each(v.begin(), v.end(),
+      [this](int n) { cout << n * _scale << endl; });
+}
+
+// capture "this" by value (Visual Studio 2017 version 15.3 and later)
+void ApplyScale2(const vector<int>& v) const
+{
+   for_each(v.begin(), v.end(),
+      [*this](int n) { cout << n * _scale << endl; });
+}
+
+// capture "this" implicitly
+void ApplyScale(const vector<int>& v) const
+{
+   for_each(v.begin(), v.end(),
+      [=](int n) { cout << n * _scale << endl; });
+}
+
+// function_lambda_expression.cpp
+// compile with: /EHsc /W4
+#include <algorithm>
+#include <iostream>
+#include <vector>
+
+using namespace std;
+
+class Scale
+{
+public:
+    // The constructor.
+    explicit Scale(int scale) : _scale(scale) {}
+
+    // Prints the product of each element in a vector object
+    // and the scale value to the console.
+    void ApplyScale(const vector<int>& v) const
+    {
+        for_each(v.begin(), v.end(), [=](int n) { cout << n * _scale << endl; });
+    }
+
+private:
+    int _scale;
+};
+
+int main()
+{
+    vector<int> values;
+    values.push_back(1);
+    values.push_back(2);
+    values.push_back(3);
+    values.push_back(4);
+
+    // Create a Scale object that scales elements by 3 and apply
+    // it to the vector object. Does not modify the vector.
+    Scale s(3);
+    s.ApplyScale(values);
+}
+```
+
+#### Using Lambda with templates
+Because lambda expressions are typed, you can use them with C++ templates. The following example shows the negate_all and print_all functions. The negate_all function applies the unary operator- to each element in the vector object. The print_all function prints each element in the vector object to the console.
+```c++
+// template_lambda_expression.cpp
+// compile with: /EHsc
+#include <vector>
+#include <algorithm>
+#include <iostream>
+
+using namespace std;
+
+// Negates each element in the vector object. Assumes signed data type.
+template <typename T>
+void negate_all(vector<T>& v)
+{
+    for_each(v.begin(), v.end(), [](T& n) { n = -n; });
+}
+
+// Prints to the console each element in the vector object.
+template <typename T>
+void print_all(const vector<T>& v)
+{
+    for_each(v.begin(), v.end(), [](const T& n) { cout << n << endl; });
+}
+
+int main()
+{
+    // Create a vector of signed integers with a few elements.
+    vector<int> v;
+    v.push_back(34);
+    v.push_back(-43);
+    v.push_back(56);
+
+    print_all(v);
+    negate_all(v);
+    cout << "After negate_all():" << endl;
+    print_all(v);
+}
+
+Output:
+34
+-43
+56
+After negate_all():
+-34
+43
+-56
+```
+
+#### Handling Exceptions
+The body of a lambda expression follows the rules for both structured exception handling (SEH) and C++ exception handling. You can handle a raised exception in the body of a lambda expression or defer exception handling to the enclosing scope. The following example uses the for_each function and a lambda expression to fill a vector object with the values of another one. It uses a try/catch block to handle invalid access to the first vector.
+```c++
+// eh_lambda_expression.cpp
+// compile with: /EHsc /W4
+#include <vector>
+#include <algorithm>
+#include <iostream>
+using namespace std;
+
+int main()
+{
+    // Create a vector that contains 3 elements.
+    vector<int> elements(3);
+
+    // Create another vector that contains index values.
+    vector<int> indices(3);
+    indices[0] = 0;
+    indices[1] = -1; // This is not a valid subscript. It will trigger an exception.
+    indices[2] = 2;
+
+    // Use the values from the vector of index values to
+    // fill the elements vector. This example uses a
+    // try/catch block to handle invalid access to the
+    // elements vector.
+    try
+    {
+        for_each(indices.begin(), indices.end(), [&](int index) {
+            elements.at(index) = index;
+        });
+    }
+    catch (const out_of_range& e)
+    {
+        cerr << "Caught '" << e.what() << "'." << endl;
+    };
+}
+```
+
+#### Managed C++/CLI
+The capture clause of a lambda expression cannot contain a variable that has a managed type. However, you can pass an argument that has a managed type to the parameter list of a lambda expression. The following example contains a lambda expression that captures the local unmanaged variable ch by value and takes a System.String object as its parameter.
+```c++
+// managed_lambda_expression.cpp
+// compile with: /clr
+using namespace System;
+
+int main()
+{
+    char ch = '!'; // a local unmanaged variable
+
+    // The following lambda expression captures local variables
+    // by value and takes a managed String object as its parameter.
+    [=](String ^s) {
+        Console::WriteLine(s + Convert::ToChar(ch));
+    }("Hello");
+}
+```
+
+#### Function Objects vs. Lambdas
+When you write code, you probably use function pointers and function objects to solve problems and perform calculations, especially when you use C++ Standard Library algorithms. Function pointers and function objects each have advantages and disadvantages—for example, function pointers have minimal syntactic overhead but do not retain state within a scope, and function objects can maintain state but require the syntactic overhead of a class definition.
+
+A lambda combines the benefits of function pointers and function objects and avoids their disadvantages. Like a function object, a lambda is flexible and can maintain state, but unlike a function object, its compact syntax doesn't require an explicit class definition. By using lambdas, you can write code that's less cumbersome and less prone to errors than the code for an equivalent function object.
+
+The following examples compare the use of a lambda to the use of a function object. The first example uses a lambda to print to the console whether each element in a vector object is even or odd. The second example uses a function object to accomplish the same task.
+
+***Example 1: Using a Lambda***<br>
+This example passes a lambda to the for_each function. The lambda prints a result that states whether each element in a vector object is even or odd.
+
+```c++
+// even_lambda.cpp
+// compile with: cl /EHsc /nologo /W4 /MTd
+#include <algorithm>
+#include <iostream>
+#include <vector>
+using namespace std;
+
+int main()
+{
+   // Create a vector object that contains 9 elements.
+   vector<int> v;
+   for (int i = 1; i < 10; ++i) {
+      v.push_back(i);
+   }
+
+   // Count the number of even numbers in the vector by
+   // using the for_each function and a lambda.
+   int evenCount = 0;
+   for_each(v.begin(), v.end(), [&evenCount] (int n) {
+      cout << n;
+      if (n % 2 == 0) {
+         cout << " is even " << endl;
+         ++evenCount;
+      } else {
+         cout << " is odd " << endl;
+      }
+   });
+
+   // Print the count of even numbers to the console.
+   cout << "There are " << evenCount
+        << " even numbers in the vector." << endl;
+}
+
+Output:
+1 is odd
+2 is even
+3 is odd
+4 is even
+5 is odd
+6 is even
+7 is odd
+8 is even
+9 is odd
+There are 4 even numbers in the vector.
+```
+
+***Comments***<br>
+In the example, the third argument to the for_each function is a lambda. The [&evenCount] part specifies the capture clause of the expression, (int n) specifies the parameter list, and remaining part specifies the body of the expression.
+
+***Example 2: Using a Function Object***<br>
+Sometimes a lambda would be too unwieldy to extend much further than the previous example. The next example uses a function object instead of a lambda, together with the for_each function, to produce the same results as Example 1. Both examples store the count of even numbers in a vector object. To maintain the state of the operation, the FunctorClass class stores the m_evenCount variable by reference as a member variable. To perform the operation, FunctorClass implements the function-call operator, operator(). The Microsoft C++ compiler generates code that is comparable in size and performance to the lambda code in Example 1. For a basic problem like the one in this article, the simpler lambda design is probably better than the function-object design. However, if you think that the functionality might require significant expansion in the future, then use a function object design so that code maintenance will be easier.
+
+For more information about the operator(), see Function Call. For more information about the for_each function, see for_each.
+```c++
+// even_functor.cpp
+// compile with: /EHsc
+#include <algorithm>
+#include <iostream>
+#include <vector>
+using namespace std;
+
+class FunctorClass
+{
+public:
+    // The required constructor for this example.
+    explicit FunctorClass(int& evenCount)
+        : m_evenCount(evenCount) { }
+
+    // The function-call operator prints whether the number is
+    // even or odd. If the number is even, this method updates
+    // the counter.
+    void operator()(int n) const {
+        cout << n;
+
+        if (n % 2 == 0) {
+            cout << " is even " << endl;
+            ++m_evenCount;
+        } else {
+            cout << " is odd " << endl;
+        }
+    }
+
+private:
+    // Default assignment operator to silence warning C4512.
+    FunctorClass& operator=(const FunctorClass&);
+
+    int& m_evenCount; // the number of even variables in the vector.
+};
+
+int main()
+{
+    // Create a vector object that contains 9 elements.
+    vector<int> v;
+    for (int i = 1; i < 10; ++i) {
+        v.push_back(i);
+    }
+
+    // Count the number of even numbers in the vector by
+    // using the for_each function and a function object.
+    int evenCount = 0;
+    for_each(v.begin(), v.end(), FunctorClass(evenCount));
+
+    // Print the count of even numbers to the console.
+    cout << "There are " << evenCount
+        << " even numbers in the vector." << endl;
+}
+
+Output:
+1 is odd
+2 is even
+3 is odd
+4 is even
+5 is odd
+6 is even
+7 is odd
+8 is even
+9 is odd
+There are 4 even numbers in the vector.
+```
 
