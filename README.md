@@ -326,6 +326,34 @@ int main() {
 }
 ```
 
+#### custom deleter
+```c++
+#include <iostream>
+#include <memory>
+
+// Custom deleter for managing dynamically allocated integers
+struct IntDeleter {
+    void operator()(int* ptr) const {
+        std::cout << "Deleting integer..." << std::endl;
+        delete ptr; // Delete the dynamically allocated integer
+    }
+};
+
+int main() {
+    // Create a unique pointer to an integer with a custom deleter
+    std::unique_ptr<int, IntDeleter> intPtr(new int(42));
+
+    // Access and modify the integer value
+    std::cout << "Original value: " << *intPtr << std::endl;
+    *intPtr = 100;
+    std::cout << "New value: " << *intPtr << std::endl;
+
+    // The integer will be automatically deleted when intPtr goes out of scope
+
+    return 0;
+}
+```
+
 #### shared_ptr
 
 std::shared_ptr is a smart pointer provided by the C++ Standard Library. It enables shared ownership of dynamically allocated objects, meaning multiple std::shared_ptr instances can point to the same object. The object is automatically deleted when the last std::shared_ptr pointing to it is destroyed or reset, ensuring proper memory management and preventing memory leaks.<br>
@@ -500,7 +528,7 @@ int main() {
     ref = std::ref(y);
 ```
 
-### macro Equivalents
+### Macro Equivalents - they are risky, have no regards to namespaces / scopes
 Inline Functions
 
 ```c++
