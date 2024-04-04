@@ -1,6 +1,66 @@
 # Bits Manipulations
 
-```c++
+128 | 64 | 32 | 16 | 8 | 4 | 2 | 1
+-----------------------------------
+ 7    6     5    4   3   2   1   0
+
+ 0 = 0
+ 1 = 1
+ 2 = 10
+ 3 = 11
+ 5 = 101
+ 6 = 110
+ 7 = 111
+
+ Bitwise operations
+
+ ```console
+    int a = 5;  // Binary representation: 0101
+    int b = 3;  // Binary representation: 0011
+
+| Operator     | Description                                | Example                  |
+|--------------|--------------------------------------------|--------------------------|
+| &            | Bitwise AND                                | a & b (result: 0001)     |
+| |            | Bitwise OR                                 | a \| b (result: 0111)    |
+| ^            | Bitwise XOR (Exclusive OR)                 | a ^ b (result: 0110)     |
+| ~            | Bitwise NOT (Complement)                   | ~a (result: 11111010)    |
+| <<           | Left Shift                                 | a << 1 (result: 1010)    |
+| >>           | Right Shift                                | a >> 1 (result: 0010)    |
+```
+
+Decimal to Binary:
+You can convert a decimal number into binary by repeatedly dividing the decimal number by 2 and keeping track of the remainders. 
+
+```console
+125 to binary = 1111101
+| Step | Decimal | Divide by 2 | Remainder | Binary |
+|------|---------|-------------|-----------|--------|
+|  1   |   125   |     62      |     1     |   1    |
+|  2   |   62    |     31      |     0     |   01   |
+|  3   |   31    |     15      |     1     |   101  |
+|  4   |   15    |     7       |     1     |  1101  |
+|  5   |   7     |     3       |     1     | 11101  |
+|  6   |   3     |     1       |     1     |111101  |
+|  7   |   1     |     0       |     1     |1111101 |
+
+48 to binary = 110000
+| Step | Decimal | Divide by 2 | Remainder | Binary |
+|------|---------|-------------|-----------|--------|
+|  1   |   48    |     24      |     0     |   0    |
+|  2   |   24    |     12      |     0     |   00   |
+|  3   |   12    |     6       |     0     |   000  |
+|  4   |   6     |     3       |     0     |  0000  |
+|  5   |   3     |     1       |     1     |  10000 |
+|  6   |   1     |     0       |     1     | 110000 |
+```
+
+### LSB/MSB
+For example, consider the 8-bit binary number 10110110:
+
+In this binary number, the rightmost bit (bit 0) is the LSB, which holds the value 0.
+The leftmost bit (bit 7) is the MSB, which holds the value 1. An ODD number always has 1 as LSB.
+
+```c#
     // Online C# Editor for free
     // Write, Edit and Run your C# code using C# Online Compiler
 
