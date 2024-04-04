@@ -41,6 +41,42 @@ int a = 1;
 char e1[8] = {"hello"};
 char *pei = new char[8]{"hello"};
 ```
+##### Data/Scope Hiding
+Variable in inner scope hides the one in outer scope:
+
+```c++
+#include <iostream>
+using namespace std;
+int a = 10;
+int main() {
+    {
+        int a = 5; //a#1
+        std::cout << a << endl;
+        {
+            a = 3; //a#1 assigned
+            int a = 4; //a#2
+            std::cout << a << endl;
+        }
+        
+        std::cout << a << endl;
+    }
+    
+    std::cout << a << endl;
+        
+    return 0;
+}
+
+Output:
+5
+4
+3
+10
+```
+
+#### Operators in C++
+https://en.wikipedia.org/wiki/Operators_in_C_and_C%2B%2B
+
+
 
 # CPP - Containers and Algorithms
 
