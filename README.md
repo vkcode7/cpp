@@ -76,7 +76,115 @@ Output:
 #### Operators in C++
 https://en.wikipedia.org/wiki/Operators_in_C_and_C%2B%2B
 
+#### L-value
+An lvalue has an address that your program can access. Examples of lvalue expressions include variable names, including const variables, array elements, function calls that return an lvalue reference, bit-fields, unions, and class members.
+```c++
+// lvalues_and_rvalues2.cpp
+int main()
+{
+    int i, j, *p;
 
+    // Correct usage: the variable i is an lvalue and the literal 7 is a prvalue.
+    i = 7;
+
+    // Incorrect usage: The left operand must be an lvalue (C2106).`j * 4` is a prvalue.
+    7 = i; // C2106
+    j * 4 = 7; // C2106
+
+    // Correct usage: the dereferenced pointer is an lvalue.
+    *p = i;
+
+    // Correct usage: the conditional operator returns an lvalue.
+    ((i < 3) ? i : j) = 7;
+
+    // Incorrect usage: the constant ci is a non-modifiable lvalue (C3892).
+    const int ci = 7;
+    ci = 9; // C3892
+}
+```
+
+#### RANGE BASED for loop
+
+```c++
+// Illustration of range-for loop
+// using CPP code
+#include <iostream>
+#include <map>
+#include <string>
+#include <vector>
+using namespace std;
+
+// Driver
+int main()
+{
+    // Iterating over whole array
+    vector<int> v = { 0, 1, 2, 3, 4, 5 };
+    for (auto i : v)
+        cout << i << ' ';
+
+    cout << '\n';
+
+    // the initializer may be a braced-init-list
+    for (int n : { 0, 1, 2, 3, 4, 5 })
+        cout << n << ' ';
+
+    cout << '\n';
+
+    // Iterating over array
+    int a[] = { 0, 1, 2, 3, 4, 5 };
+    for (int n : a)
+        cout << n << ' ';
+
+    cout << '\n';
+
+    // Just running a loop for every array
+    // element
+    for (int n : a)
+        cout << "In loop" << ' ';
+
+    cout << '\n';
+
+    // Printing string characters
+    string str = "Geeks";
+    for (char c : str)
+        cout << c << ' ';
+
+    cout << '\n';
+
+    // Printing keys and values of a map
+    map<int, int> MAP({ { 1, 1 }, { 2, 2 }, { 3, 3 } });
+    for (auto i : MAP)
+        cout << '{' << i.first << ", " << i.second << "}\n";
+}
+```
+c++ 17 or higher
+```c++
+for (auto& [key, value]: myMap) {
+    cout << key << " has value " << value << std::endl;
+}
+```
+
+Using std::begin() and std::end()
+```c++
+// INTEGER VECTOR EXAMPLE
+// CPP program to illustrate
+// Implementation of begin() function
+#include <iostream>
+#include <vector>
+using namespace std;
+
+int main()
+{
+	// declaration of vector container
+	vector<int> myvector{ 1, 2, 3, 4, 5 };
+
+	// using begin() to print vector
+	for (auto it = myvector.begin();
+		it != myvector.end(); ++it)
+		cout << ' ' << *it;
+	return 0;
+}
+```
 
 # CPP - Containers and Algorithms
 
