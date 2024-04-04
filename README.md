@@ -527,6 +527,51 @@ int main() {
     ref = std::ref(y);
 ```
 
+```c++
+#include <iostream>
+#include <vector>
+#include <map>
+#include <functional> // Include for std::reference_wrapper
+
+int main() {
+    // Example with std::vector
+    std::vector<int> vec = {1, 2, 3, 4, 5};
+    std::vector<std::reference_wrapper<int>> vec_refs;
+
+    // Store references to elements in the vector
+    for (int& elem : vec) {
+        vec_refs.push_back(std::ref(elem));
+    }
+
+    // Modify the original vector and observe changes through references
+    vec[0] = 100;
+    std::cout << "Values in vector after modification:" << std::endl;
+    for (int& ref : vec_refs) {
+        std::cout << ref << " ";
+    }
+    std::cout << std::endl;
+
+    // Example with std::map
+    std::map<std::string, int> myMap = {{"one", 1}, {"two", 2}, {"three", 3}};
+    std::map<std::string, std::reference_wrapper<int>> map_refs;
+
+    // Store references to values in the map
+    for (auto& pair : myMap) {
+        map_refs.emplace(pair.first, std::ref(pair.second));
+    }
+
+    // Modify the original map and observe changes through references
+    myMap["two"] = 200;
+    std::cout << "Values in map after modification:" << std::endl;
+    for (const auto& pair : map_refs) {
+        std::cout << pair.first << ": " << pair.second << std::endl;
+    }
+
+    return 0;
+}
+```
+
+
 ### Macro Equivalents - they are risky, have no regards to namespaces / scopes
 Inline Functions
 
@@ -1124,6 +1169,110 @@ After removal: i
 Result type is: i
 Result type is: d
 ```
+
+#### Return Type deductions - c++ 14 onwards using auto
+```c++
+#include <iostream>
+
+// Function template with return type deduction
+template<typename T, typename U>
+auto add(T a, U b) {
+    return a + b; // Compiler deduces return type based on the expression
+}
+
+int main() {
+    auto result1 = add(10, 20); // Compiler deduces return type to be int
+    auto result2 = add(3.14, 2.71); // Compiler deduces return type to be double
+
+    std::cout << "Result 1: " << result1 << std::endl;
+    std::cout << "Result 2: " << result2 << std::endl;
+
+    return 0;
+}
+```
+
+#### Namespace Alias
+Namespace aliases provide a way to create shorter or more descriptive names for namespaces
+```c++
+namespace alias_name = namespace_name;
+```
+
+```c++
+// Outer namespace
+namespace Outer {
+    // Inner namespace
+    namespace Inner {
+        void foo() {
+            std::cout << "Inside Outer::Inner::foo()" << std::endl;
+        }
+    }
+}
+
+// Create an alias for the nested namespace
+namespace NI = Outer::Inner;
+
+int main() {
+    NI::foo();
+    return 0;
+}
+```
+
+#### ADL => Argument-Dependent Name Lookup
+ADL is a mechanism in C++ that allows functions to be found via argument types
+```c++
+#include <iostream>
+
+namespace MyNamespace {
+    struct MyType {};
+
+    void myFunction(MyType) {
+        std::cout << "Inside MyNamespace::myFunction" << std::endl;
+    }
+}
+
+int main() {
+    MyNamespace::MyType obj;
+    myFunction(obj); // ADL finds MyNamespace::myFunction
+    return 0;
+}
+```
+
+#### decltype - allows you to obtain the type of an expression or a variable without actually evaluating it.
+```c++
+#include <iostream>
+
+int main() {
+    int x = 5;
+    decltype(x) y = 10; // y has the same type as x, which is int
+
+    std::cout << "y: " << y << std::endl;
+
+    return 0;
+}
+```
+
+#### using
+using simplifies the syntax for defining function pointers, and function objects. Can NOT be used with lambdas.
+```c++
+#include <iostream>
+#include <functional> // Include this header for std::function
+
+// Define a type alias for a function pointer
+using FuncPtr = void(*)(int);
+
+int main() {
+    // Use the type alias for function pointers
+    FuncPtr ptr = [](int x) { std::cout << "Function pointer: " << x << std::endl; };
+    ptr(10);
+
+    // Define a lambda function directly using auto or std::function
+    auto lambda = [](int x) { return x * x; };
+    std::cout << "Lambda: " << lambda(5) << std::endl;
+
+    return 0;
+}
+```
+
 
 
 # CPP - Containers and Algorithms
