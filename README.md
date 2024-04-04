@@ -186,6 +186,58 @@ int main()
 }
 ```
 
+#### assert() macro
+If this expression evaluates to 0 or false, this causes an assertion failure that terminates the program.
+```c++
+/* assert example */
+#include <stdio.h>      /* printf */
+#include <assert.h>     /* assert */
+
+void print_number(int* myInt) {
+  assert (myInt!=NULL);
+  printf ("%d\n",*myInt);
+}
+
+int main ()
+{
+  int a=10;
+  int * b = NULL;
+  int * c = NULL;
+
+  b=&a;
+
+  print_number (b);
+  print_number (c);
+
+  return 0;
+}
+
+output:
+10
+```
+
+#### C Memory
+malloc/realloc/calloc/free are used by C. calloc is same as malloc except that it initializes memory with 0. They return a void pointer.
+
+#### C++ Memory new/delete
+new is an operator, it can initialize memory and call constructor.
+```c++
+int *p = new int;
+int *parr = new int[];
+
+delete p;
+delete[] parr;
+```
+
+#### noexcept c++ 11
+if an exception is thrown, program will terminate
+```c++
+double sqroot(double x) noexcept {}
+```
+
+#### static_assert
+if a program error is detected at compile time, the error is displayed and compilation will stop.  
+
 # CPP - Containers and Algorithms
 
 ## STL consists of
