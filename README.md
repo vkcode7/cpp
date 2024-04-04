@@ -426,7 +426,6 @@ int main() {
 
     return 0;
 }
-
 ```
 
 #### make_unique
@@ -573,7 +572,7 @@ constexpr int square(int x) {
 }
 ```
 
-#### R-Value '&&'
+#### R-Value Reference - '&&'
 An rvalue reference is a reference that can bind to temporary objects or to objects that are about to be moved. It's a feature introduced in C++11 to enable move semantics and perfect forwarding.
 
 ```c++
@@ -660,10 +659,26 @@ public:
     }
 };
 
-void Test1(MyClass a){}
+void Test1(MyClass a){} ////Copy constructor called
 void Test2(MyClass &a){}
 void Test3(MyClass &&a){}
 void Test4(MyClass *pa){}
+
+MyClass Test5(MyClass &a){
+    return a;    //Copy constructor called
+}
+
+MyClass Test6(MyClass &a){
+    return std::move(a);    //Move constructor called
+}
+
+MyClass& Test7(MyClass &a){
+    return a;    //Copy constructor called
+}
+
+MyClass&& Test8(MyClass &a){
+    return std::move(a);    //Move constructor called
+}
 
 int main() {
     // Test all constructors and assignment operators
@@ -683,10 +698,116 @@ int main() {
     Test3(std::move(obj2));
     Test4(&obj2);
     
+    std::cout << "calling Test5" << std::endl;
+    MyClass obj7 = Test5(obj2); //Copy constructor called
+    MyClass obj8 = Test6(obj2); //Move constructor called
+    MyClass obj9 = Test7(obj6); //Copy constructor called
+    MyClass obj10 = Test8(obj6); //Move constructor called
+
+    return 0;
+}
+
+Output:
+Default constructor called.
+Parameterized constructor called with value: 42
+Copy constructor called. Copied value: 42
+Move constructor called. Moved value: 42
+Default constructor called.
+Copy assignment operator called. Copied value: 42
+Default constructor called.
+Move assignment operator called. Moved value: 42
+calling TestX methods
+Copy constructor called. Copied value: 42
+Destructor called. Deleting data: 42
+calling Test5
+Copy constructor called. Copied value: 42
+Move constructor called. Moved value: 42
+Copy constructor called. Copied value: 42
+Move constructor called. Moved value: 42
+Destructor called. Deleting data: 42
+Destructor called. Deleting data: 42
+Destructor called. Deleting data: 42
+Destructor called. Deleting data: 42
+Destructor called. Deleting data: 42
+```
+
+#### Delegating Ctor
+Delegating constructors are a feature introduced in C++11 that allows one constructor of a class to call another constructor of the same class to perform initialization. Delegating constructors allow you to reuse initialization logic across multiple constructors, leading to cleaner and more maintainable code.
+
+```c++
+#include <iostream>
+
+class MyClass {
+private:
+    int value;
+
+public:
+    // Target constructor
+    MyClass(int v) : value(v) {
+        std::cout << "Target constructor called. Value: " << value << std::endl;
+    }
+
+    // Delegating constructor
+    MyClass() : MyClass(0) {
+        std::cout << "Delegating constructor called." << std::endl;
+    }
+
+    // Another delegating constructor
+    MyClass(bool b) : MyClass(b ? 1 : 0) {
+        std::cout << "Another delegating constructor called." << std::endl;
+    }
+};
+
+int main() {
+    MyClass obj1(42); // Calls target constructor
+    MyClass obj2; // Calls delegating constructor
+    MyClass obj3(true); // Calls another delegating constructor
+
+    return 0;
+}
+
+Output:
+Target constructor called. Value: 42
+Delegating constructor called.
+Target constructor called. Value: 0
+Another delegating constructor called.
+Target constructor called. Value: 1
+```
+
+#### Explicit Ctor - prevents implicit conversions from the constructor's parameter type to the class type.
+```c++
+#include <iostream>
+
+class MyClass {
+private:
+    int value;
+
+public:
+    // Explicit constructor
+    explicit MyClass(int v) : value(v) {
+        std::cout << "Explicit constructor called. Value: " << value << std::endl;
+    }
+
+    int getValue() const {
+        return value;
+    }
+};
+
+int main() {
+    // Implicit conversion prevented due to explicit constructor
+    // MyClass obj = 42; // Error: Conversion from 'int' to 'MyClass' is ambiguous
+    // MyClass obj = MyClass(42); // OK: Explicitly construct MyClass object
+
+    // Explicit conversion required for explicit constructor
+    MyClass obj1(42); // OK: Direct initialization
+    MyClass obj2 = MyClass(42); // OK: Explicit constructor called
+
+    std::cout << "Value of obj1: " << obj1.getValue() << std::endl;
+    std::cout << "Value of obj2: " << obj2.getValue() << std::endl;
+
     return 0;
 }
 ```
-
 
 # CPP - Containers and Algorithms
 
