@@ -15,10 +15,12 @@ Literals can be qualified with a suffix explicitly such as 2, 2u, 2l, 2ul (unisg
 long is 32 bit on 32 bit platform and 64 on 64-bit platform.
 
 ***Narrowing:*** In C++ 11 one can enclose values in {} and they wont be lost in assignment.<br>
+```c++
 long l = {1234....123}; //either error or OK if supported
 int i = {3.14}; //error as truncation not allowed
 unsigned u1 = -2; //OK
 unisgned u2 = {-2}; //error
+```
 
 ***Type Modifiers:*** signed/unsigned<br>
 ***Type Qualifiers:*** const, volatile, static<br>
@@ -28,16 +30,17 @@ unisgned u2 = {-2}; //error
 - int, long, float <= 4 bytes
 - long long, double <= 8 bytes
 
-<climits>/<limit.h> contain limits such as INT_MIN<br>
-<cfloat>/<float.h> contain floating limits 
+```c++
+<climits> or <limit.h> //contain limits such as INT_MIN<br>
+<cfloat>/<float.h> //contain floating limits 
 
-Copy initialization: should be used for primitive types for code clarity<br>
+//Copy initialization: should be used for primitive types for code clarity<br>
 int a = 1;
 
-Uniform initialization: should be used for user defined types for code clarity<br>
+//Uniform initialization: should be used for user defined types for code clarity<br>
 char e1[8] = {"hello"};
 char *pei = new char[8]{"hello"};
-
+```
 
 # CPP - Containers and Algorithms
 
