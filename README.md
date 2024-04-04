@@ -644,7 +644,13 @@ Received rvalue reference: 10
 a is now: 100
 ```
 
-## A complete class
+## A complete class - Rule of 5 [If a class has ownership on pointers or resources, you must provide these 5]
+- copy ctor, copy assignment
+- move ctor, move assignment
+- dtor
+
+Rule of 0: if a class doesnt have any pointer etc, do not cretate these and compiler will provide the default ones.
+  
 ```c++
 #include <iostream>
 
@@ -1273,6 +1279,338 @@ int main() {
 }
 ```
 
+#### chrono - for handling time-related operations.
+```c++
+#include <iostream>
+#include <chrono>
+
+// Function to simulate some time-consuming operation
+void timeConsumingOperation() {
+    for (int i = 0; i < 1000000; ++i) {
+        // Simulate computation
+        volatile int x = i * i;
+    }
+}
+
+int main() {
+    // Start measuring time
+    auto start = std::chrono::high_resolution_clock::now();
+
+    // Perform time-consuming operation
+    timeConsumingOperation();
+
+    // Stop measuring time
+    auto end = std::chrono::high_resolution_clock::now();
+
+    // Calculate duration
+    std::chrono::duration<double> duration = end - start;
+
+    // Output the duration in seconds
+    std::cout << "Time taken: " << duration.count() << " seconds" << std::endl; //0.00485 seconds
+
+    return 0;
+}
+```
+
+#### Functors aka Function Objects
+A functor in C++ is an object that acts like a function. It's a type that can be called as if it were a function, typically by using the function call operator operator(). Functors provide a way to encapsulate behavior and pass it around as a first-class citizen, similar to function pointers or lambda expressions.
+```c++
+#include <iostream>
+
+// Functor class
+class MyFunctor {
+public:
+    void operator()(int x) const {
+        std::cout << "Value passed to functor: " << x << std::endl;
+    }
+};
+
+int main() {
+    MyFunctor functor; // Create an instance of the functor
+
+    // Call the functor as if it were a function
+    functor(42);
+
+    return 0;
+}
+```
+
+#### <tuple>
+<tuple> is a standard header file in C++ that provides the std::tuple class template, introduced in C++11. It's part of the Standard Template Library (STL) and is used for creating heterogeneous collections of elements. A tuple is similar to an array or struct but can hold elements of different types, making it a versatile container for storing related but different types of data.
+
+It's often used as a return type for functions that need to return multiple values, or in algorithms that need to operate on collections of heterogeneous data.
+
+```c++
+#include <iostream>
+#include <tuple>
+
+int main() {
+    // Creating a tuple with three elements of different types
+    std::tuple<int, double, std::string> myTuple(42, 3.14, "Hello");
+
+    // Creating a tuple using std::make_tuple
+    auto myTuple2 = std::make_tuple(42, 3.14, "Hello");
+
+    // Accessing elements by index
+    std::cout << "First element: " << std::get<0>(myTuple) << std::endl;
+    std::cout << "Second element: " << std::get<1>(myTuple) << std::endl;
+    std::cout << "Third element: " << std::get<2>(myTuple) << std::endl;
+
+    // Accessing elements by type
+    std::cout << "Element with type int: " << std::get<int>(myTuple) << std::endl;
+    std::cout << "Element with type double: " << std::get<double>(myTuple) << std::endl;
+    std::cout << "Element with type string: " << std::get<std::string>(myTuple) << std::endl;
+
+    return 0;
+}
+
+output:
+First element: 42
+Second element: 3.14
+Third element: Hello
+Element with type int: 42
+Element with type double: 3.14
+Element with type string: Hello
+```
+
+tie example
+```c++
+#include <iostream>
+#include <tuple>
+
+// Function that returns a tuple
+std::tuple<int, double, std::string> getValues() {
+    return std::make_tuple(42, 3.14, "Hello");
+}
+
+int main() {
+    // Call the function and unpack the returned tuple into variables
+    int intValue;
+    double doubleValue;
+    std::string stringValue;
+    
+    std::tie(intValue, doubleValue, stringValue) = getValues();
+
+    // Output the unpacked values
+    std::cout << "Int value: " << intValue << std::endl;
+    std::cout << "Double value: " << doubleValue << std::endl;
+    std::cout << "String value: " << stringValue << std::endl;
+
+    return 0;
+}
+```
+
+#### constexpr
+constexpr is a keyword introduced in C++11 (and further expanded in later standards) that indicates that a function or object's value can be computed at compile time. It stands for "constant expression". constexpr can be applied to variables, functions, and constructors, enabling compile-time evaluation and optimization. Can be applied to constructors as well to create objects at compile time.
+```c++
+constexpr int SIZE = 10; // Compile-time constant
+
+constexpr int square(int x) {
+    return x * x;
+}
+
+constexpr int result = square(5); // Compile-time evaluation
+
+class MyClass {
+public:
+    constexpr MyClass(int x) : value(x) {}
+
+    int getValue() const { return value; }
+
+private:
+    int value;
+};
+
+constexpr MyClass obj(42); // Compile-time object construction
+
+```
+
+#### friend
+In C++, the friend keyword is used to grant access to private or protected members of a class to functions or other classes that are not members of that class. It allows designated external functions or classes to access the private and protected members of a class as if they were their own members.
+```c++
+class MyClass {
+private:
+    int privateMember;
+
+public:
+    // Declare an external function as a friend
+    friend void externalFunction(MyClass& obj);
+
+    // Declare an entire class as a friend
+    friend class FriendClass;
+};
+
+// Define the friend function
+void externalFunction(MyClass& obj) {
+    std::cout << "Value of private member accessed by friend function: " << obj.privateMember << std::endl;
+}
+```
+
+
+## Operator Overloading
+```c++
+#include <iostream>
+
+class Complex {
+private:
+    double real;
+    double imaginary;
+
+public:
+    Complex(double real = 0.0, double imaginary = 0.0) : real(real), imaginary(imaginary) {}
+
+    // Overload the + operator for adding two complex numbers
+    Complex operator+(const Complex& other) const {
+        return Complex(real + other.real, imaginary + other.imaginary);
+    }
+
+    // Overload the << operator for outputting Complex objects
+    friend std::ostream& operator<<(std::ostream& os, const Complex& c) {
+        os << c.real << " + " << c.imaginary << "i";
+        return os;
+    }
+};
+
+int main() {
+    Complex c1(2.0, 3.0);
+    Complex c2(1.0, 4.0);
+
+    Complex result = c1 + c2; // Using overloaded + operator
+    std::cout << "Result: " << result << std::endl; // Using overloaded << operator
+
+    return 0;
+}
+```
+internally resolved as ***c1.operator+(c2);***
+
+Overloading ->
+```c++
+#include <iostream>
+
+class MyClass {
+private:
+    int value;
+
+public:
+    MyClass(int val) : value(val) {}
+
+    int getValue() const {
+        return value;
+    }
+
+    // Overload the -> operator
+    MyClass* operator->() {
+        return this;
+    }
+};
+
+int main() {
+    MyClass obj(42);
+    
+    // Accessing member through the overloaded ->
+    std::cout << "Value accessed through overloaded ->: " << obj->getValue() << std::endl;
+
+    return 0;
+}
+```
+
+In C++, there are certain operators that cannot be overloaded. These operators are:
+
+- Scope Resolution Operator (::): Used to qualify names in namespaces, classes, and enumerations.
+- Member Selection Operator (.): Used to access members of objects and structures directly.
+- Member Pointer Operator (.*): Used to access members of objects through pointers to members.
+- Conditional Operator (?:): Used for conditional expressions.
+- Sizeof Operator (sizeof): Used to determine the size of objects and data types.
+- Alignment Operator (alignof): Used to determine the alignment requirement of a type.
+- Ellipsis Operator (...): Used to define variadic functions.
+
+#### Variadic Functions (...)
+```c++
+#include <iostream>
+#include <cstdarg> // Required for va_list, va_start, and va_end
+
+// Variadic function that calculates the sum of its arguments
+int sum(int count, ...) {
+    int total = 0;
+    va_list args; // Variable argument list
+    va_start(args, count); // Initialize argument list
+
+    // Iterate over the variable arguments
+    for (int i = 0; i < count; ++i) {
+        total += va_arg(args, int); // Access each argument
+    }
+
+    va_end(args); // Clean up argument list
+    return total;
+}
+
+int main() {
+    std::cout << "Sum of 3, 5, and 7: " << sum(3, 3, 5, 7) << std::endl;
+    std::cout << "Sum of 1, 2, 3, 4, and 5: " << sum(5, 1, 2, 3, 4, 5) << std::endl;
+
+    return 0;
+}
+```
+
+### Casts
+Static Cast (static_cast): Used for conversions that are well-defined and checked at compile-time.
+Dynamic Cast (dynamic_cast): Used for converting pointers and references to polymorphic types. primarily used in inheritance hierarchies to perform downcasting.
+Const Cast (const_cast): Used to add or remove const or volatile qualifiers from a variable.
+Reinterpret Cast (reinterpret_cast): Used for low-level, type-unsafe conversions between unrelated types.
+c-style: traditional
+
+```c++
+//static
+double d = 3.14;
+int i = static_cast<int>(d); // Convert double to int
+
+//dynamic
+class Base {
+public:
+    virtual ~Base() {}
+};
+
+class Derived : public Base {};
+
+Base* basePtr = new Derived();
+Derived* derivedPtr = dynamic_cast<Derived*>(basePtr); // Downcasting
+if (derivedPtr) {
+    // Conversion succeeded
+} else {
+    // Conversion failed
+}
+
+//const
+const int x = 10;
+int* ptr = const_cast<int*>(&x); // Remove const qualifier
+*ptr = 20; // Modifying a const object
+
+//add const-ness
+int x = 42;
+int* ptr = &x;
+
+// Add const qualifier to the pointer
+const int* constPtr = const_cast<const int*>(ptr);
+
+// Now you cannot modify the value through constPtr
+// *constPtr = 10; // Error: assignment of read-only location
+
+// Add volatile qualifier to the pointer
+volatile int* volatilePtr = const_cast<volatile int*>(ptr);
+
+// Now you can treat volatilePtr as a pointer to a volatile variable
+// *volatilePtr = 10; // OK
+
+//reinterpret
+int* ptr = reinterpret_cast<int*>(0x1000); // Convert integer to pointer
+uintptr_t addr = reinterpret_cast<uintptr_t>(ptr); // Convert pointer to integer
+
+//c-style
+float f = 3.14;
+int i = (int)f; // C-style cast
+
+
+```
 
 
 # CPP - Containers and Algorithms
@@ -1633,7 +1971,6 @@ std::unordered_multimap is an unordered associative container that supports equi
 4. Iterator operations (e.g. incrementing an iterator) read, but do not modify the underlying container, and may be executed concurrently with operations on other iterators on the same container, with the const member functions, or reads from the elements. Container operations that invalidate any iterators modify the container and cannot be executed concurrently with any operations on existing iterators even if those iterators are not invalidated.
 5. Elements of the same container can be modified concurrently with those member functions that are not specified to access these elements. More generally, the C++ standard library functions do not read objects indirectly accessible through their arguments (including other elements of a container) except when required by its specification.
 6. In any case, container operations (as well as algorithms, or any other C++ standard library functions) may be parallelized internally as long as this does not change the user-visible results (e.g. std::transform may be parallelized, but not std::for_each which is specified to visit each element of a sequence in order).
-
 
 ## Algorithms - operates on container elements only indirectly thru iterators
 If you use raw loops and you understand the containers, you don’t have to deal with these. A surprising “advantage” of using raw loops - please, prefer algorithms!
