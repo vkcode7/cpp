@@ -808,6 +808,323 @@ int main() {
     return 0;
 }
 ```
+Note: If a destructor throws an exception and it is not caught within the destructor itself, the std::terminate() function will be called, leading to program termination.
+
+To specify that a destructor is noexcept, you can use the noexcept specifier explicitly in the destructor declaration. 
+
+#### subscript operator (operator[]) 
+```c++
+#include <iostream>
+#include <stdexcept>
+
+class MyArray {
+private:
+    int* data;
+    size_t size;
+
+public:
+    // Constructor
+    MyArray(size_t size) : size(size) {
+        data = new int[size];
+    }
+
+    // Destructor
+    ~MyArray() {
+        delete[] data;
+    }
+
+    // Subscript operator
+    int& operator[](size_t index) {
+        if (index >= size) {
+            throw std::out_of_range("Index out of range");
+        }
+        return data[index];
+    }
+
+    // Const version of subscript operator
+    const int& operator[](size_t index) const {
+        if (index >= size) {
+            throw std::out_of_range("Index out of range");
+        }
+        return data[index];
+    }
+
+    // Getter for size
+    size_t getSize() const {
+        return size;
+    }
+};
+
+int main() {
+    MyArray arr(5);
+
+    // Assign values using subscript operator
+    for (size_t i = 0; i < arr.getSize(); ++i) {
+        arr[i] = i * 10;
+    }
+
+    // Access and print values using subscript operator
+    for (size_t i = 0; i < arr.getSize(); ++i) {
+        std::cout << "arr[" << i << "] = " << arr[i] << std::endl;
+    }
+
+    return 0;
+}
+```
+
+## Generic Programming
+Generic programming is a programming paradigm aimed at writing reusable, flexible, and efficient code by abstracting from specific types and focusing on general algorithms and data structures. It allows you to write functions and classes that work with any data type, providing flexibility and code reuse.
+Here are the key concepts and techniques used in generic programming:
+- Templates
+- Template specialization
+- Type Traits
+- STL and Generic Algorithms
+By mastering generic programming techniques, you can write flexible and efficient code that adapts to various data types and requirements, promoting code reuse and maintainability.
+
+### Function Templates
+```c++
+#include <iostream>
+
+// Function template to find the maximum of two values
+template<typename T>
+T max(T a, T b) {
+    return (a > b) ? a : b;
+}
+
+int main() {
+    int intMax = max<int>(10, 20); // Explicitly specifying the template argument type
+
+    // The compiler can deduce the template argument type from the function arguments
+    double doubleMax = max(3.14, 2.71); // Compiler deduces the template argument type - Implicit instantiation
+
+    return 0;
+}
+```
+
+```c++
+#include <iostream>
+
+// Function template to print elements of an array
+// When you pass an array to this function template, the compiler deduces the size of the array based on its type.
+template<typename T, size_t N>
+void printArray(T (&arr)[N]) {
+    for (size_t i = 0; i < N; ++i) {
+        std::cout << arr[i] << " ";
+    }
+    std::cout << std::endl;
+}
+
+/* Above is equivalent too the following but in the one below size have to be passed
+template<typename T>
+void printArray(const T* arr, size_t size) {
+    for (size_t i = 0; i < size; ++i) {
+        std::cout << arr[i] << " ";
+    }
+    std::cout << std::endl;
+}
+*/
+int main() {
+    int intArr[] = {1, 2, 3, 4, 5};
+    double doubleArr[] = {3.14, 2.71, 1.618};
+
+    std::cout << "Integer Array: ";
+    printArray(intArr); // Print integer array
+
+    std::cout << "Double Array: ";
+    printArray(doubleArr); // Print double array
+
+    return 0;
+}
+```
+
+### Class Templates
+Basic Syntax:
+```c++
+template<typename T>
+class ClassName {
+public:
+    // Member variables, functions, and constructors
+};
+```
+
+```c++
+template<typename T>
+class Stack {
+private:
+    T* elements;
+    size_t capacity;
+    size_t size;
+
+public:
+    // Constructor
+    Stack(size_t capacity) : capacity(capacity), size(0) {
+        elements = new T[capacity];
+    }
+
+    // Destructor
+    ~Stack() {
+        delete[] elements;
+    }
+
+    // Push an element onto the stack
+    void push(const T& value) {
+        if (size < capacity) {
+            elements[size++] = value;
+        } else {
+            // Handle stack overflow
+        }
+    }
+
+    // Pop an element from the stack
+    T pop() {
+        if (size > 0) {
+            return elements[--size];
+        } else {
+            // Handle stack underflow
+            // Returning a default value for now
+            return T();
+        }
+    }
+
+    // Get the size of the stack
+    size_t getSize() const {
+        return size;
+    }
+};
+
+int main() {
+    // Create a stack of integers
+    Stack<int> intStack(5);
+    intStack.push(10);
+    intStack.push(20);
+    std::cout << "Size of intStack: " << intStack.getSize() << std::endl;
+
+    // Create a stack of doubles
+    Stack<double> doubleStack(3);
+    doubleStack.push(3.14);
+    doubleStack.push(2.71);
+    std::cout << "Size of doubleStack: " << doubleStack.getSize() << std::endl;
+
+    return 0;
+}
+```
+
+```c++
+template<typename Key, typename Value>
+class KeyValue {
+private:
+    Key key;
+    Value value;
+
+public:
+    // Constructor
+    KeyValue(const Key& k, const Value& v) : key(k), value(v) {}
+
+    // Getter for key
+    Key getKey() const {
+        return key;
+    }
+
+    // Getter for value
+    Value getValue() const {
+        return value;
+    }
+
+    // Setter for value
+    void setValue(const Value& v) {
+        value = v;
+    }
+};
+
+int main() {
+    // Create a KeyValue instance with string key and int value
+    KeyValue<std::string, int> pair1("age", 30);
+    std::cout << "Key: " << pair1.getKey() << ", Value: " << pair1.getValue() << std::endl;
+
+    // Create a KeyValue instance with char key and double value
+    KeyValue<char, double> pair2('x', 3.14);
+    std::cout << "Key: " << pair2.getKey() << ", Value: " << pair2.getValue() << std::endl;
+
+    return 0;
+}
+```
+
+### Templates Specialization
+allows you to provide specialized implementations of function templates or class templates for specific types or values. 
+```c++
+#include <iostream>
+
+// Generic template function
+template<typename T>
+void print(T value) {
+    std::cout << "Generic template: " << value << std::endl;
+}
+
+// Explicit specialization for int type
+template<>
+void print<int>(int value) {
+    std::cout << "Specialized for int: " << value << std::endl;
+}
+
+int main() {
+    print("Hello"); // Calls generic template
+    print(10);      // Calls specialized version for int
+    return 0;
+}
+```
+
+### type traits
+Type traits in C++ provide a way to query and manipulate properties of types at compile time. They are commonly used in template metaprogramming to enable conditional behavior based on type properties. C++ provides the <type_traits> header, which contains a collection of type traits.
+
+Here are some common type traits and their usage:
+```c++
+#include <iostream>
+#include <type_traits>
+
+int main() {
+    std::cout << std::boolalpha;
+    
+    // 1. std::is_integral<T>
+    // Determines if the type T is an integral type (bool, char, int, etc.).
+    std::cout << "int is integral: " << std::is_integral<int>::value << std::endl;
+    std::cout << "double is integral: " << std::is_integral<double>::value << std::endl;
+    
+    //2. std::is_pointer<T>
+    // Determines if the type T is a pointer type.
+    std::cout << "int* is a pointer: " << std::is_pointer<int*>::value << std::endl;
+    std::cout << "double* is a pointer: " << std::is_pointer<double*>::value << std::endl;
+ 
+    // 3. std::is_same<T, U>
+    // Determines if the types T and U are the same.
+    std::cout << "int and double are the same: " << std::is_same<int, double>::value << std::endl;
+    std::cout << "int and int are the same: " << std::is_same<int, int>::value << std::endl;
+
+    // 4. std::remove_const<T>
+    // Removes the const qualifier from the type T.
+    std::cout << "Before removal: const int" << std::endl;
+    std::cout << "After removal: " << typeid(std::remove_const<const int>::type).name() << std::endl;
+
+    // 5. std::conditional<condition, T, U>
+    // Selects between types T and U based on the boolean condition.
+    std::cout << "Result type is: " << typeid(std::conditional<true, int, double>::type).name() << std::endl;
+    std::cout << "Result type is: " << typeid(std::conditional<false, int, double>::type).name() << std::endl;
+    
+    return 0;
+}
+
+Output:
+int is integral: true
+double is integral: false
+int* is a pointer: true
+double* is a pointer: true
+int and double are the same: false
+int and int are the same: true
+Before removal: const int
+After removal: i
+Result type is: i
+Result type is: d
+```
+
 
 # CPP - Containers and Algorithms
 
