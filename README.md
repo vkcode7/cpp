@@ -573,6 +573,121 @@ constexpr int square(int x) {
 }
 ```
 
+#### R-Value '&&'
+An rvalue reference is a reference that can bind to temporary objects or to objects that are about to be moved. It's a feature introduced in C++11 to enable move semantics and perfect forwarding.
+
+```c++
+#include <iostream>
+
+void foo(int&& x) {
+    std::cout << "Received rvalue reference: " << x << std::endl;
+    x = 100;
+}
+
+int main() {
+    int a = 10; // 'a' is an lvalue
+    //foo(a); <= Error: expects an rvalue for 1st argument
+    foo(5); // 5 is an rvalue, it's a temporary object
+    foo(std::move(a)); // 'a' is explicitly cast to an rvalue using std::move
+    std::cout << "a is now: " << a << std::endl;
+
+    return 0;
+}
+
+Output:
+Received rvalue reference: 5
+Received rvalue reference: 10
+a is now: 100
+```
+
+## A complete class
+```c++
+#include <iostream>
+
+class MyClass {
+private:
+    int* data;
+
+public:
+    // Default constructor
+    MyClass() : data(nullptr) {
+        std::cout << "Default constructor called." << std::endl;
+    }
+
+    // Constructor with an integer parameter
+    explicit MyClass(int value) : data(new int(value)) {
+        std::cout << "Parameterized constructor called with value: " << *data << std::endl;
+    }
+
+    // Copy constructor
+    MyClass(const MyClass& other) : data(new int(*other.data)) {
+        std::cout << "Copy constructor called. Copied value: " << *data << std::endl;
+    }
+
+    // Move constructor
+    MyClass(MyClass&& other) noexcept : data(other.data) {
+        other.data = nullptr;
+        std::cout << "Move constructor called. Moved value: " << *data << std::endl;
+    }
+
+    // Destructor
+    ~MyClass() {
+        if (data != nullptr) {
+            std::cout << "Destructor called. Deleting data: " << *data << std::endl;
+            delete data;
+        }
+    }
+
+    // Copy assignment operator
+    MyClass& operator=(const MyClass& other) {
+        if (this != &other) {
+            delete data;
+            data = new int(*other.data);
+            std::cout << "Copy assignment operator called. Copied value: " << *data << std::endl;
+        }
+        return *this;
+    }
+
+    // Move assignment operator
+    MyClass& operator=(MyClass&& other) noexcept {
+        if (this != &other) {
+            delete data;
+            data = other.data;
+            other.data = nullptr;
+            std::cout << "Move assignment operator called. Moved value: " << *data << std::endl;
+        }
+        return *this;
+    }
+};
+
+void Test1(MyClass a){}
+void Test2(MyClass &a){}
+void Test3(MyClass &&a){}
+void Test4(MyClass *pa){}
+
+int main() {
+    // Test all constructors and assignment operators
+    MyClass obj1; // Default constructor
+    MyClass obj2(42); // Parameterized constructor
+    MyClass obj3(obj2); // Copy constructor
+    MyClass obj4 = std::move(obj3); // Move constructor
+    MyClass obj5; // Default constructor
+    obj5 = obj2; // Copy assignment operator
+    MyClass obj6; // Default constructor
+    obj6 = std::move(obj5); // Move assignment operator
+    
+    std::cout << "calling TestX methods" << std::endl;
+
+    Test1(obj2); //Copy constructor called. Copied value: 42
+    Test2(obj2);
+    Test3(std::move(obj2));
+    Test4(&obj2);
+    
+    return 0;
+}
+```
+
+
 # CPP - Containers and Algorithms
 
 ## STL consists of
