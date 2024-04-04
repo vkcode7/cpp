@@ -58,7 +58,8 @@ int main()
     std::exception is the base class for all standard
     exception classes. It can be used as a handler if
     the exception handling code is same for all child
-    class exception objects
+    class exception objects. This should be in the last
+    or it will catch the derived exceptions
     */
     catch (std::exception &ex)
     {
