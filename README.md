@@ -238,6 +238,36 @@ double sqroot(double x) noexcept {}
 #### static_assert
 if a program error is detected at compile time, the error is displayed and compilation will stop.  
 
+#### make_unique
+std::make_unique is a C++11 feature that is used to create a std::unique_ptr with dynamically allocated memory. It provides a safer and more concise way to allocate memory compared to using new directly.
+
+```c++
+    // Create a unique pointer to an integer with value 42
+    auto ptr = std::make_unique<int>(42);
+    
+    // Use the unique pointer
+    std::cout << *ptr << std::endl; // Output: 42
+
+    // Create a unique pointer to a MyClass object
+    auto ptr = std::make_unique<MyClass>(10, 15, 20); //constructor takes 3 int values
+
+    // Create a unique pointer to an array of integers
+    auto ptr = std::make_unique<int[]>(5);
+    
+    // Initialize elements of the array
+    for (int i = 0; i < 5; ++i) {
+        ptr[i] = i;
+    }
+```
+
+### make_shared
+std::make_shared is another feature introduced in C++11, and it's used to create a std::shared_ptr with dynamically allocated memory. Like std::make_unique, it provides a safer and more concise way to allocate memory compared to using new directly.
+
+```c++
+    // Create a shared pointer to an integer with value 42
+    auto ptr = std::make_shared<int>(42);
+```
+
 # CPP - Containers and Algorithms
 
 ## STL consists of
