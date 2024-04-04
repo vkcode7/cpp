@@ -500,6 +500,51 @@ int main() {
     ref = std::ref(y);
 ```
 
+### macro Equivalents
+Inline Functions
+
+```c++
+// Macro
+#define SQUARE(x) ((x) * (x))
+
+// Inline function
+inline int square(int x) {
+    return x * x;
+}
+```
+
+const
+```c++
+// Macro
+#define PI 3.14159
+
+// Const variable
+const double pi = 3.14159;
+```
+
+templates
+```c++
+// Macro
+#define max(a, b) ((a) > (b) ? (a) : (b))
+
+// Template function
+template<typename T>
+T max(T a, T b) {
+    return a > b ? a : b;
+}
+```
+
+constexpr
+```c++
+// Macro
+#define SQUARE(x) ((x) * (x))
+
+// Constexpr function
+constexpr int square(int x) {
+    return x * x;
+}
+```
+
 # CPP - Containers and Algorithms
 
 ## STL consists of
