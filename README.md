@@ -238,6 +238,169 @@ double sqroot(double x) noexcept {}
 #### static_assert
 if a program error is detected at compile time, the error is displayed and compilation will stop.  
 
+### Pointers
+Strategies to minimize pointer related errors:
+- Use containers - map/vector
+- Encapsulate in classes - constructors and destructors. This is called RAII (Resource Acquisition is Instantiation)
+- Smart pointers
+
+### Smart Pointers
+c++ 11 introduced 3 new types - unique_ptr, shared_ptr and weak_ptr
+
+#### std::unique_ptr
+std::unique_ptr is a smart pointer introduced in C++11 that manages the ownership of dynamically allocated objects. Unlike std::shared_ptr, which allows for shared ownership, std::unique_ptr enforces single ownership semantics, meaning only one std::unique_ptr can own the managed object at a time. When the std::unique_ptr is destroyed or reset, it automatically deallocates the managed object, providing a simple and safe way to manage dynamic memory.
+
+Here are some key characteristics and features of std::unique_ptr:
+
+Single Ownership: A std::unique_ptr represents exclusive ownership of the managed object. When a std::unique_ptr is moved to another std::unique_ptr, ownership of the managed object is transferred, and the original std::unique_ptr becomes empty (nullptr).
+
+Automatic Resource Management: When a std::unique_ptr goes out of scope or is explicitly reset, it automatically deallocates the managed object using the destructor of the object type. This helps prevent memory leaks and resource management errors.
+
+Lightweight: std::unique_ptr is a lightweight smart pointer with minimal overhead compared to std::shared_ptr. It typically has the size of a raw pointer and does not require additional control blocks to manage reference counts.
+
+Support for Custom Deleters: std::unique_ptr supports custom deleters, which are callable objects that specify how the managed object should be deallocated. This allows for flexible resource management, such as freeing resources allocated with malloc() or closing file handles.
+
+Move Semantics: std::unique_ptr supports move semantics, allowing for efficient transfer of ownership between std::unique_ptr instances. This enables efficient resource management and avoids unnecessary copying of managed objects.
+
+Copy ctor of a unique_ptr is deleted and therefore a unique_ptr can be passed around as a reference
+
+```c++
+#include <iostream>
+#include <memory>
+
+int main() {
+    // Create a unique pointer to an integer with value 42
+    std::unique_ptr<int> ptr(new int(42));
+    
+    // Access the managed object
+    std::cout << "Value: " << *ptr << std::endl;
+    
+    // Modify the managed object
+    *ptr = 100;
+    std::cout << "New value: " << *ptr << std::endl;
+    
+    // Release ownership and deallocate the managed object
+    ptr.reset();
+    
+    return 0;
+}
+```
+
+To get the raw pointer use
+```c++
+    // Get the raw pointer
+    int *rawPtr = ptr.get();
+```
+
+Array version
+```c++
+#include <iostream>
+#include <memory>
+
+int main() {
+    // Create a unique pointer to an array of integers with 5 elements
+    std::unique_ptr<int[]> arrayPtr(new int[5]);
+
+    // Initialize elements of the array
+    for (int i = 0; i < 5; ++i) {
+        arrayPtr[i] = i * 10;
+    }
+
+    // Access and print elements of the array
+    for (int i = 0; i < 5; ++i) {
+        std::cout << "Element " << i << ": " << arrayPtr[i] << std::endl;
+    }
+
+    // Get the raw pointer
+    int *rawPtr = arrayPtr.get();
+
+    // Use the raw pointer to modify an element
+    rawPtr[2] = 100;
+
+    // Access and print elements of the array again
+    for (int i = 0; i < 5; ++i) {
+        std::cout << "Element " << i << ": " << arrayPtr[i] << std::endl;
+    }
+
+    return 0;
+}
+```
+
+#### shared_ptr
+
+std::shared_ptr is a smart pointer provided by the C++ Standard Library. It enables shared ownership of dynamically allocated objects, meaning multiple std::shared_ptr instances can point to the same object. The object is automatically deleted when the last std::shared_ptr pointing to it is destroyed or reset, ensuring proper memory management and preventing memory leaks.<br>
+Thread-Safe: Operations on std::shared_ptr instances are thread-safe, meaning multiple threads can safely access and modify them concurrently.
+
+```c++
+#include <iostream>
+#include <memory>
+
+int main() {
+    // Create a shared pointer to an integer with value 42
+    std::shared_ptr<int> ptr = std::make_shared<int>(42);
+    
+    // Create another shared pointer pointing to the same object
+    std::shared_ptr<int> ptr2 = ptr;
+
+    // Use the shared pointers
+    std::cout << "ptr value: " << *ptr << std::endl; // Output: ptr value: 42
+    std::cout << "ptr2 value: " << *ptr2 << std::endl; // Output: ptr2 value: 42
+    
+    // Reset one of the shared pointers
+    ptr.reset();
+    
+    // Use the remaining shared pointer
+    std::cout << "ptr2 value after reset: " << *ptr2 << std::endl; // Output: ptr2 value after reset: 42
+    
+    return 0;
+}
+```
+
+#### weak_ptr - resolves cyclical references
+std::weak_ptr is another smart pointer provided by the C++ Standard Library, designed to observe objects managed by std::shared_ptr without affecting their lifetimes. Here are the key points about std::weak_ptr:
+
+Non-owning Observation: std::weak_ptr holds a non-owning ("weak") reference to an object managed by std::shared_ptr. It does not contribute to the reference count of the managed object.
+
+Prevents Circular References: Helps prevent circular references among std::shared_ptr instances, which can lead to memory leaks. By using std::weak_ptr, you can break cycles of shared ownership.
+
+Access with lock(): To access the object managed by a std::weak_ptr, you must use the lock() function, which returns a std::shared_ptr. This operation is safe and returns an empty std::shared_ptr if the object has been deleted.
+
+Expired Check: You can check if the object managed by a std::weak_ptr is still valid using the expired() function. If the object has been deleted, expired() returns true; otherwise, it returns false.
+
+Thread Safety: Operations on std::weak_ptr are thread-safe, making it safe to use in multithreaded environments.
+```c++
+#include <iostream>
+#include <memory>
+
+int main() {
+    // Create a shared pointer to an integer
+    std::shared_ptr<int> sharedPtr = std::make_shared<int>(42);
+
+    // Create a weak pointer from the shared pointer
+    std::weak_ptr<int> weakPtr = sharedPtr;
+
+    // Check if the weak pointer is expired
+    if (auto lockedPtr = weakPtr.lock()) {
+        std::cout << "Weak pointer is not expired. Value: " << *lockedPtr << std::endl;
+    } else {
+        std::cout << "Weak pointer is expired." << std::endl;
+    }
+
+    // Resetting the shared pointer
+    sharedPtr.reset();
+
+    // Check if the weak pointer is expired after resetting the shared pointer
+    if (weakPtr.expired()) {
+        std::cout << "Weak pointer is expired." << std::endl;
+    } else {
+        std::cout << "Weak pointer is not expired." << std::endl;
+    }
+
+    return 0;
+}
+
+```
+
 #### make_unique
 std::make_unique is a C++11 feature that is used to create a std::unique_ptr with dynamically allocated memory. It provides a safer and more concise way to allocate memory compared to using new directly.
 
@@ -266,6 +429,75 @@ std::make_shared is another feature introduced in C++11, and it's used to create
 ```c++
     // Create a shared pointer to an integer with value 42
     auto ptr = std::make_shared<int>(42);
+```
+
+#### reference_wrapper
+The main difference between the reference operator (&) and std::reference_wrapper lies in their purpose, flexibility, and usage scenarios.
+
+Purpose:
+
+The reference operator (&) is used to create references to objects in C++. It directly creates a reference to an existing object.
+std::reference_wrapper is a class template provided by the C++ Standard Library. It acts as a wrapper around a reference to an object and provides additional functionalities like assignment and comparison.
+Flexibility:
+
+References created using the reference operator (&) are fixed and cannot be changed after initialization. Once a reference is created, it always refers to the same object.
+std::reference_wrapper provides more flexibility as it allows you to create, copy, and change references dynamically during the program execution. You can also reset or reassign a std::reference_wrapper to refer to a different object.
+Usage Scenarios:
+
+The reference operator (&) is commonly used when passing parameters to functions, returning values from functions, and creating aliases for existing objects. It's particularly useful when you want to avoid unnecessary copying of objects.
+std::reference_wrapper is often used in situations where you need to store or manipulate references in containers like std::vector or std::map, or when you want to pass references as function arguments to algorithms or function templates that require copyable types.
+In summary, while both the reference operator and std::reference_wrapper allow you to work with references in C++, they serve different purposes and offer different levels of flexibility. The reference operator is used to create fixed references to existing objects, while std::reference_wrapper provides a more flexible wrapper around references that can be dynamically managed and manipulated during program execution.
+
+```c++
+void increment(int& num) {
+    num++;
+}
+
+int main() {
+    int x = 5;
+    int& ref = x; // Creating a reference using the reference operator
+    
+    std::cout << "Original value of x: " << x << std::endl; // Output: Original value of x: 5
+    
+    increment(ref); // Pass the reference to a function
+    
+    std::cout << "Updated value of x: " << x << std::endl; // Output: Updated value of x: 6
+    
+    return 0;
+}
+```
+
+```c++
+#include <iostream>
+#include <functional> // Include for std::reference_wrapper
+
+void increment(std::reference_wrapper<int> numRef) {
+    numRef.get()++;
+}
+
+int main() {
+    int x = 5;
+    std::reference_wrapper<int> ref(x); // Creating a std::reference_wrapper
+    
+    std::cout << "Original value of x: " << x << std::endl; // Output: Original value of x: 5
+    
+    increment(ref); // Pass the reference wrapper to a function
+    
+    std::cout << "Updated value of x: " << x << std::endl; // Output: Updated value of x: 6
+    
+    return 0;
+}
+```
+
+```c++
+    int x = 5, y = 10;
+    std::reference_wrapper<int> ref(x); // Create a std::reference_wrapper to x initially
+
+    // Print the initial value using the reference wrapper
+    print(ref);
+
+    // Change the reference dynamically to y
+    ref = std::ref(y);
 ```
 
 # CPP - Containers and Algorithms
