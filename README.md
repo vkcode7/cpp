@@ -1,3 +1,44 @@
+# C++
+
+C++ is a ***strongly typed langugae*** as every variable is a type that never changes.<br>
+Basic/aka Intrinsic types are:<br>
+char, short, int, long, long long
+unsigned <= unisgned versions of above, with unsigned we can store 2x of signed plus zero
+signed <= signed versions, default except for "char"
+
+other types: float, double, long double, bool
+
+char can have -128 to 127 or 0 to 255 (unsigned char)<br>
+typically float is 32, double is 64 and long double is 80 bits<br>
+
+Literals can be qualified with a suffix explicitly such as 2, 2u, 2l, 2ul (unisgned long), 2.0 (double), 2.0f, 2.0l (long double)<br>
+long is 32 bit on 32 bit platform and 64 on 64-bit platform.
+
+***Narrowing:*** In C++ 11 one can enclose values in {} and they wont be lost in assignment.<br>
+long l = {1234....123}; //either error or OK if supported
+int i = {3.14}; //error as truncation not allowed
+unsigned u1 = -2; //OK
+unisgned u2 = {-2}; //error
+
+***Type Modifiers:*** signed/unsigned<br>
+***Type Qualifiers:*** const, volatile, static<br>
+***Types:***
+- char, bool <= 1 byte
+- wchar_t, short <= 2 bytes
+- int, long, float <= 4 bytes
+- long long, double <= 8 bytes
+
+<climits>/<limit.h> contain limits such as INT_MIN<br>
+<cfloat>/<float.h> contain floating limits 
+
+Copy initialization: should be used for primitive types for code clarity<br>
+int a = 1;
+
+Uniform initialization: should be used for user defined types for code clarity<br>
+char e1[8] = {"hello"};
+char *pei = new char[8]{"hello"};
+
+
 # CPP - Containers and Algorithms
 
 ## STL consists of
