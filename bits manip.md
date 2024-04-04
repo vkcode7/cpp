@@ -60,6 +60,17 @@ For example, consider the 8-bit binary number 10110110:
 In this binary number, the rightmost bit (bit 0) is the LSB, which holds the value 0.
 The leftmost bit (bit 7) is the MSB, which holds the value 1. An ODD number always has 1 as LSB.
 
+### Truth Table
+
+```bash
+|  A  |  B  | A AND B|  A OR B | A XOR B |
+|-----|-----|--------|---------|---------|
+|  0  |  0  |   0    |    0    |    0    |
+|  0  |  1  |   0    |    1    |    1    |
+|  1  |  0  |   0    |    1    |    1    |
+|  1  |  1  |   1    |    1    |    0    |
+```
+
 ```c#
     // Online C# Editor for free
     // Write, Edit and Run your C# code using C# Online Compiler
