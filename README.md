@@ -1,5 +1,10 @@
 # CPP - Containers and Algorithms
 
+## STL consists of
+- Containers - Hold objects
+- Iterators - Manipulates STL elements
+- Algorithms - Perform common manipulations
+
 ## Containers library
 The Containers library is a generic collection of class templates and algorithms that allow programmers to easily implement common data structures like queues, lists and stacks. There are two(until C++11)three(since C++11) classes of containers:
 sequence containers,
@@ -8,7 +13,7 @@ unordered associative containers,(since C++11)
 
 each of which is designed to support a different set of operations.
 
-## Sequence containers
+## Sequence containers (Linear Data Structures)
 Sequence containers implement data structures which can be accessed sequentially. - 
 array (static contiguous memory), 
 vector (dynamic contiguous memory), 
@@ -16,7 +21,7 @@ forward_list (singly linked list),
 list (doubly linked list), 
 deque (double ended queue)
 
-## Associative containers
+## Associative containers (Non Linear)
 Associative containers implement sorted data structures that can be quickly searched (O(log n) complexity).
 set - collection of unique keys, sorted by keys
 multiset -same as set but multiple keys of same value are allowed
@@ -353,7 +358,7 @@ std::unordered_multimap is an unordered associative container that supports equi
 6. In any case, container operations (as well as algorithms, or any other C++ standard library functions) may be parallelized internally as long as this does not change the user-visible results (e.g. std::transform may be parallelized, but not std::for_each which is specified to visit each element of a sequence in order).
 
 
-## Algorithms
+## Algorithms - operates on container elements only indirectly thru iterators
 If you use raw loops and you understand the containers, you don’t have to deal with these. A surprising “advantage” of using raw loops - please, prefer algorithms!
 Otherwise, most probably you understand what standard algorithms do. Think about them and you’ll be able to come up with their complexities in most cases. Let’s have a look at some algorithms:
 - ***all_of/ any_of / none_of*** have at most O(n) complexity where n is the size of the range the algorithm is applied on
@@ -368,7 +373,7 @@ Otherwise, most probably you understand what standard algorithms do. Think about
 - ***reverse*** performs exactly half as many swaps as the size of the range to be reversed, therefore the complexity is O(n)
 - ***rotate*** also has a complexity of O(n).
 
-Quite boring, right? But boredom brings simplicity to your calculations.
+Quite boring, right? But boredom brings simplicity to your calculations. Algos are of 2 types - Mutating (swap, fill..) and Non-mutating (find, count...).
 
 ### adjacent_find
 Searches for two adjacent elements that are either equal or satisfy a specified condition.
