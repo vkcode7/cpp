@@ -1608,10 +1608,50 @@ uintptr_t addr = reinterpret_cast<uintptr_t>(ptr); // Convert pointer to integer
 //c-style
 float f = 3.14;
 int i = (int)f; // C-style cast
-
-
 ```
 
+### 2D Arrays
+```c++
+#include <iostream>
+using namespace std;
+
+int main() {
+    // Define the dimensions of the 2D array
+    const int rows = 3;
+    const int cols = 4;
+
+    // Dynamically allocate memory for the 2D array
+    int** array2D = new int*[rows];
+    for (int i = 0; i < rows; ++i) {
+        array2D[i] = new int[cols];
+    }
+
+    // Fill the 2D array with values
+    int counter = 1;
+    for (int i = 0; i < rows; ++i) {
+        for (int j = 0; j < cols; ++j) {
+            array2D[i][j] = counter++;
+        }
+    }
+
+    // Print the 2D array
+    cout << "2D Array:" << endl;
+    for (int i = 0; i < rows; ++i) {
+        for (int j = 0; j < cols; ++j) {
+            cout << array2D[i][j] << " ";
+        }
+        cout << endl;
+    }
+
+    // Deallocate memory for the 2D array
+    for (int i = 0; i < rows; ++i) {
+        delete[] array2D[i];
+    }
+    delete[] array2D;
+
+    return 0;
+}
+```
 
 # CPP - Containers and Algorithms
 
