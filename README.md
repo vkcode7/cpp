@@ -2,8 +2,8 @@
 
 C++ is a ***strongly typed langugae*** as every variable is a type that never changes.<br>
 Basic/aka Intrinsic types are:<br>
-char, short, int, long, long long
-unsigned <= unisgned versions of above, with unsigned we can store 2x of signed plus zero
+char, short, int, long, long long<br>
+unsigned <= unisgned versions of above, with unsigned we can store 2x of signed plus zero<br>
 signed <= signed versions, default except for "char"
 
 other types: float, double, long double, bool
