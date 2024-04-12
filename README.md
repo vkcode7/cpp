@@ -1661,45 +1661,45 @@ int main() {
 - Algorithms - Perform common manipulations
 
 ## Containers library
-The Containers library is a generic collection of class templates and algorithms that allow programmers to easily implement common data structures like queues, lists and stacks. There are two(until C++11)three(since C++11) classes of containers:
-sequence containers,
-associative containers, and
-unordered associative containers,(since C++11)
+The Containers library is a generic collection of class templates and algorithms that allow programmers to easily implement common data structures like queues, lists and stacks. There are two(until C++11)three(since C++11) classes of containers:<br>
+sequence containers, <br>
+associative containers, and<br>
+unordered associative containers,(since C++11)<br>
 
 each of which is designed to support a different set of operations.
 
 ## Sequence containers (Linear Data Structures)
-Sequence containers implement data structures which can be accessed sequentially. - 
-array (static contiguous memory), 
-vector (dynamic contiguous memory), 
-forward_list (singly linked list), 
-list (doubly linked list), 
-deque (double ended queue)
+Sequence containers implement data structures which can be accessed sequentially.
+- array (static contiguous memory), 
+- vector (dynamic contiguous memory), 
+- forward_list (singly linked list), 
+- list (doubly linked list), 
+- deque (double ended queue)
 
 ## Associative containers (Non Linear)
 Associative containers implement sorted data structures that can be quickly searched (O(log n) complexity).
-set - collection of unique keys, sorted by keys
-multiset -same as set but multiple keys of same value are allowed
-map - collection of key-value pairs, sorted by keys, keys are unique
-multimap - same as map but multiple keys of same value are allowed
+- set - collection of unique keys, sorted by keys
+- multiset -same as set but multiple keys of same value are allowed
+- map - collection of key-value pairs, sorted by keys, keys are unique
+- multimap - same as map but multiple keys of same value are allowed
 
 ## Unordered associative containers (since C++11)
 Unordered associative containers implement unsorted (hashed) data structures that can be quickly searched (O(1) average, O(n) worst-case complexity).
-unordered_set - collection of unique keys, hashed by keys
-unordered_multiset -same as set but multiple keys of same value are allowed
-unordered_map - collection of key-value pairs, hashed by keys, keys are unique
-unordered_multimap - same as map but multiple keys of same value are allowed
+- unordered_set - collection of unique keys, hashed by keys
+- unordered_multiset -same as set but multiple keys of same value are allowed
+- unordered_map - collection of key-value pairs, hashed by keys, keys are unique
+- unordered_multimap - same as map but multiple keys of same value are allowed
 
 ## Container adaptors
 Container adaptors provide a different interface for sequential containers.
-stack: adapts a container to provide stack (LIFO data structure)
-queue: adapts a container to provide queue (FIFO data structure)
-priority_queue: adapts a container to provide priority queue
+- stack: adapts a container to provide stack (LIFO data structure)
+- queue: adapts a container to provide queue (FIFO data structure)
+- priority_queue: adapts a container to provide priority queue
 
-flat_set: (C++23): adapts a container to provide a collection of unique keys, sorted by keys
-flat_map:(C++23):adapts two containers to provide a collection of key-value pairs, sorted by unique keys
-flat_multiset: (C++23): adapts a container to provide a collection of keys, sorted by keys
-flat_multimap: (C++23): adapts two containers to provide a collection of key-value pairs, sorted by keys
+- flat_set: (C++23): adapts a container to provide a collection of unique keys, sorted by keys
+- flat_map:(C++23):adapts two containers to provide a collection of key-value pairs, sorted by unique keys
+- flat_multiset: (C++23): adapts a container to provide a collection of keys, sorted by keys
+- flat_multimap: (C++23): adapts two containers to provide a collection of key-value pairs, sorted by keys
 
 ## C++ Containers and operations
 https://www.sandordargo.com/blog/2023/11/15/most-important-complexities
