@@ -643,6 +643,74 @@ Received rvalue reference: 5
 Received rvalue reference: 10
 a is now: 100
 ```
+## virtual keyword
+In C++, the virtual keyword is used in a base class to declare a member function that can be overridden in derived classes. When a member function is declared as virtual in a base class, it allows derived classes to provide their own implementation of that function.<br>
+
+Here's the basic role of virtual keyword in a base class:<br>
+
+- Polymorphism: It enables polymorphic behavior, which means that the appropriate member function to be called is determined at runtime based on the type of object.
+- Dynamic Dispatch: When you call a virtual function through a base class pointer or reference, the function of the most-derived class's type is called.
+- Overriding: Derived classes can provide their own implementation of a virtual function. If a derived class provides an implementation for a virtual function declared in the base class, it overrides the base class's implementation.
+```c++
+#include <iostream>
+
+class Base {
+public:
+    virtual void show() {
+        std::cout << "Base class show()" << std::endl;
+    }
+};
+
+class Derived : public Base {
+public:
+    void show() override {
+        std::cout << "Derived class show()" << std::endl;
+    }
+};
+
+int main() {
+    Base *basePtr;
+    Derived derivedObj;
+
+    basePtr = &derivedObj; // Pointer of Base class points to Derived class object
+
+    // Virtual function call through base class pointer
+    basePtr->show(); // Output will be "Derived class show()"
+
+    return 0;
+}
+```
+
+### virtual destructor
+In C++, a virtual destructor is a destructor declared in a base class that can be overridden in derived classes. It's used to ensure proper destruction of objects when they are deleted through a pointer to the base class that points to a derived class object.<br>
+
+Here's why and how you use a virtual destructor:<br>
+
+Proper Cleanup in Inheritance Hierarchies: When you have a base class and one or more derived classes, and you delete an object of a derived class through a pointer to the base class, you want all the destructors in the inheritance hierarchy to be called. If the destructor in the base class is not virtual, only the destructor of the base class will be called, potentially leading to resource leaks in the derived classes. <br>
+Dynamic Binding: A virtual destructor enables dynamic binding, allowing the correct destructor to be called based on the object's dynamic type at runtime.
+```c++
+#include <iostream>
+
+class Base {
+public:
+    virtual ~Base() {
+        std::cout << "Base destructor" << std::endl;
+    }
+};
+
+class Derived : public Base {
+public:
+    ~Derived() override {
+        std::cout << "Derived destructor" << std::endl;
+    }
+};
+
+int main() {
+    Base* ptr = new Derived();
+    delete ptr; // Calls Derived destructor first, then Base destructor
+    return 0;
+}
+```
 
 ## A complete class - Rule of 5 [If a class has ownership on pointers or resources, you must provide these 5]
 - copy ctor, copy assignment
