@@ -187,7 +187,18 @@ int main()
 ```
 
 #### assert() macro
-If this expression evaluates to 0 or false, this causes an assertion failure that terminates the program.
+If this expression evaluates to 0 or false, this causes an assertion failure that terminates the program. It doesnt go into release so there is no performance penalty in released code.
+
+```c
+## assert.h
+00031 #ifdef NDEBUG //Non DEBUG Code
+00032 # define assert(EX)
+00033 #else
+00034 # define assert(EX) (void)((EX) || (__assert (#EX, __FILE__, __LINE__),0))
+00035 #endif
+```
+Look at line 34, it implies that if assert() returns false then execute the second condition in OR.
+
 ```c++
 /* assert example */
 #include <stdio.h>      /* printf */
