@@ -2004,6 +2004,108 @@ std::unordered_multiset is an associative container that contains set of possibl
 ### std::unordered_multimap
 std::unordered_multimap is an unordered associative container that supports equivalent keys (an unordered_multimap may contain multiple copies of each key value) and that associates values of another type with the keys. 
 
+## User defined DataTypes and map/set/unordered_map/uo_set 
+
+For user defined types we need to implement certain extra operators and a hash function as in example below:
+
+In this example:
+
+The MyClass class represents objects with an id and a name.<br>
+The < operator is overloaded to define a strict weak ordering, required for elements in std::set and std::map.<br>
+The == operator is overloaded to check equality, required for elements in std::unordered_set and std::unordered_map.<br>
+A custom hash function Hash is provided for objects of MyClass, required for hashing elements in std::unordered_set and std::unordered_map.<br>
+This class can be used as keys in std::set, std::unordered_set, std::map, and std::unordered_map.<br>
+
+```c++
+#include <iostream>
+#include <set>
+#include <unordered_set>
+#include <map>
+#include <unordered_map>
+#include <string>
+
+class MyClass {
+private:
+    int id;
+    std::string name;
+
+public:
+    MyClass(int _id, const std::string& _name) : id(_id), name(_name) {}
+
+    // Overloading < operator for std::set and std::map
+    bool operator<(const MyClass& other) const {
+        return id < other.id;
+    }
+
+    // Overloading == operator for std::unordered_set and std::unordered_map
+    bool operator==(const MyClass& other) const {
+        return id == other.id && name == other.name;
+    }
+
+    // Hash function for std::unordered_set and std::unordered_map
+    struct Hash {
+        std::size_t operator()(const MyClass& obj) const {
+            return std::hash<int>()(obj.id) ^ (std::hash<std::string>()(obj.name) << 1);
+        }
+    };
+};
+
+int main() {
+    std::set<MyClass> mySet;
+    std::unordered_set<MyClass, MyClass::Hash> myUnorderedSet;
+    std::map<MyClass, int> myMap;
+    std::unordered_map<MyClass, int, MyClass::Hash> myUnorderedMap;
+
+    MyClass obj1(1, "Object 1");
+    MyClass obj2(2, "Object 2");
+    MyClass obj3(1, "Object 1"); // Duplicate of obj1
+
+    mySet.insert(obj1);
+    mySet.insert(obj2);
+    mySet.insert(obj3); // Duplicate, won't be inserted
+
+    myUnorderedSet.insert(obj1);
+    myUnorderedSet.insert(obj2);
+    myUnorderedSet.insert(obj3); // Duplicate, won't be inserted
+
+    myMap[obj1] = 10;
+    myMap[obj2] = 20;
+    myMap[obj3] = 30; // Duplicate, will overwrite
+
+    myUnorderedMap[obj1] = 100;
+    myUnorderedMap[obj2] = 200;
+    myUnorderedMap[obj3] = 300; // Duplicate, will overwrite
+
+    // Displaying elements of std::set
+    std::cout << "Elements of set:" << std::endl;
+    for (const auto& elem : mySet) {
+        std::cout << elem.id << ": " << elem.name << std::endl;
+    }
+
+    // Displaying elements of std::unordered_set
+    std::cout << "\nElements of unordered_set:" << std::endl;
+    for (const auto& elem : myUnorderedSet) {
+        std::cout << elem.id << ": " << elem.name << std::endl;
+    }
+
+    // Displaying elements of std::map
+    std::cout << "\nElements of map:" << std::endl;
+    for (const auto& pair : myMap) {
+        std::cout << pair.first.id << ": " << pair.first.name << " -> " << pair.second << std::endl;
+    }
+
+    // Displaying elements of std::unordered_map
+    std::cout << "\nElements of unordered_map:" << std::endl;
+    for (const auto& pair : myUnorderedMap) {
+        std::cout << pair.first.id << ": " << pair.first.name << " -> " << pair.second << std::endl;
+    }
+
+    return 0;
+}
+
+```
+
+
 ## Thread safety
 1. All container functions can be called concurrently by different threads on different containers. More generally, the C++ standard library functions do not read objects accessible by other threads unless those objects are directly or indirectly accessible via the function arguments, including the this pointer.
 2. All const member functions can be called concurrently by different threads on the same container. In addition, the member functions begin(), end(), rbegin(), rend(), front(), back(), data(), find(), lower_bound(), upper_bound(), equal_range(), at(), and, except in associative containers, operator[], behave as const for the purposes of thread safety (that is, they can also be called concurrently by different threads on the same container). More generally, the C++ standard library functions do not modify objects unless those objects are accessible, directly or indirectly, via the function's non-const arguments, including the this pointer.
