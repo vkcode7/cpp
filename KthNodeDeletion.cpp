@@ -1,11 +1,11 @@
-
+/*
 Delete the kth node from the end of a singly linked list
 
 Input: 1 -> 2 -> 3 -> 4 -> 5 -> null.    k = 2
 
 Result: 1 -> 2 -> 3 -> 5 -> null
+*/
 
-```cpp
 struct ListNode {
   int val;
   ListNode * next;
@@ -64,4 +64,4 @@ ListNode * RemoveNode(ListNode * head, int k)
 
   return head;
 }
-```
+
