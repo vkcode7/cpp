@@ -31,7 +31,7 @@ unisgned u2 = {-2}; //error
 - long long, double <= 8 bytes
 
 ```c++
-<climits> or <limit.h> //contain limits such as INT_MIN<br>
+<climits> or <limit.h> //contain limits such as INT_MIN
 <cfloat>/<float.h> //contain floating limits 
 
 //Copy initialization: should be used for primitive types for code clarity<br>
@@ -41,6 +41,17 @@ int a = 1;
 char e1[8] = {"hello"};
 char *pei = new char[8]{"hello"};
 ```
+
+### Limits
+<table>
+	<tr><td>INT_MIN</td><td>FLT_MIN<td>DBL_MIN</td><td>LDBL_MIN</td></tr>
+	<tr><td>INT_MAX</td><td>FLT_MAX<td>DBL_MAX</td><td>LDBL_MAX</td></tr>
+</table>
+
+<table>
+	<tr><td>CHAR_MIN<td>SCHAR_MIN</td><td>SHRT_MIN</td><td>LONG_MIN</td><td>ULONG_MIN</td><td>LLONG_MIN</td></tr>
+</table>
+
 ##### Data/Scope Hiding
 Variable in inner scope hides the one in outer scope:
 
