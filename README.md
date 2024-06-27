@@ -702,6 +702,26 @@ int main() {
     return 0;
 }
 ```
+### virtual vs override keywords
+When you override a function you don't technically need to write either virtual or override.
+
+The original base class declaration needs the keyword virtual to mark it as virtual.
+
+In the derived class the function is virtual by way of having the ¹same type as the base class function.
+
+However, an override can help avoid bugs by producing a compilation error when the intended override isn't technically an override. For instance, the function type isn't exactly like the base class function. Or that a maintenance of the base class changes that function's type, e.g. adding a defaulted argument. 
+
+<i>error: 'virtual void Base::show()' marked 'override', but does not override</i>
+
+In the same way, a virtual keyword in the derived class can make such a bug more subtle by ensuring that the function is still virtual in the further derived classes.
+
+So the general advice is,
+
+Use virtual for the base class function declaration.
+This is technically necessary.
+
+Use override (only) for a derived class' override.
+This helps maintenance.
 
 ### virtual destructor
 In C++, a virtual destructor is a destructor declared in a base class that can be overridden in derived classes. It's used to ensure proper destruction of objects when they are deleted through a pointer to the base class that points to a derived class object.<br>
