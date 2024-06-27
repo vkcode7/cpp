@@ -1,12 +1,14 @@
 # FAQs
 
-## Can I throw an exception from a constructor? From a destructor?
+## Exceptions
+
+### Can I throw an exception from a constructor? From a destructor?
 For constructors, yes: You should throw an exception from a constructor whenever you cannot properly initialize (construct) an object. There is no really satisfactory alternative to exiting a constructor by a throw. If a constructor throws an exception, the object’s destructor is not run. If your object has already done something that needs to be undone (such as allocating some memory, opening a file, or locking a semaphore), this “stuff that needs to be undone” must be remembered by a data member inside the object.
 
 For destructors, not really: You can throw an exception in a destructor, but that exception must not leave the destructor; if a destructor exits by emitting an exception, all kinds of bad things are likely to happen because the basic rules of the standard library and the language itself will be violated. Don’t do it.
 
 
-## How can I handle a destructor that fails?  
+### How can I handle a destructor that fails?  
 Write a message to a log-file. Terminate the process. Or call Aunt Tilda. But do not throw an exception!
 
 Here’s why (buckle your seat-belts):
@@ -43,7 +45,7 @@ The easy way to prevent this is never throw an exception from a destructor. But 
 
 Of course the word never should be “in quotes” since there is always some situation somewhere where the rule won’t hold. But certainly at least 99% of the time this is a good rule of thumb.
 
-## What should I throw?  
+### What should I throw?  
 C++, unlike just about every other language with exceptions, is very accomodating when it comes to what you can throw. In fact, you can throw anything you like. That begs the question then, what should you throw?
 
 Generally, it’s best to throw objects, not built-ins. If possible, you should throw instances of classes that derive (ultimately) from the std::exception class. By making your exception class inherit (ultimately) from the standard exception base-class, you are making life easier for your users (they have the option of catching most things via std::exception), plus you are probably providing them with more information (such as the fact that your particular exception might be a refinement of std::runtime_error or whatever).
@@ -63,7 +65,7 @@ void f()
 ```
 Here, a temporary of type MyException is created and thrown. Class MyException inherits from class std::runtime_error which (ultimately) inherits from class std::exception.
 
-## What should I catch?  
+### What should I catch?  
 In keeping with the C++ tradition of “there’s more than one way to do that” (translation: “give programmers options and tradeoffs so they can decide what’s best for them in their situation”), C++ allows you a variety of options for catching.
 
 You can catch by value.
@@ -73,7 +75,7 @@ In fact, you have all the flexibility that you have in declaring function parame
 
 Given all this flexibility, how do you decide what to catch? Simple: unless there’s a good reason not to, catch by reference. Avoid catching by value, since that causes a copy to be made and the copy can have different behavior from what was thrown. Only under very special circumstances should you catch by pointer.
 
-## How do I throw polymorphically?  
+### How do I throw polymorphically?  
 Sometimes people write code like:
 ```c++
 class MyExceptionBase { };
