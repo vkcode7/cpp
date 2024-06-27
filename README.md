@@ -3085,3 +3085,47 @@ Output:
 There are 4 even numbers in the vector.
 ```
 
+# FAQs
+
+## Can I throw an exception from a constructor? From a destructor?
+For constructors, yes: You should throw an exception from a constructor whenever you cannot properly initialize (construct) an object. There is no really satisfactory alternative to exiting a constructor by a throw. If a constructor throws an exception, the object’s destructor is not run. If your object has already done something that needs to be undone (such as allocating some memory, opening a file, or locking a semaphore), this “stuff that needs to be undone” must be remembered by a data member inside the object.
+
+For destructors, not really: You can throw an exception in a destructor, but that exception must not leave the destructor; if a destructor exits by emitting an exception, all kinds of bad things are likely to happen because the basic rules of the standard library and the language itself will be violated. Don’t do it.
+
+
+## How can I handle a destructor that fails?  
+Write a message to a log-file. Terminate the process. Or call Aunt Tilda. But do not throw an exception!
+
+Here’s why (buckle your seat-belts):
+
+The C++ rule is that you must never throw an exception from a destructor that is being called during the “stack unwinding” process of another exception. For example, if someone says throw Foo(), the stack will be unwound so all the stack frames between the
+```c++
+    throw Foo()
+```
+and the
+```c++
+  }
+  catch (Foo e)
+  {
+```
+will get popped. This is called stack unwinding.
+
+During stack unwinding, all the local objects in all those stack frames are destructed. If one of those destructors throws an exception (say it throws a Bar object), the C++ runtime system is in a no-win situation: should it ignore the Bar and end up in the
+```c++
+  }
+  catch (Foo e)
+  {
+```
+where it was originally headed? Should it ignore the Foo and look for a
+```c++
+  }
+  catch (Bar e)
+  {
+```
+handler? There is no good answer — either choice loses information.
+
+So the C++ language guarantees that it will call terminate() at this point, and terminate() kills the process. Bang you’re dead.
+
+The easy way to prevent this is never throw an exception from a destructor. But if you really want to be clever, you can say never throw an exception from a destructor while processing another exception. But in this second case, you’re in a difficult situation: the destructor itself needs code to handle both throwing an exception and doing “something else”, and the caller has no guarantees as to what might happen when the destructor detects an error (it might throw an exception, it might do “something else”). So the whole solution is harder to write. So the easy thing to do is always do “something else”. That is, never throw an exception from a destructor.
+
+Of course the word never should be “in quotes” since there is always some situation somewhere where the rule won’t hold. But certainly at least 99% of the time this is a good rule of thumb.
