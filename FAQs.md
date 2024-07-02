@@ -670,8 +670,85 @@ inline bool isPowerOf2(int i)
 }
 ```
 
+### What’s the difference between “const X* p”, “X* const p” and “const X* const p”?
+Read the pointer declarations right-to-left.
 
+- const X* p means “p points to an X that is const”: the X object can’t be changed via p.
+- X* const p means “p is a const pointer to an X that is non-const”: you can’t change the pointer p itself, but you can change the X object via p.
+- const X* const p means “p is a const pointer to an X that is const”: you can’t change the pointer p itself, nor can you change the X object via p.
 
+### When should I use references, and when should I use pointers?
+Use references when you can, and pointers when you have to.
+
+### Should I use call-by-value or call-by-reference?
+That depends on what you are trying to achieve:
+
+- If you want to change the object passed, call by reference or use a pointer; e.g., void f(X&); or void f(X*);.
+- If you don’t want to change the object passed and it is big, call by const reference; e.g., void f(const X&);.
+- Otherwise, call by value; e.g. void f(X);.
+
+### What are the two steps that happen when I say delete p?
+delete p is a two-step process: it calls the destructor, then releases the memory.
+```c++
+// Original code: delete p;
+if (p) {    // or "if (p != nullptr)"
+  p->~Fred();
+  operator delete(p);
+}
+```
+
+### In p = new Fred(), does the Fred memory “leak” if the Fred constructor throws an exception? 
+No.
+
+If an exception occurs during the Fred constructor of p = new Fred(), the C++ language guarantees that the memory sizeof(Fred) bytes that were allocated will automagically be released back to the heap.
+
+This is what it looks like internally:
+```c++
+// Original code: Fred* p = new Fred();
+Fred* p;
+void* tmp = operator new(sizeof(Fred));
+try {
+  new(tmp) Fred();  // Placement new - calls the Fred constructor. 
+  p = (Fred*)tmp;   // The pointer is assigned only if the ctor succeeds; p becomes this pointer
+}
+catch (...) {
+  operator delete(tmp);  // Deallocate the memory
+  throw;                 // Re-throw the exception
+}
+```
+
+### Is it legal (and moral) for a member function to say delete this?
+As long as you’re careful, it’s okay (not evil) for an object to commit suicide (delete this).
+
+Here’s how I define “careful”:
+
+- You must be absolutely 100% positively sure that this object was allocated via new (not by new[], nor by placement new, nor a local object on the stack, nor a namespace-scope / global, nor a member of another object; but by plain ordinary new).
+- You must be absolutely 100% positively sure that your member function will be the last member function invoked on this object.
+- You must be absolutely 100% positively sure that the rest of your member function (after the delete this line) doesn’t touch any piece of this object (including calling any other member functions or touching any data members). This includes code that will run in destructors for any objects allocated on the stack that are still alive.
+- You must be absolutely 100% positively sure that no one even touches the this pointer itself after the delete this line. 
+
+### How can I force objects of my class to always be created via new rather than as local, namespace-scope, global, or static?
+Make ctors private as in code:
+```c++
+class Fred {
+public:
+  // The create() methods are the "named constructors":
+  static Fred* create()                 { return new Fred();     }
+  static Fred* create(int i)            { return new Fred(i);    }
+  static Fred* create(const Fred& fred) { return new Fred(fred); }
+  // ...
+private:
+  // The constructors themselves are private or protected:
+  Fred();
+  Fred(int i);
+  Fred(const Fred& fred);
+  // ...
+};
+```
+
+## OOPS
+### What is encapsulation?
+Preventing unauthorized access to some piece of information or functionality. In other words hiding implementation level details. Encapsulation doesn’t prevent people from knowing about the inside of a class; it prevents the code they write from becoming dependent on the insides of the class. Encapsulation != security. Encapsulation prevents mistakes, not espionage.
 
 ## Exceptions
 
