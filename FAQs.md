@@ -750,13 +750,164 @@ private:
 ### What is encapsulation?
 Preventing unauthorized access to some piece of information or functionality. In other words hiding implementation level details. Encapsulation doesn’t prevent people from knowing about the inside of a class; it prevents the code they write from becoming dependent on the insides of the class. Encapsulation != security. Encapsulation prevents mistakes, not espionage.
 
+### Should my constructors use “initialization lists” or “assignment”?
+Initialization lists. In fact, constructors should initialize as a rule all member objects in the initialization list. That is more efficient.
+
+### Should you use the this pointer in the constructor? 
+
+You can use this in the constructor (in the {body} and even in the initialization list) if you are careful.
+
+Here is something that always works: the {body} of a constructor (or a function called from the constructor) can reliably access the data members declared in a base class and/or the data members declared in the constructor’s own class. This is because all those data members are guaranteed to have been fully constructed by the time the constructor’s {body} starts executing.
+
+### What is the “Named Constructor Idiom”?
+With the Named Constructor Idiom, you declare all the class’s constructors in the private or protected sections, and you provide public static methods that return an object. These static methods are the so-called “Named Constructors.” In general there is one such static method for each different way to construct an object.
+
+The Named Constructor Idiom can also be used to make sure your objects are always created via new.
+
+Note that the Named Constructor Idiom, at least as implemented above, is just as fast as directly calling a constructor — modern compilers will not make any extra copies of your object.
+
+### Does return-by-value mean extra copies and extra overhead?
+
+Not necessarily.
+
+All(?) commercial-grade compilers optimize away the extra copy wherever possible.
+
+```c++
+class Foo { /*...*/ };
+
+Foo rbv()
+{
+  // ...
+  return Foo(42, 73);  // Suppose Foo has a ctor Foo::Foo(int a, int b)
+}
+
+void caller()
+{
+  Foo x = rbv();  // The return-value of rbv() goes into x
+  // ...
+}
+```
+
+The optimization is done by code similar to below:
+```c++
+// Pseudo-code
+void rbv(void* put_result_here)  // Original C++ code: Foo rbv()
+{
+  // ...code that initializes (not assigns to) the variable pointed to by put_result_here
+}
+
+// Pseudo-code
+void caller()
+{
+  // Original C++ code: Foo x = rbv()
+  struct Foo x;  // Note: x does not get initialized prior to calling rbv()
+  rbv(&x);       // Note: rbv() initializes a local variable defined in caller()
+  // ...
+}
+```
+
+So the  ingredient in the secret sauce is that the compiler (usually) transforms return-by-value into pass-by-pointer. This means that commercial-grade compilers don’t bother creating a temporary: they directly construct the returned object in the location pointed to by put_result_here.
+
+
+### What’s the “static initialization order ‘fiasco’ (problem)”?  
+A subtle way to crash your program.
+
+The static initialization order problem is a very subtle and commonly misunderstood aspect of C++. Unfortunately it’s very hard to detect — the errors often occur before main() begins.
+
+In short, suppose you have two static objects x and y which exist in separate source files, say x.cpp and y.cpp. Suppose further that the initialization for the y object (typically the y object’s constructor) calls some method on the x object.
+
+That’s it. It’s that simple.
+
+The tough part is that you have a 50%-50% chance of corrupting the program. If the compilation unit for x.cpp happens to get initialized first, all is well. But if the compilation unit for y.cpp get initialized first, then y’s initialization will get run before x’s initialization, and you’re toast. E.g., y’s constructor could call a method on the x object, yet the x object hasn’t yet been constructed.
+
+### How do I prevent the “static initialization order problem” discussed above?
+
+To prevent the static initialization order problem, use the Construct On First Use Idiom, described below.
+
+```c++
+// File x.cpp
+#include "Fred.h"
+Fred& x()
+{
+  static Fred* ans = new Fred();
+  return *ans;
+}
+
+// File Barney.cpp
+#include "Barney.h"
+Barney::Barney()
+{
+  // ...
+  x().goBowling();
+  // ...
+}
+```
+
+Since static local objects are constructed the first time control flows over their declaration (only), the above new Fred() statement will only happen once: the first time x() is called. Every subsequent call will return the same Fred object (the one pointed to by ans). Then all you do is change your usages of x to x():
+
+The downside of this approach is that the Fred object is never destructed. If the Fred object has a destructor with important side effects, there is another technique that answers this concern; but it needs to be used with care since it creates the possibility of another (equally nasty) problem. Problem is that this Fred object cant be used by other statics in their destructors.
+
+```c++
+// File x.cpp
+#include "Fred.h"
+Fred& x()
+{
+  static Fred ans;  // was static Fred* ans = new Fred();
+  return ans;       // was return *ans;
+}
+```
+
+### What is “placement new” and why would I use it? 
+There are many uses of placement new. The simplest use is to place an object at a particular location in memory. This is done by supplying the place as a pointer parameter to the new part of a new expression.
+
+You are also solely responsible for destructing the placed object. This is done by explicitly calling the destructor [f->~Fred();].
+
+### I’m creating a derived class; should my assignment operators call my base class’s assignment operators?
+
+Yes (if you need to define assignment operators in the first place).
+
+If you define your own assignment operators, the compiler will not automatically call your base class’s assignment operators for you. Unless your base class’s assignment operators themselves are broken, you should call them explicitly from your derived class’s assignment operators (again, assuming you create them in the first place).
+
+However if you do not create your own assignment operators, the ones that the compiler create for you will automatically call your base class’s assignment operators.
+```c++
+class Base {
+  // ...
+};
+class Derived : public Base {
+public:
+  // ...
+  Derived& operator= (const Derived& d);
+  Derived& operator= (Derived&& d);
+  // ...
+};
+Derived& Derived::operator= (const Derived& d)
+{
+  // Make sure self-assignment is benign
+  Base::operator= (d);
+  // Do the rest of your assignment operator here...
+  return *this;
+}
+Derived& Derived::operator= (Derived&& d)
+{
+  // self-assignment is not allowed in move assignment
+  Base::operator= (std::move(d));
+  // Do the rest of your assignment operator here...
+  return *this;
+}
+```
+
+
+
+
+
+
+
 ## Exceptions
 
 ### Can I throw an exception from a constructor? From a destructor?
 For constructors, yes: You should throw an exception from a constructor whenever you cannot properly initialize (construct) an object. There is no really satisfactory alternative to exiting a constructor by a throw. If a constructor throws an exception, the object’s destructor is not run. If your object has already done something that needs to be undone (such as allocating some memory, opening a file, or locking a semaphore), this “stuff that needs to be undone” must be remembered by a data member inside the object.
 
 For destructors, not really: You can throw an exception in a destructor, but that exception must not leave the destructor; if a destructor exits by emitting an exception, all kinds of bad things are likely to happen because the basic rules of the standard library and the language itself will be violated. Don’t do it.
-
 
 ### How can I handle a destructor that fails?  
 Write a message to a log-file. Terminate the process. Or call Aunt Tilda. But do not throw an exception!
