@@ -1,8 +1,8 @@
 # Quick Notes
 
 ### Rule of 5
-copy ctor, copy assignment
-move ctor, move assignment
+copy ctor, copy assignment<br>
+move ctor, move assignment<br>
 dtor
 
 ```c++
@@ -371,11 +371,11 @@ int& operator[](size_t index) {
 ```
 
 ### Casts
-Static Cast (static_cast): Used for conversions that are well-defined and checked at compile-time.
-Dynamic Cast (dynamic_cast): Used for converting pointers and references to polymorphic types. primarily used in inheritance hierarchies to perform downcasting.
-Const Cast (const_cast): Used to add or remove const or volatile qualifiers from a variable.
-Reinterpret Cast (reinterpret_cast): Used for low-level, type-unsafe conversions between unrelated types.
-c-style: traditional
+Static Cast (static_cast): Used for conversions that are well-defined and checked at compile-time.<br>
+Dynamic Cast (dynamic_cast): Used for converting pointers and references to polymorphic types, primarily used in inheritance hierarchies to perform downcasting.<br>
+Const Cast (const_cast): Used to add or remove const or volatile qualifiers from a variable.<br>
+Reinterpret Cast (reinterpret_cast): Used for low-level, type-unsafe conversions between unrelated types.<br>
+c-style: traditional<br>
 
 ```c++
 //static
@@ -470,6 +470,59 @@ int main() {
     return 0;
 }
 ```
+
+### CPP - Containers and Algorithms
+STL consists of:<br>
+Containers - Hold objects<br>
+Iterators - Manipulates STL elements<br>
+Algorithms - Perform common manipulations<br>
+
+Containers library:<br>
+The Containers library is a generic collection of class templates and algorithms that allow programmers to easily implement common data structures like queues, lists and stacks. There are two(until C++11), three(since C++11) classes of containers:<br>
+sequence containers - array, vector, list, forward_list, deque,<br>
+associative containers - set, map, multiset, multimap, and<br>
+unordered associative containers - unordered_set, unordered_map, unordered_multiset, unordered_multimap,(since C++11)<br>
+
+each of which is designed to support a different set of operations.
+
+Container adaptors - Container adaptors provide a different interface for sequential containers.<br>
+- stack (LIFO), queue (FIFO), priority_queue
+
+### Lambdas
+```c++
+//(1)   (2)  (3)      (4)      (5)
+//===   ===  =======  ======   =======
+  [=]   ()   mutable  throw()   -> int
+  { //<== lambda body starts here (6)
+    int n = x+y;
+    x = y;
+    y = n;
+    return n;
+  } //<== lambda body ends here
+```
+
+```c++
+// declaring_lambda_expressions1.cpp
+// compile with: /EHsc /W4
+#include <functional>
+#include <iostream>
+
+int main()
+{
+    using namespace std;
+
+    // Assign the lambda expression that adds two numbers to an auto variable.
+    auto f1 = [](int x, int y) { return x + y; };
+
+    cout << f1(2, 3) << endl;
+
+    // Assign the same lambda expression to a function object.
+    function<int(int, int)> f2 = [](int x, int y) { return x + y; };
+
+    cout << f2(3, 4) << endl;
+}
+```
+
 
 # FAQs
 
