@@ -1,9 +1,9 @@
 # Quick Notes
 
 ### Rule of 5
-copy ctor, copy assignment<br>
-move ctor, move assignment<br>
-dtor
+- copy ctor, copy assignment
+- move ctor, move assignment
+- dtor
 
 ```c++
 class MyClass {
@@ -178,7 +178,6 @@ int main() {
 
 ### Templates Specialization
 allows you to provide specialized implementations of function templates or class templates for specific types or values.
-
 ```c++
 // Generic template function
 template<typename T>
@@ -371,11 +370,11 @@ int& operator[](size_t index) {
 ```
 
 ### Casts
-Static Cast (static_cast): Used for conversions that are well-defined and checked at compile-time.<br>
-Dynamic Cast (dynamic_cast): Used for converting pointers and references to polymorphic types, primarily used in inheritance hierarchies to perform downcasting.<br>
-Const Cast (const_cast): Used to add or remove const or volatile qualifiers from a variable.<br>
-Reinterpret Cast (reinterpret_cast): Used for low-level, type-unsafe conversions between unrelated types.<br>
-c-style: traditional<br>
+- Static Cast (static_cast): Used for conversions that are well-defined and checked at compile-time.
+- Dynamic Cast (dynamic_cast): Used for converting pointers and references to polymorphic types, primarily used in inheritance hierarchies to perform downcasting.
+- Const Cast (const_cast): Used to add or remove const or volatile qualifiers from a variable.
+- Reinterpret Cast (reinterpret_cast): Used for low-level, type-unsafe conversions between unrelated types.
+- c-style: traditional
 
 ```c++
 //static
@@ -472,16 +471,16 @@ int main() {
 ```
 
 ### CPP - Containers and Algorithms
-STL consists of:<br>
-Containers - Hold objects<br>
-Iterators - Manipulates STL elements<br>
-Algorithms - Perform common manipulations<br>
+STL consists of:
+- Containers - Hold objects<br>
+- Iterators - Manipulates STL elements<br>
+- Algorithms - Perform common manipulations<br>
 
 Containers library:<br>
 The Containers library is a generic collection of class templates and algorithms that allow programmers to easily implement common data structures like queues, lists and stacks. There are two(until C++11), three(since C++11) classes of containers:<br>
-sequence containers - array, vector, list, forward_list, deque,<br>
-associative containers - set, map, multiset, multimap, and<br>
-unordered associative containers - unordered_set, unordered_map, unordered_multiset, unordered_multimap,(since C++11)<br>
+- sequence containers - array, vector, list, forward_list, deque
+- associative containers - set, map, multiset, multimap
+- unordered associative containers - unordered_set, unordered_map, unordered_multiset, unordered_multimap,(since C++11)
 
 each of which is designed to support a different set of operations.
 
