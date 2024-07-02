@@ -525,6 +525,154 @@ int main()
 
 # FAQs
 
+## Big Picture
+
+### What is so great about classes
+Classes are there to help you organize your code and to reason about your programs. You could roughly equivalently say that classes are there to help you avoid making mistakes and to help you find bugs after you do make a mistake. In this way, classes significantly help maintenance.
+
+A class is the representation of an idea, a concept, in the code. An object of a class represents a particular example of the idea in the code. Without classes, a reader of the code would have to guess about the relationships among data items and functions – classes make such relationships explicit and “understood” by compilers. With classes, more of the high-level structure of your program is reflected in the code, not just in the comments.
+
+A well-designed class presents a clean and simple interface to its users, hiding its representation and saving its users from having to know about that representation.
+
+### What’s the big deal with OO?
+Object-oriented techniques using classes and virtual functions are an important way to develop large, complex software applications and systems. So are generic programming techniques using templates. Both are important ways to express polymorphism – at run time and at compile time, respectively. OO is a style relying on encapsulation, inheritance, and polymorphism, it means programming using class hierarchies and virtual functions to allow manipulation of objects of a variety of types through well-defined interfaces and to allow a program to be extended incrementally through derivation.
+
+### What’s the big deal with generic programming?
+Generic programming techniques using templates are an important way to develop large, complex software applications and systems. So are object oriented techniques. Both are important ways to express polymorphism – at compile time and at run time, respectively. And they work great together in C++.
+
+C++ supports generic programming. Generic programming is a way of developing software that maximizes code reuse in a way that does not sacrifice performance.
+
+Generic programming is programming based on parameterization: You can parameterize a type with another (such as a vector with its element types) and an algorithm with another (such as a sort function with a comparison function). 
+
+A common term used to describe generic programming is “parametric polymorphism”, with “ad hoc polymorphism” being the corresponding term for object-oriented programming. In the context of C++, generic programming resolves all names at compile time; it does not involve dynamic (run-time) dispatch. This has led generic programming to become dominant in areas where run-time performance is important.
+
+### What’s the point of the L, U and f suffixes on numeric literals?
+You should use these suffixes when you need to force the compiler to treat the numeric literal as if it were the specified type. For example, if x is of type float, the expression x + 5.7 is of type double: it first promotes the value of x to a double, then performs the arithmetic using double-precision instructions. If that is what you want, fine; but if you really wanted it to do the arithmetic using single-precision instructions, you can change that code to x + 5.7f. 
+
+### Is !(a < b) logically the same as a >= b? NO.
+Example: if a is a floating point NaN, then both a < b and a >= b will be false. That means !(a < b) will be true and a >= b will be false.
+
+If your compiler produces a NaN, it has the unusual property that it is not equal to any value, including itself. For example, if a is NaN, then a == a is false. In fact, if a is NaN, then a will be neither less than, equal to, nor greater than any value including itself. In other words, regardless of the value of b, a < b, a <= b, a > b, a >= b, and a == b will all return false.
+
+```c++
+#include <cmath>
+void funct(double x)
+{
+  if (isnan(x)) {   // Though see caveat below
+    // x is NaN
+    // ...
+  } else {
+    // x is a normal value
+    // ...
+  }
+}
+```
+
+### Why is floating point so inaccurate? Why doesn’t this print 0.43?
+```c++
+#include <iostream>
+int main()
+{
+  float a = 1000.43;
+  float b = 1000.0;
+  std::cout << a - b << '\n';
+  // ...
+}
+```
+(On one C++ implementation, this prints 0.429993)
+
+Disclaimer: Frustration with rounding/truncation/approximation isn’t really a C++ issue; it’s a computer science issue. However, people keep asking about it on comp.lang.c++, so what follows is a nominal answer.
+
+Answer: Floating point is an approximation. The IEEE standard for 32 bit float supports 1 bit of sign, 8 bits of exponent, and 23 bits of mantissa. Since a normalized binary-point mantissa always has the form 1.xxxxx… the leading 1 is dropped and you get effectively 24 bits of mantissa. The number 1000.43 (and many, many others, including some really common ones like 0.1) is not exactly representable in float or double format. 1000.43 is actually represented as the following bitpattern (the “s” shows the position of the sign bit, the “e“s show the positions of the exponent bits, and the “m“s show the positions of the mantissa bits):
+```
+    seeeeeeeemmmmmmmmmmmmmmmmmmmmmmm
+    01000100011110100001101110000101
+```
+The shifted mantissa is 1111101000.01101110000101 or 1000 + 7045/16384. The fractional part is 0.429992675781. With 24 bits of mantissa you only get about 1 part in 16M of precision for float. The double type provides more precision (53 bits of mantissa).
+
+## Mixing C and C++
+### How do I call a C function from C++?
+Just declare the C function extern "C" (in your C++ code) and call it (from your C or C++ code). For example:
+```c++
+    // C++ code
+    extern "C" void f(int); // one way
+    extern "C" {    // another way
+        int g(double);
+        double h();
+    };
+    void code(int i, double d)
+    {
+        f(i);
+        int ii = g(d);
+        double dd = h();
+        // ...
+    }
+```
+
+### How do I call a C++ function from C?
+Just declare the C++ function extern "C" (in your C++ code) and call it (from your C or C++ code). For example:
+```c++
+// C++ code:
+extern "C" void f(int);
+void f(int i)
+{
+    // ...
+}
+
+///Now f() can be used like this:
+
+/* C code: */
+void f(int);
+void cc(int i)
+{
+    f(i);
+    /* ... */
+}
+```
+
+Naturally, this works only for non-member functions. If you want to call member functions (incl. virtual functions) from C, you need to provide a simple wrapper in C++ code that calls the class method.
+```c++
+// C++ code:
+    class C {
+        // ...
+        virtual double f(int);
+    };
+    extern "C" double call_C_f(C* p, int i) // wrapper function
+    {
+        return p->f(i);
+    }
+
+//C code will use struct
+    /* C code: */
+    double call_C_f(struct C* p, int i);
+    void ccc(struct C* p, int i)
+    {
+        double d = call_C_f(p,i);
+        /* ... */
+    }
+```
+
+If you want to call overloaded functions from C, you must provide wrappers with distinct names for the C code to use.
+```c++
+    // C++ code:
+    void f(int);
+    void f(double);
+    extern "C" void f_i(int i) { f(i); }
+    extern "C" void f_d(double d) { f(d); }
+```
+
+## General
+### How can I tell if an integer is a power of two without looping?
+```c++
+inline bool isPowerOf2(int i)
+{
+  return i > 0 && (i & (i - 1)) == 0;
+}
+```
+
+
+
+
 ## Exceptions
 
 ### Can I throw an exception from a constructor? From a destructor?
