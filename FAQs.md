@@ -1,3 +1,476 @@
+# Quick Notes
+
+### Rule of 5
+copy ctor, copy assignment
+move ctor, move assignment
+dtor
+
+```c++
+class MyClass {
+private:
+    int* data;
+
+public:
+    // Default constructor
+    MyClass() : data(nullptr) {
+        std::cout << "Default constructor called." << std::endl;
+    }
+
+    // Constructor with an integer parameter
+    explicit MyClass(int value) : data(new int(value)) {
+        std::cout << "Parameterized constructor called with value: " << *data << std::endl;
+    }
+
+    // Copy constructor
+    MyClass(const MyClass& other) : data(new int(*other.data)) {
+        std::cout << "Copy constructor called. Copied value: " << *data << std::endl;
+    }
+
+    // Move constructor
+    MyClass(MyClass&& other) noexcept : data(other.data) {
+        other.data = nullptr;
+        std::cout << "Move constructor called. Moved value: " << *data << std::endl;
+    }
+
+    // Destructor
+    ~MyClass() {
+        if (data != nullptr) {
+            std::cout << "Destructor called. Deleting data: " << *data << std::endl;
+            delete data;
+        }
+    }
+
+    // Copy assignment operator
+    MyClass& operator=(const MyClass& other) {
+        if (this != &other) {
+            delete data;
+            data = new int(*other.data);
+            std::cout << "Copy assignment operator called. Copied value: " << *data << std::endl;
+        }
+        return *this;
+    }
+
+    // Move assignment operator
+    MyClass& operator=(MyClass&& other) noexcept {
+        if (this != &other) {
+            delete data;
+            data = other.data;
+            other.data = nullptr;
+            std::cout << "Move assignment operator called. Moved value: " << *data << std::endl;
+        }
+        return *this;
+    }
+};
+```
+
+### unique_ptr
+```c++
+// Create a unique pointer to an integer with value 42
+auto ptr = std::make_unique<int>(42);
+
+// Use the unique pointer
+std::cout << *ptr << std::endl; // Output: 42
+
+// Create a unique pointer to a MyClass object
+auto ptr = std::make_unique<MyClass>(10, 15, 20); //constructor takes 3 int values
+
+// Create a shared pointer to an integer with value 42
+auto ptr = std::make_shared<int>(42);
+```
+
+### Function template to find the maximum of two values
+```c++
+template<typename T>
+T max(T a, T b) {
+    return (a > b) ? a : b;
+}
+
+int main() {
+    int intMax = max<int>(10, 20); // Explicitly specifying the template argument type
+
+    // The compiler can deduce the template argument type from the function arguments
+    double doubleMax = max(3.14, 2.71); // Compiler deduces the template argument type - Implicit instantiation
+
+    return 0;
+}
+```
+
+### Function template to print elements of an array
+```c++
+// When you pass an array to this function template, the compiler deduces the size of the array based on its type.
+template<typename T, size_t N>
+void printArray(T (&arr)[N]) {
+    for (size_t i = 0; i < N; ++i) {
+        std::cout << arr[i] << " ";
+    }
+    std::cout << std::endl;
+}
+
+/* Above is equivalent too the following but in the one below size have to be passed
+template<typename T>
+void printArray(const T* arr, size_t size) {
+    for (size_t i = 0; i < size; ++i) {
+        std::cout << arr[i] << " ";
+    }
+    std::cout << std::endl;
+}
+*/
+int main() {
+    int intArr[] = {1, 2, 3, 4, 5};
+    double doubleArr[] = {3.14, 2.71, 1.618};
+
+    std::cout << "Integer Array: ";
+    printArray(intArr); // Print integer array
+
+    std::cout << "Double Array: ";
+    printArray(doubleArr); // Print double array
+
+    return 0;
+}
+```
+
+### class templates
+```c++
+template<typename T>
+class ClassName {
+public:
+    // Member variables, functions, and constructors
+};
+
+template<typename Key, typename Value>
+class KeyValue {
+private:
+    Key key;
+    Value value;
+
+public:
+    // Constructor
+    KeyValue(const Key& k, const Value& v) : key(k), value(v) {}
+
+    // Getter for key
+    Key getKey() const {
+        return key;
+    }
+
+    // Getter for value
+    Value getValue() const {
+        return value;
+    }
+
+    // Setter for value
+    void setValue(const Value& v) {
+        value = v;
+    }
+};
+
+int main() {
+    // Create a KeyValue instance with string key and int value
+    KeyValue<std::string, int> pair1("age", 30);
+    std::cout << "Key: " << pair1.getKey() << ", Value: " << pair1.getValue() << std::endl;
+
+    // Create a KeyValue instance with char key and double value
+    KeyValue<char, double> pair2('x', 3.14);
+    std::cout << "Key: " << pair2.getKey() << ", Value: " << pair2.getValue() << std::endl;
+
+    return 0;
+}
+```
+
+### Templates Specialization
+allows you to provide specialized implementations of function templates or class templates for specific types or values.
+
+```c++
+// Generic template function
+template<typename T>
+void print(T value) {
+    std::cout << "Generic template: " << value << std::endl;
+}
+
+// Explicit specialization for int type
+template<>
+void print<int>(int value) {
+    std::cout << "Specialized for int: " << value << std::endl;
+}
+
+int main() {
+    print("Hello"); // Calls generic template
+    print(10);      // Calls specialized version for int
+    return 0;
+}
+```
+
+### Namespace alias
+```c++
+namespace alias_name = namespace_name;
+// Outer namespace
+namespace Outer {
+    // Inner namespace
+    namespace Inner {
+        void foo() {
+            std::cout << "Inside Outer::Inner::foo()" << std::endl;
+        }
+    }
+}
+
+// Create an alias for the nested namespace
+namespace NI = Outer::Inner;
+
+int main() {
+    NI::foo();
+    return 0;
+}
+```
+
+### decltype - allows you to obtain the type of an expression or a variable without actually evaluating it.
+```c++
+int main() {
+    int x = 5;
+    decltype(x) y = 10; // y has the same type as x, which is int
+
+    std::cout << "y: " << y << std::endl;
+
+    return 0;
+}
+```
+
+### using
+using simplifies the syntax for defining function pointers, and function objects. Can NOT be used with lambdas.
+```c++
+#include <iostream>
+#include <functional> // Include this header for std::function
+
+// Define a type alias for a function pointer
+using FuncPtr = void(*)(int);
+
+int main() {
+    // Use the type alias for function pointers
+    FuncPtr ptr = [](int x) { std::cout << "Function pointer: " << x << std::endl; };
+    ptr(10);
+
+    // Define a lambda function directly using auto or std::function
+    auto lambda = [](int x) { return x * x; };
+    std::cout << "Lambda: " << lambda(5) << std::endl;
+
+    return 0;
+}
+```
+
+### Functors aka Function Objects
+A functor in C++ is an object that acts like a function. It's a type that can be called as if it were a function, typically by using the function call operator operator(). Functors provide a way to encapsulate behavior and pass it around as a first-class citizen, similar to function pointers or lambda expressions.
+
+```c++
+// Functor class
+class MyFunctor {
+public:
+    void operator()(int x) const {
+        std::cout << "Value passed to functor: " << x << std::endl;
+    }
+};
+
+int main() {
+    MyFunctor functor; // Create an instance of the functor
+
+    // Call the functor as if it were a function
+    functor(42);
+
+    return 0;
+}
+```
+
+### Tuple ands tie
+It's often used as a return type for functions that need to return multiple values, or in algorithms that need to operate on collections of heterogeneous data.
+```c++
+// Creating a tuple with three elements of different types
+std::tuple<int, double, std::string> myTuple(42, 3.14, "Hello");
+
+// Creating a tuple using std::make_tuple
+auto myTuple2 = std::make_tuple(42, 3.14, "Hello");
+auto [a,b,c] = myTuple2;
+
+// Function that returns a tuple
+std::tuple<int, double, std::string> getValues() {
+    return std::make_tuple(42, 3.14, "Hello");
+}
+
+int main() {
+    // Call the function and unpack the returned tuple into variables
+    int intValue;
+    double doubleValue;
+    std::string stringValue;
+    
+    std::tie(intValue, doubleValue, stringValue) = getValues();
+}
+```
+
+### constexpr
+constexpr is a keyword introduced in C++11 (and further expanded in later standards) that indicates that a function or object's value can be computed at compile time.
+```c++
+constexpr int SIZE = 10; // Compile-time constant
+
+constexpr int square(int x) {
+    return x * x;
+}
+
+constexpr int result = square(5); // Compile-time evaluation
+
+class MyClass {
+public:
+    constexpr MyClass(int x) : value(x) {}
+
+    int getValue() const { return value; }
+
+private:
+    int value;
+};
+
+constexpr MyClass obj(42); // Compile-time object construction
+```
+
+### friend
+In C++, the friend keyword is used to grant access to private or protected members of a class to functions or other classes that are not members of that class. It allows designated external functions or classes to access the private and protected members of a class as if they were their own members.
+```c++
+class MyClass {
+private:
+    int privateMember;
+
+public:
+    // Declare an external function as a friend
+    friend void externalFunction(MyClass& obj);
+
+    // Declare an entire class as a friend
+    friend class FriendClass;
+};
+
+// Define the friend function
+void externalFunction(MyClass& obj) {
+    std::cout << "Value of private member accessed by friend function: " << obj.privateMember << std::endl;
+}
+```
+### Operator Overloading
+```c++
+// Overload the + operator for adding two complex numbers
+Complex operator+(const Complex& other) const {
+    return Complex(real + other.real, imaginary + other.imaginary);
+}
+```
+internally resolved as c1.operator+(c2);
+
+### Overload the -> operator
+MyClass* operator->() {
+    return this;
+}
+
+### Subscript operator
+```c++
+int& operator[](size_t index) {
+    if (index >= size) {
+        throw std::out_of_range("Index out of range");
+    }
+    return data[index];
+}
+```
+
+### Casts
+Static Cast (static_cast): Used for conversions that are well-defined and checked at compile-time.
+Dynamic Cast (dynamic_cast): Used for converting pointers and references to polymorphic types. primarily used in inheritance hierarchies to perform downcasting.
+Const Cast (const_cast): Used to add or remove const or volatile qualifiers from a variable.
+Reinterpret Cast (reinterpret_cast): Used for low-level, type-unsafe conversions between unrelated types.
+c-style: traditional
+
+```c++
+//static
+double d = 3.14;
+int i = static_cast<int>(d); // Convert double to int
+
+//dynamic
+class Base {
+public:
+    virtual ~Base() {}
+};
+
+class Derived : public Base {};
+
+Base* basePtr = new Derived();
+Derived* derivedPtr = dynamic_cast<Derived*>(basePtr); // Downcasting
+if (derivedPtr) {
+    // Conversion succeeded
+} else {
+    // Conversion failed
+}
+
+//const
+const int x = 10;
+int* ptr = const_cast<int*>(&x); // Remove const qualifier
+*ptr = 20; // Modifying a const object
+
+//add const-ness
+int x = 42;
+int* ptr = &x;
+
+// Add const qualifier to the pointer
+const int* constPtr = const_cast<const int*>(ptr);
+
+// Now you cannot modify the value through constPtr
+// *constPtr = 10; // Error: assignment of read-only location
+
+// Add volatile qualifier to the pointer
+volatile int* volatilePtr = const_cast<volatile int*>(ptr);
+
+// Now you can treat volatilePtr as a pointer to a volatile variable
+// *volatilePtr = 10; // OK
+
+//reinterpret
+int* ptr = reinterpret_cast<int*>(0x1000); // Convert integer to pointer
+uintptr_t addr = reinterpret_cast<uintptr_t>(ptr); // Convert pointer to integer
+
+//c-style
+float f = 3.14;
+int i = (int)f; // C-style cast
+```
+
+### 2D Arrays
+```c++
+#include <iostream>
+using namespace std;
+
+int main() {
+    // Define the dimensions of the 2D array
+    const int rows = 3;
+    const int cols = 4;
+
+    // Dynamically allocate memory for the 2D array
+    int** array2D = new int*[rows];
+    for (int i = 0; i < rows; ++i) {
+        array2D[i] = new int[cols];
+    }
+
+    // Fill the 2D array with values
+    int counter = 1;
+    for (int i = 0; i < rows; ++i) {
+        for (int j = 0; j < cols; ++j) {
+            array2D[i][j] = counter++;
+        }
+    }
+
+    // Print the 2D array
+    cout << "2D Array:" << endl;
+    for (int i = 0; i < rows; ++i) {
+        for (int j = 0; j < cols; ++j) {
+            cout << array2D[i][j] << " ";
+        }
+        cout << endl;
+    }
+
+    // Deallocate memory for the 2D array
+    for (int i = 0; i < rows; ++i) {
+        delete[] array2D[i];
+    }
+    delete[] array2D;
+
+    return 0;
+}
+```
+
 # FAQs
 
 ## Exceptions
