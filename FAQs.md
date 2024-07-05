@@ -973,6 +973,138 @@ void userCode(Base& b)
 
 Another good use of friend functions are the binary infix arithmetic operators. E.g., aComplex + aComplex should be defined as a friend rather than a member if you want to allow aFloat + aComplex as well (member functions don’t allow promotion of the left hand argument, since that would change the class of the object that is the recipient of the member function invocation).
 
+## Inheritance - part-of and kind-of
+
+### Why can’t my derived class access private things from my base class?
+
+To protect you from future changes to the base class.
+
+Derived classes do not get access to private members of a base class. This effectively “seals off” the derived class from any changes made to the private members of the base class.
+
+### What is a “virtual member function”?
+
+A virtual function allows derived classes to replace the implementation provided by the base class. The compiler makes sure the replacement is always called whenever the object in question is actually of the derived class, even if the object is accessed by a base pointer rather than a derived pointer. This allows algorithms in the base class to be replaced in the derived class, even if users don’t know about the derived class.
+
+The derived class can either fully replace (“override”) the base class member function, or the derived class can partially replace (“augment”) the base class member function. The latter is accomplished by having the derived class member function call the base class member function, if desired.
+
+### What is a pure virtual function?
+A pure virtual function is a function that must be overridden in a derived class and need not be defined. A virtual function is declared to be “pure” using the curious =0 syntax.
+```c++
+    class Base {
+    public:
+        void f1();      // not virtual
+        virtual void f2();  // virtual, not pure
+        virtual void f3() = 0;  // pure virtual
+    };
+    Base b; // error: pure virtual f3 not overridden
+```
+
+In fact, a class with no data and where all functions are pure virtual functions is often called an interface.
+
+### What’s the difference between how virtual and non-virtual member functions are called? 
+Non-virtual member functions are resolved statically. That is, the member function is selected statically (at compile-time) based on the type of the pointer (or reference) to the object.
+
+In contrast, virtual member functions are resolved dynamically (at run-time). That is, the member function is selected dynamically (at run-time) based on the type of the object, not the type of the pointer/reference to that object. This is called “dynamic binding.” Most compilers use some variant of the following technique: if the object has one or more virtual functions, the compiler puts a hidden pointer in the object called a “virtual-pointer” or “v-pointer.” This v-pointer points to a global table called the “virtual-table” or “v-table.”
+
+The compiler creates a v-table for each class that has at least one virtual function. For example, if class Circle has virtual functions for draw() and move() and resize(), there would be exactly one v-table associated with class Circle, even if there were a gazillion Circle objects, and the v-pointer of each of those Circle objects would point to the Circle v-table. The v-table itself has pointers to each of the virtual functions in the class. For example, the Circle v-table would have three pointers: a pointer to Circle::draw(), a pointer to Circle::move(), and a pointer to Circle::resize().
+
+During a dispatch of a virtual function, the run-time system follows the object’s v-pointer to the class’s v-table, then follows the appropriate slot in the v-table to the method code.
+
+### What happens in the hardware when I call a virtual function? How many layers of indirection are there? How much overhead is there?
+The answer is entirely compiler-dependent, so your mileage may vary, but most C++ compilers use a scheme similar to the one presented here.
+
+Let’s work an example. Suppose class Base has 5 virtual functions: virt0() through virt4().
+```c++
+// Your original C++ source code
+class Base {
+public:
+  virtual arbitrary_return_type virt0( /*...arbitrary params...*/ );
+  virtual arbitrary_return_type virt1( /*...arbitrary params...*/ );
+  virtual arbitrary_return_type virt2( /*...arbitrary params...*/ );
+  virtual arbitrary_return_type virt3( /*...arbitrary params...*/ );
+  virtual arbitrary_return_type virt4( /*...arbitrary params...*/ );
+  // ...
+};
+```
+
+Step #1: the compiler builds a static table containing 5 function-pointers, burying that table into static memory somewhere. Many (not all) compilers define this table while compiling the .cpp that defines Base’s first non-inline virtual function. We call that table the v-table; let’s pretend its technical name is Base::__vtable. If a function pointer fits into one machine word on the target hardware platform, Base::__vtable will end up consuming 5 hidden words of memory. Not 5 per instance, not 5 per function; just 5. It might look something like the following pseudo-code:
+```c++
+// Pseudo-code (not C++, not C) for a static table defined within file Base.cpp
+// Pretend FunctionPtr is a generic pointer to a generic member function
+// (Remember: this is pseudo-code, not C++ code)
+FunctionPtr Base::__vtable[5] = {
+  &Base::virt0, &Base::virt1, &Base::virt2, &Base::virt3, &Base::virt4
+};
+```
+
+Step #2: the compiler adds a hidden pointer (typically also a machine-word) to each object of class Base. This is called the v-pointer. Think of this hidden pointer as a hidden data member, as if the compiler rewrites your class to something like this:
+```c++
+// Your original C++ source code
+class Base {
+public:
+  // ...
+  FunctionPtr* __vptr;  // Supplied by the compiler, hidden from the programmer
+  // ...
+};
+```
+
+Step #3: the compiler initializes this->__vptr within each constructor. The idea is to cause each object’s v-pointer to point at its class’s v-table, as if it adds the following instruction in each constructor’s init-list:
+```c++
+Base::Base( /*...arbitrary params...*/ )
+  : __vptr(&Base::__vtable[0])  // Supplied by the compiler, hidden from the programmer
+  // ...
+{
+  // ...
+}
+```
+Now let’s work out a derived class. Suppose your C++ code defines class Der that inherits from class Base. The compiler repeats steps #1 and #3 (but not #2). In step #1, the compiler creates a hidden v-table, keeping the same function-pointers as in Base::__vtable but replacing those slots that correspond to overrides. For instance, if Der overrides virt0() through virt2() and inherits the others as-is, Der’s v-table might look something like this (pretend Der doesn’t add any new virtuals):
+```c++
+// Pseudo-code (not C++, not C) for a static table defined within file Der.cpp
+// Pretend FunctionPtr is a generic pointer to a generic member function
+// (Remember: this is pseudo-code, not C++ code)
+FunctionPtr Der::__vtable[5] = {
+  &Der::virt0, &Der::virt1, &Der::virt2, &Base::virt3, &Base::virt4
+                                          ↑↑↑↑          ↑↑↑↑ // Inherited as-is
+};
+```
+In step #3, the compiler adds a similar pointer-assignment at the beginning of each of Der’s constructors. The idea is to change each Der object’s v-pointer so it points at its class’s v-table. (This is not a second v-pointer; it’s the same v-pointer that was defined in the base class, Base; remember, the compiler does not repeat step #2 in class Der.)
+
+Finally, let’s see how the compiler implements a call to a virtual function. Your code might look like this:
+```c++
+// Your original C++ code
+void mycode(Base* p)
+{
+  p->virt3();
+}
+```
+The compiler has no idea whether this is going to call Base::virt3() or Der::virt3() or perhaps the virt3() method of another derived class that doesn’t even exist yet. It only knows for sure that you are calling virt3() which happens to be the function in slot #3 of the v-table. It rewrites that call into something like this:
+```c++
+// Pseudo-code that the compiler generates from your C++
+void mycode(Base* p)
+{
+  p->__vptr[3](p);
+}
+```
+
+On typical hardware, the machine-code is two ‘load’s plus a call:
+
+The first load gets the v-pointer, storing it into a register, say r1.
+The second load gets the word at r1 + 3*4 (pretend function-pointers are 4-bytes long, so r1 + 12 is the pointer to the right class’s virt3() function). Pretend it puts that word into register r2 (or r1 for that matter).
+The third instruction calls the code at location r2.
+Conclusions:
+
+Objects of classes with virtual functions have only a small space-overhead compared to those that don’t have virtual functions.
+Calling a virtual function is fast — almost as fast as calling a non-virtual function.
+You don’t get any additional per-call overhead no matter how deep the inheritance gets. You could have 10 levels of inheritance, but there is no “chaining” — it’s always the same — fetch, fetch, call.
+
+
+
+
+
+
+
+
+
 
 
 
