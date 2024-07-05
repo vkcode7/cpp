@@ -1123,6 +1123,67 @@ So when should I declare a destructor virtual? Whenever the class has at least o
 A virtual call is a mechanism to get work done given partial information. In particular, virtual allows us to call a function knowing only an interfaces and not the exact type of the object. To create an object you need complete information. In particular, you need to know the exact type of what you want to create. Consequently, a “call to a constructor” cannot be virtual.
 
 
+### Is an array of Derived a kind-of array of Base?
+
+Nope.. 
+```c++
+class Base {
+public:
+  virtual void f();             // 1
+};
+class Derived : public Base {
+public:
+  // ...
+private:
+  int i_;                       // 2
+};
+void userCode(Base* arrayOfBase)
+{
+  arrayOfBase[1].f();           // 3
+}
+int main()
+{
+  Derived arrayOfDerived[10];   // 4
+  userCode(arrayOfDerived);     // 5
+  // ...
+}
+```
+The compiler thinks this is perfectly type-safe. Line 5 converts a Derived* to a Base*. But in reality it is horrendously evil: since Derived is larger than Base, the pointer arithmetic done on line 3 is incorrect: the compiler uses sizeof(Base) when computing the address for arrayOfBase[1], yet the array is an array of Derived, which means the address computed on line 3 (and the subsequent invocation of member function f()) isn’t even at the beginning of any object! It’s smack in the middle of a Derived object. 
+
+The root problem is that C++ can’t distinguish between a pointer-to-a-thing and a pointer-to-an-array-of-things. Naturally C++ “inherited” this feature from C.
+
+NOTE: If we had used an array class (e.g., std::array<Derived, 10> from the standard library) instead of using a raw array, this problem would have been properly trapped as an error at compile time rather than a run-time disaster.
+
+### final specifier (since C++11) - How can I set up my class so it won’t be inherited from?
+
+Specifies that a virtual function cannot be overridden in a derived class, or that a class cannot be derived from.
+
+```c++
+struct Base
+{
+    virtual void foo();
+};
+ 
+struct A : Base
+{
+    void foo() final; // Base::foo is overridden and A::foo is the final override
+    void bar() final; // Error: bar cannot be final as it is non-virtual
+};
+ 
+struct B final : A // struct B is final
+{
+    void foo() override; // Error: foo cannot be overridden as it is final in A
+};
+ 
+struct C : B {}; // Error: B is final
+```
+
+But also ask yourself why you want to? There are two common answers:
+
+For efficiency: to avoid your function calls being virtual.
+For safety: to ensure that your class is not used as a base class (for example, to be sure that you can copy objects without fear of slicing).
+
+
 
 
 
