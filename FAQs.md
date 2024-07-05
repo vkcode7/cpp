@@ -896,6 +896,82 @@ Derived& Derived::operator= (Derived&& d)
 }
 ```
 
+### What are some guidelines / “rules of thumb” for overloading operators?
+- If you provide constructive operators, they should return their result by value. For example, x + y should return its result by value. If it returns by reference, you will probably run into lots of problems figuring out who owns the referent and when the referent will get destructed. Doesn’t matter if returning by reference is more efficient; it is probably wrong. See the next bullet for more on this point.
+- If you provide constructive operators, they should not change their operands. For example, x + y should not change x.
+- If you provide constructive operators, they should allow promotion of the left-hand operand (at least in the case where the class has a single-parameter ctor that is not marked with the explicit keyword). For example, if your class Fraction supports promotion from int to Fraction (via the non-explicit ctor Fraction::Fraction(int)), and if you allow x - y for two Fraction objects, you should also allow 42 - y. In practice that simply means that your operator-() should not be a member function of Fraction. Typically you will make it a friend, if for no other reason than to force it into the public: part of the class, but even if it is not a friend, it should not be a member.
+- If you define x++ and ++x, maintain the usual identities. For example, x++ and ++x should have the same observable effect on x, and should differ only in what they return. ++x should return x by reference; x++ should either return a copy (by value) of the original state of x or should have a void return-type. You’re usually better off returning a copy of the original state of x by value, especially if your class will be used in generic algorithms. The easy way to do that is to implement x++ using three lines: make a local copy of *this, call ++x (i.e., this->operator++()), then return the local copy. Similar comments for x-- and --x.
+- Avoid overloading short-circuiting operators: x || y or x && y. The overloaded versions of these do not short-circuit — they evaluate both operands even if the left-hand operand “determines” the outcome, so that confuses users.
+
+### How can I overload the prefix and postfix forms of operators ++ and --?
+Via a dummy parameter.
+
+Since the prefix and postfix ++ operators can have two definitions, the C++ language gives us two different signatures. Both are called operator++(), but the prefix version takes no parameters and the postfix version takes a dummy int. 
+
+```c++
+Number& Number::operator++ () //prefix <-- this is faster as local copy is not made
+{
+  // ...
+  return *this;
+}
+Number Number::operator++ (int) //postfix
+{
+  Number ans = *this;
+  ++(*this);  // or just call operator++()
+  return ans;
+}
+```
+
+### Do friends violate encapsulation?
+No! If they’re used properly, they enhance encapsulation.
+
+“Friend” is an explicit mechanism for granting access, just like membership. You cannot (in a standard conforming program) grant yourself access to a class without modifying its source. For example:
+
+```c++
+class X {
+    int i;
+public:
+    void m();       // grant X::m() access
+    friend void f(X&);  // grant f(X&) access
+    // ...
+};
+void X::m() { i++; /* X::m() can access X::i */ }
+void f(X& x) { x.i++; /* f(X&) can access X::i */ }
+```
+
+They provide a degree of freedom in the interface design options.
+
+Member functions and friend functions are equally privileged (100% vested). The major difference is that a friend function is called like f(x), while a member function is called like x.f(). Thus the ability to choose between member functions (x.f()) and friend functions (f(x)) allows a designer to select the syntax that is deemed most readable, which lowers maintenance costs.
+
+The major disadvantage of friend functions is that they require an extra line of code when you want dynamic binding. To get the effect of a virtual friend, the friend function should call a hidden (usually protected) virtual member function. This is called the Virtual Friend Function Idiom. For example:
+
+```c++
+class Base {
+public:
+  friend void f(Base& b);
+  // ...
+protected:
+  virtual void do_f();
+  // ...
+};
+inline void f(Base& b)
+{
+  b.do_f();
+}
+class Derived : public Base {
+public:
+  // ...
+protected:
+  virtual void do_f();  // "Override" the behavior of f(Base& b)
+  // ...
+};
+void userCode(Base& b)
+{
+  f(b);
+}
+```
+
+Another good use of friend functions are the binary infix arithmetic operators. E.g., aComplex + aComplex should be defined as a friend rather than a member if you want to allow aFloat + aComplex as well (member functions don’t allow promotion of the left hand argument, since that would change the class of the object that is the recipient of the member function invocation).
 
 
 
