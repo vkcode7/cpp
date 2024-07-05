@@ -1118,6 +1118,10 @@ So when should I declare a destructor virtual? Whenever the class has at least o
     }
 ```
 
+### Why don’t we have virtual constructors?
+
+A virtual call is a mechanism to get work done given partial information. In particular, virtual allows us to call a function knowing only an interfaces and not the exact type of the object. To create an object you need complete information. In particular, you need to know the exact type of what you want to create. Consequently, a “call to a constructor” cannot be virtual.
+
 
 
 
