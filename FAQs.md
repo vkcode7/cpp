@@ -1097,7 +1097,26 @@ Objects of classes with virtual functions have only a small space-overhead compa
 Calling a virtual function is fast — almost as fast as calling a non-virtual function.
 You don’t get any additional per-call overhead no matter how deep the inheritance gets. You could have 10 levels of inheritance, but there is no “chaining” — it’s always the same — fetch, fetch, call.
 
+### When should my destructor be virtual? 
+When someone will delete a derived-class object via a base-class pointer.
 
+So when should I declare a destructor virtual? Whenever the class has at least one virtual function. Having virtual functions indicate that a class is meant to act as an interface to derived classes, and when it is, an object of a derived class may be destroyed through a pointer to the base. 
+
+```c++
+    class Base {
+        // ...
+        virtual ~Base();
+    };
+    class Derived : public Base {
+        // ...
+        ~Derived();
+    };
+    void f()
+    {
+        Base* p = new Derived;
+        delete p;   // virtual destructor used to ensure that ~Derived is called
+    }
+```
 
 
 
