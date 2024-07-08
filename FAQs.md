@@ -1183,13 +1183,166 @@ But also ask yourself why you want to? There are two common answers:
 For efficiency: to avoid your function calls being virtual.
 For safety: to ensure that your class is not used as a base class (for example, to be sure that you can copy objects without fear of slicing).
 
+### How are “private inheritance” and “composition” similar? 
 
+private inheritance is a syntactic variant of composition (AKA aggregation and/or has-a).
 
+E.g., the “Car has-a Engine” relationship can be expressed using simple composition:
+```c++
+class Engine {
+public:
+  Engine(int numCylinders);
+  void start();                 // Starts this Engine
+};
 
+class Car {
+public:
+  Car() : e_(8) { }             // Initializes this Car with 8 cylinders
+  void start() { e_.start(); }  // Start this Car by starting its Engine
+private:
+  Engine e_;                    // Car has-a Engine
+};
+```
 
+The “Car has-a Engine” relationship can also be expressed using private inheritance:
+```c++
+class Car : private Engine {    // Car has-a Engine
+public:
+  Car() : Engine(8) { }         // Initializes this Car with 8 cylinders
+  using Engine::start;          // Start this Car by starting its Engine
+};
+```
+There are several similarities between these two variants:
 
+- In both cases there is exactly one Engine member object contained in every Car object
+- In neither case can users (outsiders) convert a Car* to an Engine*
+- In both cases the Car class has a start() method that calls the start() method on the contained Engine object.
+- There are also several distinctions:
 
+The simple-composition variant is needed if you want to contain several Engines per Car
+- The private-inheritance variant can introduce unnecessary multiple inheritance
+- The private-inheritance variant allows members of Car to convert a Car* to an Engine*
+- The private-inheritance variant allows access to the protected members of the base class
+- The private-inheritance variant allows Car to override Engine’s virtual functions
+- The private-inheritance variant makes it slightly simpler (20 characters compared to 28 characters) to give Car a start() method that simply calls through to the Engine’s start() method
 
+***Use composition when you can, private inheritance when you have to.***
+
+### What are the access rules with private and protected inheritance?  
+Take these classes as examples:
+```c++
+class B                    { /*...*/ };
+class D_priv : private   B { /*...*/ };
+class D_prot : protected B { /*...*/ };
+class D_publ : public    B { /*...*/ };
+class UserClass            { B b; /*...*/ };
+```
+None of the derived classes can access anything that is private in B. In D_priv, the public and protected parts of B are private. In D_prot, the public and protected parts of B are protected. In D_publ, the public parts of B are public and the protected parts of B are protected (D_publ is-a-kind-of-a B). class UserClass can access only the public parts of B, which “seals off” UserClass from B.
+
+To make a public member of B public in D_priv or D_prot, state the name of the member with a B:: prefix. E.g., to make member B::f(int,float) public in D_prot, you would say:
+```c++
+class D_prot : protected B {
+public:
+  using B::f;  // Note: Not using B::f(int,float)
+};
+```
+
+### What is the “dreaded diamond”?  
+The “dreaded diamond” refers to a class structure in which a particular class appears more than once in a class’s inheritance hierarchy. For example,
+
+```c++
+class Base {
+public:
+  // ...
+protected:
+  int data_;
+};
+class Der1 : public Base { /*...*/ };
+class Der2 : public Base { /*...*/ };
+class Join : public Der1, public Der2 {
+public:
+  void method()
+  {
+     data_ = 1;  // Bad: this is ambiguous; see below
+  }
+};
+int main()
+{
+  Join* j = new Join();
+  Base* b = j;   // Bad: this is ambiguous; see below
+}
+```
+```
+
+                         Base
+                         /  \
+                        /    \
+                       /      \
+                    Der1      Der2
+                       \      /
+                        \    /
+                         \  /
+                         Join
+```
+This structure is often called the dreaded diamond, but it really isn’t dreaded; it’s more just something to be aware of.
+
+The key is to realize that Base is inherited twice, which means any data members declared in Base, such as data_ above, will appear twice within a Join object. This can create ambiguities: which data_ did you want to change? For the same reason the conversion from Join* to Base*, or from Join& to Base&, is ambiguous: which Base class subobject did you want?
+
+C++ lets you resolve the ambiguities. For example, instead of saying data_ = 1 you could say Der2::data_ = 1, or you could convert from Join* to a Der1* and then to a Base*.
+
+### Where in a hierarchy should I use virtual inheritance?
+
+Just below the top of the diamond, not at the join-class.
+
+To avoid the duplicated base class subobject that occurs with the “dreaded diamond”, you should use the virtual keyword in the inheritance part of the classes that derive directly from the top of the diamond:
+```c++
+class Base {
+public:
+  // ...
+protected:
+  int data_;
+};
+
+class Der1 : public virtual Base {
+                    ↑↑↑↑↑↑↑ // This is the key
+public:
+  // ...
+};
+
+class Der2 : public virtual Base {
+                    ↑↑↑↑↑↑↑ // This is the key
+public:
+  // ...
+};
+
+class Join : public Der1, public Der2 {
+public:
+  void method()
+  {
+     data_ = 1;  // Good: this is now unambiguous
+  }
+};
+
+int main()
+{
+  Join* j = new Join();
+  Base* b = j;   // Good: this is now unambiguous
+}
+```
+Because of the virtual keyword in the base-class portion of Der1 and Der2, an instance of Join will have only a single Base subobject. This eliminates the ambiguities. This is usually better than using full qualification as described in the previous FAQ.
+
+For emphasis, the virtual keyword goes in the hierarchy above Der1 and Der2. It doesn’t help to put the virtual keyword in the Join class itself. In other words, you have to know that a join class will exist when you are creating class Der1 and Der2.
+```
+                         Base
+                         /  \
+                        /    \
+               virtual /      \ virtual
+                    Der1      Der2
+                       \      /
+                        \    /
+                         \  /
+                         Join
+```
 
 
 
