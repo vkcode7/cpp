@@ -1344,6 +1344,62 @@ For emphasis, the virtual keyword goes in the hierarchy above Der1 and Der2. It 
                          Join
 ```
 
+### What does it mean to “delegate to a sister class” via virtual inheritance?  
+Consider the following example:
+```c++
+class Base {
+public:
+  virtual void foo() = 0;
+  virtual void bar() = 0;
+};
+
+class Der1 : public virtual Base {
+public:
+  virtual void foo();
+};
+
+void Der1::foo()
+{ bar(); }
+
+class Der2 : public virtual Base {
+public:
+  virtual void bar();
+};
+
+class Join : public Der1, public Der2 {
+public:
+  // ...
+};
+
+int main()
+{
+  Join* p1 = new Join();
+  Der1* p2 = p1;
+  Base* p3 = p1;
+  p1->foo();
+  p2->foo();
+  p3->foo();
+}
+```
+Believe it or not, when Der1::foo() calls this->bar(), it ends up calling Der2::bar(). Yes, that’s right: a class that Der1 knows nothing about will supply the override of a virtual function invoked by Der1::foo(). This “cross delegation” can be a powerful technique for customizing the behavior of polymorphic classes.
+
+
+### What special considerations do I need to know about when I inherit from a class that uses virtual inheritance?  
+Initialization list of most-derived-class’s ctor directly invokes the virtual base class’s ctor.
+
+Because a virtual base class subobject occurs only once in an instance, there are special rules to make sure the virtual base class’s constructor and destructor get called exactly once per instance. The C++ rules say that virtual base classes are constructed before all non-virtual base classes. The thing you as a programmer need to know is this: constructors for virtual base classes anywhere in your class’s inheritance hierarchy are called by the “most derived” class’s constructor.
+
+Practically speaking, this means that when you create a concrete class that has a virtual base class, you must be prepared to pass whatever parameters are required to call the virtual base class’s constructor. And, of course, if there are several virtual base classes anywhere in your classes ancestry, you must be prepared to call all their constructors. This might mean that the most-derived class’s constructor needs more parameters than you might otherwise think.
+
+
+
+
+
+
+
+
+
+
 
 
 
