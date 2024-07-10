@@ -1391,17 +1391,177 @@ Because a virtual base class subobject occurs only once in an instance, there ar
 
 Practically speaking, this means that when you create a concrete class that has a virtual base class, you must be prepared to pass whatever parameters are required to call the virtual base class’s constructor. And, of course, if there are several virtual base classes anywhere in your classes ancestry, you must be prepared to call all their constructors. This might mean that the most-derived class’s constructor needs more parameters than you might otherwise think.
 
+## Templates
+
+### What is a “parameterized type” or What is “genericity”?? 
+Another way to say, “class templates.”
+
+A parameterized/genericity type is a type that is parameterized over another type or some value. List<int> is a type (List) parameterized over another type (int).
+
+### Why can’t I separate the definition of my templates class from its declaration and put it inside a .cpp file?  
+If all you want to know is how to fix this situation, read the next two FAQs. But in order to understand why things are the way they are, first accept these facts:
+
+A template is not a class or a function. A template is a “pattern” that the compiler uses to generate a family of classes or functions.
+In order for the compiler to generate the code, it must see both the template definition (not just declaration) and the specific types/whatever used to “fill in” the template. 
+
+## Containers
+### Is the storage for a std::vector<T> or a std::array<T,N> guaranteed to be contiguous?
+Yes.
+
+This means the following technique is safe:
+```c++
+#include <vector>
+#include <array>
+#include "Foo.h"  /* get class Foo */
+// old-style code that wants an array
+void f(Foo* array, unsigned numFoos);
+void g()
+{
+  std::vector<Foo> v;
+  std::array<Foo, 10> a;
+  // ...
+  f(v.data(), v.size());  // Safe
+  f(a.data(), a.size());  // Safe
+}
+```
+
+In general, it means you are guaranteed that &v[0] + n == &v[n], where v is a non-empty std::vector<T> or std::array<T,N> and n is an integer in the range 0 .. v.size()-1.
+
+However v.begin() is not guaranteed to be a T*, which means v.begin() is not guaranteed to be the same as &v[0]:
+```c++
+void g()
+{
+  std::vector<Foo> v;
+  // ...
+  f(v.begin(), v.size());  // error, not guaranteed to be the same as &v[0]
+    ↑↑↑↑↑↑↑↑↑ // cough, choke, gag; use v.data() instead
+}
+```
+Also, using &v[0] is undefined behavior if the std::vector or std::array is empty, while it is always safe to use the .data() function.
 
 
+### How do you tell the compiler to make a member function inline?  
+The declaration of an inline member function looks just like the declaration of a non-inline member function:
+```c++
+class Fred {
+public:
+  void f(int i, char c);
+};
+```
+But when you define an inline member function (the {...} part), you prepend the member function’s definition with the keyword inline, and you (almost always) put the definition into a header file:
+```c++
+inline void Fred::f(int i, char c)
+{
+  // ...
+}
+```
+The reason you (almost always) put the definition (the {...} part) of an inline function in a header file is to avoid “unresolved external” errors from the linker. That error will occur if you put the inline function’s definition in a .cpp file and if that function is called from some other .cpp file.
 
+Another way to make member function inline is: define the member function in the class body itself:
+```c++
+class Fred {
+public:
+  void f(int i, char c)
+    {
+      // ...
+    }
+};
+```
 
+## Mermber Functions and Pointers
 
+### Is the type of “pointer-to-member-function” different from “pointer-to-function”?
+Yes. Consider the following function:
+```
+int f(char a, float b);
+```
+The type of this function is different depending on whether it is an ordinary function or a non-static member function of some class:
 
+- Its type is **“int (*)(char,float)”** if an ordinary function
+- Its type is **“int (Fred::*)(char,float)”** if a non-static member function of class Fred
+- Note: if it’s a static member function of class Fred, its type is the same as if it were an ordinary function: **“int (*)(char,float)”**.
 
+### Why am I having trouble taking the address of a C++ function?
+Non-static member functions have a hidden parameter that corresponds to the this pointer. The this pointer points to the instance data for the object. You must use “normal” functions (non class members) or static member functions when a function pointer is needed to be passed around. C++ introduces a new type of pointer, called a pointer-to-member, which can be invoked only by providing an object.
 
+### How can I avoid syntax errors when calling a member function using a pointer-to-member-function?
+If you have access to a compiler and standard library that implements the appropriate parts of the upcoming C++17 standard, use std::invoke. Otherwise, use a #define macro.
 
+```c++
+class Fred {
+public:
+  int f(char x, float y);
+  int g(char x, float y);
+  int h(char x, float y);
+  int i(char x, float y);
+  // ...
+};
 
+typedef  int (Fred::*FredMemFn)(char x, float y);  // Please do this!
+``
+use it as:
+```
+void userCode(Fred& fred, FredMemFn p)  // Use a typedef for pointer-to-member types
+{
+  int ans = std::invoke(p, fred, 'x', 3.14);
+  // Would normally be: int ans = (fred.*p)('x', 3.14);
+  // ...
+}
+```
+OR
+```
+#define CALL_MEMBER_FN(object,ptrToMember)  ((object).*(ptrToMember))
+//Note: FredMemFn is a typedef for a pointer-to-member type:
 
+void userCode(Fred& fred, FredMemFn p)  // Use a typedef for pointer-to-member types
+{
+  int ans = CALL_MEMBER_FN(fred,p)('x', 3.14);
+  // Would normally be: int ans = (fred.*p)('x', 3.14);
+  // ...
+}
+```
+
+### How do I declare a pointer-to-member-function that points to a const member function?
+```c++
+class Fred {
+public:
+  int f(int i) const;
+  int g(int i) const;
+  int h(int j) const;
+  // ...
+};
+```
+Then when you use a typedef to declare the member-function-pointer type, it should look like this:
+```c++
+// FredMemFn points to a const member-function of Fred that takes (int)
+typedef  int (Fred::*FredMemFn)(int) const;
+                                     ↑↑↑↑↑ // Points only to member functions decorated with const
+```
+
+### Can I convert a pointer-to-member-function to a void*? 
+No. It may or may not work. Technical details: pointers to member functions and pointers to data are not necessarily represented in the same way. A pointer to a member function might be a data structure rather than a single pointer. Think about it: if it’s pointing at a virtual function, it might not actually be pointing at a statically resolvable pile of code, so it might not even be a normal address — it might be a different data structure of some sort.
+
+### Can I convert a pointer-to-function to a void*?
+No. Might fail as it is undefined benavior.
+```c++
+int f(char x, float y);
+int g(char x, float y);
+typedef int(*FunctPtr)(char,float);
+int callit(FunctPtr p, char x, float y)
+{
+  return p(x, y);
+}
+int main()
+{
+  FunctPtr p = f;
+  void* p2 = (void*)p;              // ← illegal!!
+  callit(p, 'x', 3.14f);            // okay
+  callit(FunctPtr(p2), 'x', 3.14f); // might fail!!
+  // ...
+}
+```
+
+Technical details: void* pointers are pointers to data, and function pointers point to functions. The language does not require functions and data to be in the same address space, so, by way of example and not limitation, on architectures that have them in different address spaces, the two different pointer types will not be comparable.
 
 ## Exceptions
 
@@ -1540,4 +1700,46 @@ Note that the throw statement has been moved into a virtual function. The statem
 
 ## Why doesn’t C++ provide a “finally” construct?  
 Because C++ supports an alternative that is almost always better: The “resource acquisition is initialization” technique. The basic idea is to represent a resource by a local object, so that the local object’s destructor will release the resource. That way, the programmer cannot forget to release the resource.
+
+## c++ 11
+
+### Rvalue references and move semantics
+
+In C++11, we can define “move constructors” and “move assignments” to move rather than copy their argument:
+```
+    template<class T> class vector {
+        // ...
+        vector(const vector&);          // copy constructor
+        vector(vector&&);           // move constructor
+        vector& operator=(const vector&);   // copy assignment
+        vector& operator=(vector&&);        // move assignment
+    };  // note: move constructor and move assignment takes non-const &&
+        // they can, and usually do, write to their argument
+```
+The && indicates an “rvalue reference”. An rvalue reference can bind to an rvalue (but not to an lvalue):
+```
+    X a;
+    X f();
+    X& r1 = a;      // bind r1 to a (an lvalue)
+    X& r2 = f();        // error: f() is an rvalue; can't bind
+    X&& rr1 = f();  // fine: bind rr1 to temporary
+    X&& rr2 = a;    // error: bind a is an lvalue
+```
+The idea behind a move assignment is that instead of making a copy, it simply takes the representation from its source and replaces it with a cheap default. 
+
+How do we know whether it’s ok to simply move from a source? We tell the compiler:
+```
+    template<class T> 
+    void swap(T& a, T& b)   // "perfect swap" (almost)
+    {
+        T tmp = move(a);    // could invalidate a
+        a = move(b);        // could invalidate b
+        b = move(tmp);      // could invalidate tmp
+    }
+```
+move(x) is just a cast that means “you can treat x as an rvalue”. Maybe it would have been better if move() had been called rval(), but by now move() has been used for years. The move() template function can be written in C++11 (see the “brief introduction”) and and uses rvalue references.
+
+Rvalue references can also be used to provide perfect forwarding.
+
+In the C++11 standard library, all containers are provided with move constructors and move assignments, and operations that insert new elements, such as insert() and push_back(), have versions that take rvalue references. The net result is that the standard containers and algorithms quietly – without user intervention – improve in performance because they copy less.
 
