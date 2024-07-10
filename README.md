@@ -665,6 +665,13 @@ Received rvalue reference: 5
 Received rvalue reference: 10
 a is now: 100
 ```
+This is what happens at low level:
+- A temporary variable of type int is created on the stack of main. It's assigned with value 5.
+- The address of the temporary is passed to fn.
+- fn writes 100 by that address, changing the value of the temporary.
+- The function exits, the temporary dies at the end of the full expression involving the call.
+
+
 ## virtual keyword
 In C++, the virtual keyword is used in a base class to declare a member function that can be overridden in derived classes. When a member function is declared as virtual in a base class, it allows derived classes to provide their own implementation of that function.<br>
 
