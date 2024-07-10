@@ -1819,7 +1819,7 @@ The basic idea for C++11 was to allow a non-static data member to be initialized
     };
 ```
 This is equivalent to:
-```
+```c++
     class A {
     public:
         int a;
@@ -1844,4 +1844,154 @@ The compiler evaluates the expression and writes the string as an error message 
 ```
 A static_assert can be useful to make assumptions about a program and its treatment by a compiler explicit.
 
+## Threads in c++ 11
 
+A thread is launched by constructing a std::thread with a function or a function object (incl. a lambda):
+
+```c++
+    #include <thread>
+    void f();
+    struct F {
+        void operator()();
+    };
+    int main()
+    {
+        std::thread t1{f};     // f() executes in separate thread
+        std::thread t2{F()};   // F()() executes in separate thread
+
+        t1.join();  // wait for t1
+        t2.join();  // wait for t2
+    }
+```
+
+Typically, we’d like to pass some arguments to the task to be executed (here we are calling something executed by a thread a “task”). In general, we’d also like to get a result back from an executed task. With plain tasks, there is no notion of a return value; std::future is the correct default choice for that. Alternatively, we can pass an argument to a task telling it where to put its result: For example:
+
+```c++
+    void f(vector<double>&, double* res);   // place result in res
+    struct F {
+        vector<double>& v;
+        double* res;
+        F(vector<double>& vv, double* p) :v{vv}, res{p} { }
+        void operator()();  // place result in res
+    };
+    int main()
+    {
+        double res1;
+        double res2;
+
+        //the standard library bind makes a function object of its arguments.
+        std::thread t1{std::bind(f,some_vec,&res1)};    // f(some_vec,&res1) executes in separate thread
+        std::thread t2{F(some_vec,&res2)};      // F(some_vec,&res2)() executes in separate thread
+        t1.join();
+        t2.join();
+        std::cout << res1 << ' ' << res2 << '\n';
+    }
+```
+
+### Mutual exclusion 
+A mutex is a primitive object used for controlling access in a multi-threaded system. The most basic use is:
+```c++
+    std::mutex m;
+    int sh; // shared data
+    // ...
+    m.lock();
+    // manipulate shared data:
+    sh+=1;
+    m.unlock();
+```
+
+In addition to lock(), a mutex has a try_lock() operation which can be used to try to get into the critical region without the risk of getting blocked:
+```c++
+    std::mutex m;
+    int sh; // shared data
+    // ...
+    if (m.try_lock()) {
+        // manipulate shared data:
+        sh+=1;
+        m.unlock();
+    else {
+        // maybe do something else
+    }
+```
+
+***Timed Mutex***
+What if you need to acquire a mutex within the next ten seconds? The timed_mutex class is offered for that. Its operations are specialized versions of try_lock() with an associated time limit:
+
+    std::timed_mutex m;
+    int sh; // shared data
+    // ...
+    if (m.try_lock_for(std::chrono::seconds(10))) {
+        // manipulate shared data:
+        sh+=1;
+        m.unlock();
+    }
+    else {
+        // we didn't get the mutex; do something else
+    }
+
+### Locks
+A lock is an object that can hold a reference to a mutex and may unlock() the mutex during the lock’s destruction (such as when leaving block scope). A thread may use a lock to aid in managing mutex ownership in an exception safe manner. In other words, a lock implements Resource Acquisition Is Initialization for mutual exclusion. For example:
+```c++
+    std::mutex m;
+    int sh; // shared data
+    // ...
+    void f()
+    {
+        // ...
+        std::unique_lock lck(m);
+        // manipulate shared data: lock will be released even if this code throws an exception
+        sh+=1;
+    }
+```
+
+we can use a unique_lock to do try_lock:
+```c++
+    std::mutex m;
+    int sh; // shared data
+    // ...
+    void f()
+    {
+        // ...
+        std::unique_lock lck(m,std::defer_lock);    // make a lock, but don't acquire the mutex
+        // ...
+        if (lck.try_lock()) {
+            // manipulate shared data:
+            sh+=1;
+        }
+        else {
+            // maybe do something else
+        }
+    }
+```
+Similarly, unique_lock supports try_lock_for() and try_lock_until(). What you get from using a lock rather than the mutex directly is exception handling and protection against forgetting to unlock(). In concurrent programming, we need all the help we can get.
+
+### Futures and promises
+C++11 offers future and promise for returning a value from a task spawned on a separate thread, and packaged_task to help launch tasks. The important point about future and promise is that they enable a transfer of a value between two tasks without explicit use of a lock; “the system” implements the transfer efficiently. The basic idea is simple: When a task wants to return a value to the thread that launched it, it puts the value into a promise. Somehow, the implementation makes that value appear in the future attached to the promise. 
+
+### async
+Here is an example of a way for the programmer to rise above the messy threads-plus-lock level of concurrent programming:
+```c++
+    template<class T, class V> struct Accum  {  // simple accumulator function object
+        T* b;
+        T* e;
+        V val;
+        Accum(T* bb, T* ee, const V& v) : b{bb}, e{ee}, val{vv} {}
+        V operator() () { return std::accumulate(b,e,val); }
+    };
+    double comp(vector<double>& v)
+        // spawn many tasks if v is large enough
+    {
+        if (v.size()<10000) return std::accumulate(v.begin(),v.end(),0.0);
+        auto f0 {async(Accum{&v[0],&v[v.size()/4],0.0})};
+        auto f1 {async(Accum{&v[v.size()/4],&v[v.size()/2],0.0})};
+        auto f2 {async(Accum{&v[v.size()/2],&v[v.size()*3/4],0.0})};
+        auto f3 {async(Accum{&v[v.size()*3/4],&v[v.size()],0.0})};
+        return f0.get()+f1.get()+f2.get()+f3.get();
+    }
+```
+This is a very simple-minded use of concurrency (note the “magic number”), but note the absence of explicit threads, locks, buffers, etc. The type of the f-variables are determined by the return type of the standard-library function async() which is a future. If necessary, get() on a future waits for a thread to finish. Here, it is async()’s job to spawn threads as needed and the future’s job to join() the threads appropriately. “Simple” is the most important aspect of the async()/future design; futures can also be used with threads in general, but don’t even think of using async() to launch tasks that do I/O, manipulate mutexes, or in other ways interact with other tasks. The idea behind async() is the same as the idea behind the range-for statement: Provide a simple way to handle the simplest, rather common, case and leave the more complex examples to the fully general mechanism.
+
+An async() can be requested to launch in a new thread, in any thread but the caller’s, or to launch in a different thread only if async() “thinks” that it is a good idea. The latter is the simplest from the user’s perspective and potentially the most efficient (for simple tasks only).
+
+
+But what about errors? What if a task throws an exception? If a task throws an exception and doesn’t catch it itself std::terminate() is called. That typically means that the program finishes. We usually try rather hard to avoid that. A std::future can transmit an exception to the parent/calling thread; that’s one reason to like futures. Otherwise, return some sort of error code.
