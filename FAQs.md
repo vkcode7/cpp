@@ -1706,7 +1706,7 @@ Because C++ supports an alternative that is almost always better: The “resourc
 ### Rvalue references and move semantics
 
 In C++11, we can define “move constructors” and “move assignments” to move rather than copy their argument:
-```
+```c++
     template<class T> class vector {
         // ...
         vector(const vector&);          // copy constructor
@@ -1717,18 +1717,18 @@ In C++11, we can define “move constructors” and “move assignments” to mo
         // they can, and usually do, write to their argument
 ```
 The && indicates an “rvalue reference”. An rvalue reference can bind to an rvalue (but not to an lvalue):
-```
+```c++
     X a;
     X f();
     X& r1 = a;      // bind r1 to a (an lvalue)
-    X& r2 = f();        // error: f() is an rvalue; can't bind
+    X& r2 = f();    // error: f() is an rvalue; can't bind
     X&& rr1 = f();  // fine: bind rr1 to temporary
     X&& rr2 = a;    // error: bind a is an lvalue
 ```
 The idea behind a move assignment is that instead of making a copy, it simply takes the representation from its source and replaces it with a cheap default. 
 
 How do we know whether it’s ok to simply move from a source? We tell the compiler:
-```
+```c++
     template<class T> 
     void swap(T& a, T& b)   // "perfect swap" (almost)
     {
@@ -1742,4 +1742,106 @@ move(x) is just a cast that means “you can treat x as an rvalue”. Maybe it w
 Rvalue references can also be used to provide perfect forwarding.
 
 In the C++11 standard library, all containers are provided with move constructors and move assignments, and operations that insert new elements, such as insert() and push_back(), have versions that take rvalue references. The net result is that the standard containers and algorithms quietly – without user intervention – improve in performance because they copy less.
+
+For more details, see: https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2006/n2027.html
+
+### Lambdas
+
+A lambda expression is a mechanism for specifying a function object. The primary use for a lambda is to specify a simple action to be performed by some function. For example:
+```c++
+    vector<int> v = {50, -10, 20, -30};
+
+    std::sort(v.begin(), v.end(), [](int a, int b) { return abs(a)<abs(b); });
+    // now v should be { -10, 20, -30, 50 }
+```
+
+If an action is neither common nor simple, consider using a named function object or function. For example, the example above could have been written:
+```c++
+    void f(vector<Record>& v)
+    {
+        vector<int> indices(v.size());
+        int count = 0;
+        generate(indices.begin(),indices.end(),[&](){ return ++count; });
+        struct Cmp_names {
+            const vector<Record>& vr;
+            Cmp_names(const vector<Record>& r) :vr(r) { }
+            bool operator()(int a, int b) const { return vr[a].name<vr[b].name; }
+        };
+        // sort indices in the order determined by the name field of the records:
+        std::sort(indices.begin(), indices.end(), Cmp_names(v));
+        // ...
+    }
+```
+
+### noexcept to prevent exception propagation
+If a function declared noexcept throws (so that the exception tries to escape the noexcept function) the program is terminated by a call to std::terminate().
+
+It is possible to make a function conditionally noexcept. For example, an algorithm can be specified to be noexcept if (and only if) the operations it uses on a template argument are noexcept:
+```c++
+    template<class T>
+    void do_f(vector<T>& v) noexcept(noexcept(f(v.at(0)))) // can throw if f(v.at(0)) can
+    {
+        for(int i; i<v.size(); ++i)
+            v.at(i) = f(v.at(i));
+    }
+```
+Here, we first use noexcept as an operator: noexcept(f(v.at(0))) is true if f(v.at(0)) can’t throw, that is if the f() and at() used are noexcept.
+
+The noexcept() operator is a constant expression and does not evaluate its operand.
+
+The general form of a noexcept declaration is noexcept(expression) and “plain noexcept” is simply a shorthand for noexcept(true). All declarations of a function must have compatible noexcept specifications.
+
+A destructor shouldn’t throw; a generated destructor is implicitly noexcept (independently of what code is in its body) if all of the members of its class have noexcept destructors (which, ahem, they too will have by default).
+
+It is typically a bad idea to have a move operation throw, so declare those noexcept wherever possible. A generated copy or move operation is implicitly noexcept if all of the copy or move operations it uses on members of its class have noexcept destructors.
+
+noexcept is widely and systematically used in the standard library to improve performance and clarify requirements.
+
+### In-class member initializers
+
+In C++98, only static const members of integral types could be initialized in-class, and the initializer has to be a constant expression. These restrictions ensured that the compiler can do the initialization at compile-time. For example:
+```c++
+    int var = 7;
+    class X {
+        static const int m1 = 7;        // ok
+        const int m2 = 7;                   // error: not static
+        static int m3 = 7;              // error: not const
+        static const int m4 = var;          // error: initializer not constant expression
+        static const string m5 = "odd"; // error: not integral type
+        // ...
+    };
+```
+The basic idea for C++11 was to allow a non-static data member to be initialized where it is declared (in its class). A constructor can then use the initializer when run-time initialization is needed. Consider:
+```c++
+    class A {
+    public:
+        int a = 7;
+    };
+```
+This is equivalent to:
+```
+    class A {
+    public:
+        int a;
+        A() : a(7) {}
+    };
+```
+
+### Thread-local storage  
+In C++11 you can use the storage class thread_local to define a variable that should be instantiated once per thread.
+
+Note that using thread_local storage requires care, and in particular does not work well with most parallel algorithms.
+
+### static_assert compile-time assertions  
+A static (compile time) assertion consists of a constant expression and a string literal:
+
+    static_assert(expression,string);
+The compiler evaluates the expression and writes the string as an error message if the expression is false (i.e., if the assertion failed). For example:
+```c++
+    static_assert(sizeof(long)>=8, "64-bit code generation required for this library.");
+    struct S { X m1; Y m2; };
+    static_assert(sizeof(S)==sizeof(X)+sizeof(Y),"unexpected padding in S");
+```
+A static_assert can be useful to make assumptions about a program and its treatment by a compiler explicit.
+
 
