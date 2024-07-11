@@ -2227,8 +2227,14 @@ int main() {
 
 ### Priority Queue
 
-- Max Heap: With highest element on Top => priority_queue<int> pq; 
-- Min Heap: With Lowest element on Top => priority_queue <int, vector<int>, greater<int>> gq;
+- Max Heap: With highest element on Top =>
+  ```
+  priority_queue<int> pq;
+  ```
+- Min Heap: With Lowest element on Top =>
+  ```
+  priority_queue <int, vector<int>, greater<int>> gq;
+  ```
 
 ```c++
 // C++ program to demonstrate the use of priority_queue
