@@ -1671,11 +1671,11 @@ int main() {
 ```
 
 ### Casts
-Static Cast (static_cast): Used for conversions that are well-defined and checked at compile-time.
-Dynamic Cast (dynamic_cast): Used for converting pointers and references to polymorphic types. primarily used in inheritance hierarchies to perform downcasting.
-Const Cast (const_cast): Used to add or remove const or volatile qualifiers from a variable.
-Reinterpret Cast (reinterpret_cast): Used for low-level, type-unsafe conversions between unrelated types.
-c-style: traditional
+- Static Cast (static_cast): Used for conversions that are well-defined and checked at compile-time.
+- Dynamic Cast (dynamic_cast): Used for converting pointers and references to polymorphic types. primarily used in inheritance hierarchies to perform downcasting.
+- Const Cast (const_cast): Used to add or remove const or volatile qualifiers from a variable.
+- Reinterpret Cast (reinterpret_cast): Used for low-level, type-unsafe conversions between unrelated types.
+- C-style: traditional
 
 ```c++
 //static
