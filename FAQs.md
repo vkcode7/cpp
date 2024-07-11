@@ -1498,9 +1498,9 @@ public:
 };
 
 typedef  int (Fred::*FredMemFn)(char x, float y);  // Please do this!
-``
-use it as:
 ```
+use it as:
+```c++
 void userCode(Fred& fred, FredMemFn p)  // Use a typedef for pointer-to-member types
 {
   int ans = std::invoke(p, fred, 'x', 3.14);
@@ -1509,7 +1509,7 @@ void userCode(Fred& fred, FredMemFn p)  // Use a typedef for pointer-to-member t
 }
 ```
 OR
-```
+```c++
 #define CALL_MEMBER_FN(object,ptrToMember)  ((object).*(ptrToMember))
 //Note: FredMemFn is a typedef for a pointer-to-member type:
 
