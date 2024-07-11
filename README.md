@@ -1382,6 +1382,7 @@ using simplifies the syntax for defining function pointers, and function objects
 
 // Define a type alias for a function pointer
 using FuncPtr = void(*)(int);
+//typedef void(*FunctPtr)(int);
 
 int main() {
     // Use the type alias for function pointers
