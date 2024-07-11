@@ -2124,7 +2124,7 @@ std::unordered_multimap is an unordered associative container that supports equi
 
 ## User defined DataTypes and map/set/unordered_map/uo_set 
 
-For user defined types we need to implement certain extra operators and a hash function as in example below:
+For user defined types we need to implement certain extra operators (<, ==) and a hash function as in example below, without these 3, the code wont compile:
 
 In this example:
 
