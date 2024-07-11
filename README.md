@@ -2223,6 +2223,54 @@ int main() {
 
 ```
 
+## Conrainer Adaptors
+
+### Priority Queue
+
+- Max Heap: With highest element on Top => priority_queue<int> pq; 
+- Min Heap: With Lowest element on Top => priority_queue <int, vector<int>, greater<int>> gq;
+
+```c++
+// C++ program to demonstrate the use of priority_queue
+#include <iostream>
+#include <queue>
+using namespace std;
+
+// driver code
+int main()
+{
+	int arr[6] = { 10, 2, 4, 8, 6, 9 };
+
+	// defining priority queue - Highest element stays on Top
+	priority_queue<int> pq; 
+
+	// printing array
+	cout << "Array: ";
+	for (auto i : arr) {
+		cout << i << ' ';
+	}
+	cout << endl;
+	// pushing array sequentially one by one
+	for (int i = 0; i < 6; i++) {
+		pq.push(arr[i]);
+	}
+
+	// printing priority queue
+	cout << "Priority Queue: ";
+	while (!pq.empty()) {
+		cout << pq.top() << ' ';
+		pq.pop();
+	}
+
+	return 0;
+}
+
+Output:
+Array: 10 2 4 8 6 9 
+Priority Queue: 10 9 8 6 4 2 
+
+```
+
 
 ## Thread safety
 1. All container functions can be called concurrently by different threads on different containers. More generally, the C++ standard library functions do not read objects accessible by other threads unless those objects are directly or indirectly accessible via the function arguments, including the this pointer.
