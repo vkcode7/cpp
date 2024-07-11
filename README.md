@@ -1453,8 +1453,8 @@ int main() {
 }
 ```
 
-#### <tuple>
-<tuple> is a standard header file in C++ that provides the std::tuple class template, introduced in C++11. It's part of the Standard Template Library (STL) and is used for creating heterogeneous collections of elements. A tuple is similar to an array or struct but can hold elements of different types, making it a versatile container for storing related but different types of data.
+#### tuple
+"tuple" is a standard header file in C++ that provides the std::tuple class template, introduced in C++11. It's part of the Standard Template Library (STL) and is used for creating heterogeneous collections of elements. A tuple is similar to an array or struct but can hold elements of different types, making it a versatile container for storing related but different types of data.
 
 It's often used as a return type for functions that need to return multiple values, or in algorithms that need to operate on collections of heterogeneous data.
 
