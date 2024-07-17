@@ -1995,3 +1995,160 @@ An async() can be requested to launch in a new thread, in any thread but the cal
 
 
 But what about errors? What if a task throws an exception? If a task throws an exception and doesn’t catch it itself std::terminate() is called. That typically means that the program finishes. We usually try rather hard to avoid that. A std::future can transmit an exception to the parent/calling thread; that’s one reason to like futures. Otherwise, return some sort of error code.
+
+### virtual simulation using function pointer
+
+```c++
+#include <iostream>
+
+// Forward declaration of Base class
+class Base;
+
+// Function pointer type for the Print function using the 'using' keyword
+using PrintFunction = void (*)(const Base*);
+
+// Base class
+class Base {
+public:
+
+    Base()
+    {
+       printFunction = [](const Base*) { 
+           std::cout << "Base class" << std::endl; 
+       }; 
+    }
+    // Constructor to initialize the function pointer
+    Base(PrintFunction printFunc) : printFunction(printFunc) {}
+
+    // Function to call the Print function through the function pointer
+    void Print() const {
+        printFunction(this);
+    }
+
+private:
+    // Function pointer to hold the address of the Print function
+    PrintFunction printFunction;
+};
+
+// Derived class
+class Derived : public Base {
+public:
+    // Constructor to initialize the base class with the derived class's Print function
+    Derived() : Base(&Derived::PrintFunctionImpl) {}
+
+private:
+    // Implementation of the Print function for Derived class
+    static void PrintFunctionImpl(const Base* base) {
+        std::cout << "Derived class" << std::endl;
+    }
+};
+
+int main() {
+    // Create objects of Base and Derived
+    Base base;
+    Derived derived;
+
+    // Call Print function for both objects
+    base.Print();       // Outputs: Base class
+    derived.Print();    // Outputs: Derived class
+
+    // Demonstrate polymorphism with a Base* pointing to a Derived object
+    Base* polymorphicPtr = new Derived();
+    polymorphicPtr->Print();   // Outputs: Derived class
+
+    // Clean up
+    delete polymorphicPtr;
+
+    return 0;
+}
+```
+
+### Using vtables
+
+```c++
+#include <iostream>
+#include <string>
+
+// Forward declaration of Base class
+class Base;
+
+// Function pointer type for the Print function using the 'using' keyword
+using PrintFunction = void (*)(const Base*);
+
+// VTable structure for Base class
+struct BaseVTable {
+    PrintFunction Print;
+};
+
+// Base class
+class Base {
+public:
+    // Constructor to initialize the vtable pointer and message
+    Base(const BaseVTable* vt = &Base::vtable, const std::string& msg = "Hello base")
+        : vtablePtr(vt), message(msg) {}
+
+    // Function to call the Print function through the vtable
+    void Print() const {
+        vtablePtr->Print(this);
+    }
+
+    // Default print function for Base class
+    static void PrintFunctionImpl(const Base* base) {
+        std::cout << base->message << std::endl;
+    }
+
+    // VTable instance for Base class
+    static const BaseVTable vtable;
+
+public:
+    // Message variable
+    std::string message;
+
+private:
+    // Pointer to the vtable
+    const BaseVTable* vtablePtr;
+};
+
+// Definition of the vtable for Base class
+const BaseVTable Base::vtable = { &Base::PrintFunctionImpl };
+
+// Derived class
+class Derived : public Base {
+public:
+    // Constructor to initialize the base class with the derived class's vtable and message
+    Derived() : Base(&Derived::vtable, "Hello derived") {}
+
+    // Implementation of the Print function for Derived class
+    static void PrintFunctionImpl(const Base* base) {
+        std::cout << base->message << std::endl;
+    }
+
+    // VTable instance for Derived class
+    static const BaseVTable vtable;
+    
+    // Make the Base class a friend of the Derived class to access the message variable
+    friend class Base;
+};
+
+// Definition of the vtable for Derived class
+const BaseVTable Derived::vtable = { &Derived::PrintFunctionImpl };
+
+int main() {
+    // Create objects of Base and Derived
+    Base base;
+    Derived derived;
+
+    // Call Print function for both objects
+    base.Print();       // Outputs: Hello base
+    derived.Print();    // Outputs: Hello derived
+
+    // Demonstrate polymorphism with a Base* pointing to a Derived object
+    Base* polymorphicPtr = new Derived();
+    polymorphicPtr->Print();   // Outputs: Hello derived
+
+    // Clean up
+    delete polymorphicPtr;
+
+    return 0;
+}
+```
