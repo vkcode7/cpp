@@ -2152,3 +2152,81 @@ int main() {
     return 0;
 }
 ```
+
+### Function Pointers
+```c++
+#include <iostream>
+#include <functional>
+
+using namespace std;
+
+using SumFuncType1 = int (*) (int, int);
+typedef int (*SumFuncType2) (int, int);
+
+auto Sum(int a, int b)
+{
+    return a + b;
+}
+
+int main() {
+    function<int(int,int)> func1 = Sum;
+    cout << "Sum of 10 and 20 using func1 is "<< func1(10,20) << endl;
+    
+    SumFuncType1 func2 = Sum;
+    cout << "Sum of 11 and 21 using func2 is "<< func2(11,21) << endl;
+
+    SumFuncType2 func3 = Sum;
+    cout << "Sum of 12 and 22 using func3 is "<< func3(12,22) << endl;
+
+    return 0;
+}
+/*
+Sum of 10 and 20 using func1 is 30
+Sum of 11 and 21 using func2 is 32
+Sum of 12 and 22 using func3 is 34
+*/
+```
+
+C++ Members
+```c++
+#include <iostream>
+#include <functional>
+
+using namespace std;
+
+class Fred {
+public:
+  float f(float x, float y) { return x + y; }
+  float g(float x, float y) { return x + y; }
+  float h(float x, float y) { return x + y; }
+  // ...
+};
+
+typedef  float (Fred::*FredMemFn)(float, float);  
+
+using FredMemFn2 = float (Fred::*)(float, float);  
+
+int main() {
+
+    Fred fred;
+
+    FredMemFn fn1 = &Fred::f;
+    cout << "Calling Fred::f " << (fred.*fn1)(10.5, 11.1) << endl;
+    
+    FredMemFn2 fn2 = &Fred::g;
+    cout << "Calling Fred::g " << (fred.*fn2)(10.1, 11.2) << endl;
+
+    auto boundFunction = std::bind(&Fred::h, &fred, std::placeholders::_1, std::placeholders::_2);
+
+    // Create a std::function object
+    std::function<float(float, float)> fn3 = boundFunction;
+    cout << "Calling Fred::h " << fn3(10.5, 11.2) << endl;
+
+    return 0;
+}
+/*
+Calling Fred::f 21.6
+Calling Fred::g 21.3
+Calling Fred::h 21.7
+*/
+```
