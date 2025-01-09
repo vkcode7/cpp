@@ -12,7 +12,26 @@ char can have -128 to 127 or 0 to 255 (unsigned char)<br>
 typically float is 32, double is 64 and long double is 80 bits<br>
 
 Literals can be qualified with a suffix explicitly such as 2, 2u, 2l, 2ul (unisgned long), 2.0 (double), 2.0f, 2.0l (long double)<br>
-long is 32 bit on 32 bit platform and 64 on 64-bit platform.
+long is 32 bit on 32 bit and 64 bit platforms. long long is 64 bit.
+
+On MS Windows:
+```bash
+Type                        | S/U | x86    | x64
+----------------------------+-----+--------+-------
+BYTE, BOOLEAN               | U   | 8 bit  | 8 bit
+----------------------------+-----+--------+-------
+SHORT                       | S   | 16 bit | 16 bit
+USHORT, WORD                | U   | 16 bit | 16 bit
+----------------------------+-----+--------+-------
+INT, LONG                   | S   | 32 bit | 32 bit
+UINT, ULONG, DWORD          | U   | 32 bit | 32 bit
+----------------------------+-----+--------+-------
+INT_PTR, LONG_PTR, LPARAM   | S   | 32 bit | 64 bit
+UINT_PTR, ULONG_PTR, WPARAM | U   | 32 bit | 64 bit
+----------------------------+-----+--------+-------
+LONGLONG                    | S   | 64 bit | 64 bit
+ULONGLONG, QWORD            | U   | 64 bit | 64 bit
+```
 
 ***Narrowing:*** In C++ 11 one can enclose values in {} and they wont be lost in assignment.<br>
 ```c++
