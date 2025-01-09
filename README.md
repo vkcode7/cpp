@@ -2,11 +2,11 @@
 
 C++ is a ***strongly typed langugae*** as every variable is a type that never changes.<br>
 Basic/aka Intrinsic types are:<br>
-char, short, int, long, long long<br>
+<mark>char, short, int, long, long long</mark><br>
 unsigned <= unisgned versions of above, with unsigned we can store 2x of signed plus zero<br>
 signed <= signed versions, default except for "char"
 
-other types: float, double, long double, bool
+other types: float (32b), double (64b), long double (80 bits), bool
 
 char can have -128 to 127 or 0 to 255 (unsigned char)<br>
 typically float is 32, double is 64 and long double is 80 bits<br>
@@ -33,7 +33,7 @@ LONGLONG                    | S   | 64 bit | 64 bit
 ULONGLONG, QWORD            | U   | 64 bit | 64 bit
 ```
 
-***Narrowing:*** In C++ 11 one can enclose values in {} and they wont be lost in assignment.<br>
+<mark>***Narrowing:*** In C++ 11 one can enclose values in {} and they wont be lost in assignment.</mark><br>
 ```c++
 long l = {1234....123}; //either error or OK if supported
 int i = {3.14}; //error as truncation not allowed
