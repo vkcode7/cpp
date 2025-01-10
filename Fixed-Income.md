@@ -601,3 +601,108 @@ Example of Eurodollar Future:
 *   **SOFR futures** are becoming the standard as financial markets move away from LIBOR. These futures are expected to be the main vehicle for hedging and speculation on U.S. interest rates going forward, particularly as more products and derivatives transition to SOFR.
 
 The CME Group has ceased issuing new Eurodollar futures contracts for most maturities following the transition away from LIBOR. This shift is part of the broader move away from the LIBOR benchmark to the SOFR benchmark, as LIBOR is being phased out due to concerns over its reliability and manipulation risks.
+
+### Rate Curves
+**Rate curves**, such as yield curves or discount curves, are constructed using observable market data to represent the relationship between interest rates and various maturities. These curves are fundamental tools in pricing, risk management, and financial analysis.
+
+Here’s a step-by-step explanation of how rate curves are typically built:
+
+- - -
+
+### **1\. Collect Market Data**
+
+The first step involves gathering market instruments that reflect interest rates at different maturities. Commonly used instruments include:
+
+*   **Overnight Index Rates (OIS):** Short-term rates for overnight borrowing.
+*   **Deposits:** Spot rates for very short maturities (e.g., 1M, 3M).
+*   **Futures:** Implied rates from instruments like Eurodollar or SOFR futures for intermediate maturities.
+*   **Swaps:** Interest rate swap rates for longer maturities.
+*   **Bonds:** Yields from government or corporate bonds.
+
+- - -
+
+### **2\. Choose a Bootstrapping Method**
+
+The curve is constructed through **bootstrapping**, which sequentially determines zero-coupon rates for different maturities. This involves:
+
+*   Using known rates for short maturities (e.g., deposit rates).
+*   Inferring rates for intermediate and long maturities by solving for discount factors.
+
+- - -
+
+### **3\. Calculate Discount Factors**
+
+For each maturity, calculate a **discount factor**, which represents the present value of $1 received at that maturity:
+
+D(T)\=1(1+r(T))TD(T) = \\frac{1}{(1 + r(T))^T}D(T)\=(1+r(T))T1​
+
+Where:
+
+*   r(T)r(T)r(T): The rate for maturity TTT.
+*   D(T)D(T)D(T): The discount factor for maturity TTT.
+
+- - -
+
+### **4\. Construct the Short End of the Curve**
+
+*   **Overnight and Spot Rates:** Use OIS or deposit rates for maturities up to 1 year.
+*   These rates are directly input into the curve since they are relatively straightforward.
+
+- - -
+
+### **5\. Extend to Intermediate Maturities**
+
+*   **Futures:** Extract implied forward rates from interest rate futures.
+*   **Calculation:** If the futures price is PPP, the implied rate is: r\=100−Pr = 100 - Pr\=100−P
+*   The forward rate is used to derive discount factors for maturities aligned with futures contracts.
+
+- - -
+
+### **6\. Build the Long End of the Curve**
+
+*   **Swaps or Bonds:** Use swap rates or bond yields for maturities longer than those covered by futures.
+*   Solve for the zero-coupon rates that match the market prices of these instruments using the previously calculated discount factors.
+
+- - -
+
+### **7\. Interpolate Missing Points**
+
+*   Use interpolation techniques to fill in rates for maturities not directly observable in the market.
+*   Common methods:
+    *   **Linear Interpolation**: Straight-line interpolation between two known rates.
+    *   **Cubic Spline**: A smoother curve-fitting method.
+    *   **Piecewise Constant Forward Rates**: Ensures consistency in forward rates.
+
+- - -
+
+### **8\. Validate the Curve**
+
+*   Check for arbitrage opportunities by ensuring the curve is smooth and free of inconsistencies.
+*   Validate that the derived discount factors and forward rates align with market instrument prices.
+
+- - -
+
+### **Example: Building a Discount Curve**
+
+1.  **Input Data**:
+    
+    *   1M deposit rate: 2.00%
+    *   3M deposit rate: 2.50%
+    *   6M futures-implied rate: 2.75%
+    *   1Y swap rate: 3.00%
+2.  **Construct Zero-Coupon Rates**:
+    
+    *   Use deposit rates directly for 1M and 3M.
+    *   Bootstrap 6M and 1Y rates using futures and swaps.
+3.  **Interpolate**:
+    
+    *   Fill in intermediate maturities (e.g., 2M, 4M) using interpolation.
+
+- - -
+
+### **Applications of Rate Curves**
+
+*   **Pricing:** Discount cash flows for bonds, swaps, or derivatives.
+*   **Risk Management:** Measure sensitivities like duration or convexity.
+*   **Hedging:** Derive forward rates to manage interest rate exposure.
+*   **Market Analysis:** Understand economic expectations (e.g., steepening or flattening yield curves).
