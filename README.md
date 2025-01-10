@@ -187,6 +187,7 @@ int main()
         cout << '{' << i.first << ", " << i.second << "}\n";
 }
 ```
+
 c++ 17 or higher
 ```c++
 for (auto& [key, value]: myMap) {
@@ -264,7 +265,7 @@ malloc/realloc/calloc/free are used by C. calloc is same as malloc except that i
 new is an operator, it can initialize memory and call constructor.
 ```c++
 int *p = new int;
-int *parr = new int[];
+int *parr = new int[10];
 
 delete p;
 delete[] parr;
