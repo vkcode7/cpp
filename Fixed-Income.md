@@ -315,3 +315,33 @@ A derivative is a financial instrument whose value is derived from the price or 
     *   Two types: **payer swaption** (right to enter a swap where you pay fixed and receive floating) and **receiver swaption** (right to enter a swap where you receive fixed and pay floating).
 *   **Example**: A company might buy a payer swaption to protect against the risk of rising interest rates.
 
+### Cost to Carry
+The cost of carry represents the total cost of holding an asset over time, factoring in financing costs, storage fees, insurance, opportunity costs and any potential income (dividends) from the asset. 
+
+Cost of Carry = Futures Price − Spot Price
+
+### Equity Options Determinants
+The price of an equity option is influenced by several key determinants, which are commonly referred to as the "Greeks" and other market factors. These factors play a crucial role in determining the value and pricing of an option.
+
+### **Summary of the Key Determinants of Equity Option Pricing**
+
+| **Determinant** | **Impact on Option Price** |
+| --- | --- |
+| **Underlying Stock Price** | Call options increase in value as the stock price rises; Put options increase in value as the stock price falls. |
+| **Strike Price** | A lower strike price increases the value of a call; A higher strike price increases the value of a put. |
+| **Time to Expiration** | Longer time to expiration increases the value of options (more time for price movement). |
+| **Volatility (σ)** | Higher volatility increases the value of both call and put options. |
+| **Risk-Free Interest Rate (r)** | Higher rates increase the value of call options; decrease the value of put options. |
+| **Dividends (D)** | Dividends decrease the value of call options and increase the value of put options. |
+| **Option Type (Call vs. Put)** | Calls increase in value when stock price rises; Puts increase in value when stock price falls. |
+
+### **Equity Options Greeks:**
+The **Greeks** are a set of risk measures that describe how the price of an option is expected to change in response to various factors such as changes in the price of the underlying asset, time to expiration, volatility, and interest rates. Each Greek measures the sensitivity of an option’s price to a specific factor. Here's a breakdown of the key **Greeks** for equity options:
+
+| **Greek** | **Measures** | **Impact on Option Price** | **Positive for** |
+| --- | --- | --- | --- |
+| **Delta (Δ)** | Sensitivity to changes in underlying stock price by $1 | For calls: increases as stock price rises; For puts: decreases as stock price rises | Calls (positive) |
+| **Gamma (Γ)** | Sensitivity of delta to changes in underlying stock price | High gamma = faster changes in delta for small price changes | Both calls and puts (higher near ATM) |
+| **Theta (Θ)** | Sensitivity to time decay | Negative for long options; options lose value as expiration nears | Both calls and puts |
+| **Vega (ν)** | Sensitivity to changes in volatility | Higher volatility increases option price | Both calls and puts (positive) |
+| **Rho (ρ)** | Sensitivity to changes in risk-free interest rates | Calls rise with interest rates; Puts fall with interest rates | Calls (positive) |
