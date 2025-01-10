@@ -66,3 +66,135 @@ delete[] parr;
 
 ### Smart Pointers
 c++ 11 introduced 3 new types - unique_ptr, shared_ptr and weak_ptr
+
+#### unique_ptr
+```c++
+#include <iostream>
+#include <memory>
+
+int main() {
+    // Create a unique pointer to an integer with value 42
+    std::unique_ptr<int> ptr(new int(42));
+    
+    // Access the managed object
+    std::cout << "Value: " << *ptr << std::endl;
+    
+    // Modify the managed object
+    *ptr = 100;
+    std::cout << "New value: " << *ptr << std::endl;
+    
+    // Release ownership and deallocate the managed object
+    ptr.reset();
+    
+    return 0;
+}
+```
+
+To get the raw pointer use
+```c++
+    // Get the raw pointer
+    int *rawPtr = ptr.get();
+```
+   
+Array version
+```c++
+int main() {
+    // Create a unique pointer to an array of integers with 5 elements
+    std::unique_ptr<int[]> arrayPtr(new int[5]);
+
+    // Initialize elements of the array
+    for (int i = 0; i < 5; ++i) {
+        arrayPtr[i] = i * 10;
+    }
+
+    // Access and print elements of the array
+    for (int i = 0; i < 5; ++i) {
+        std::cout << "Element " << i << ": " << arrayPtr[i] << std::endl;
+    }
+
+    // Get the raw pointer
+    int *rawPtr = arrayPtr.get();
+
+    // Use the raw pointer to modify an element
+    rawPtr[2] = 100;
+
+    // Access and print elements of the array again
+    for (int i = 0; i < 5; ++i) {
+        std::cout << "Element " << i << ": " << arrayPtr[i] << std::endl;
+    }
+
+    return 0;
+}
+```
+
+**make_unique:**
+```c++
+    // Create a unique pointer to an integer with value 42
+    auto ptr = std::make_unique<int>(42);
+    
+    // Use the unique pointer
+    std::cout << *ptr << std::endl; // Output: 42
+
+    // Create a unique pointer to a MyClass object
+    auto ptr = std::make_unique<MyClass>(10, 15, 20); //constructor takes 3 int values
+
+    // Create a unique pointer to an array of integers
+    auto ptr = std::make_unique<int[]>(5);
+    
+    // Initialize elements of the array
+    for (int i = 0; i < 5; ++i) {
+        ptr[i] = i;
+    }
+```
+
+#### shared_ptr
+```c++
+    // Create a shared pointer to an integer with value 42
+    std::shared_ptr<int> ptr = std::make_shared<int>(42);
+    
+    // Create another shared pointer pointing to the same object
+    std::shared_ptr<int> ptr2 = ptr;
+```
+
+#### reference_wrapper
+std::reference_wrapper is a class template provided by the C++ Standard Library. It acts as a wrapper around a reference to an object and provides additional functionalities like assignment and comparison. Flexibility:
+
+std::reference_wrapper is often used in situations where you need to store or manipulate references in containers like std::vector or std::map, or when you want to pass references as function arguments to algorithms or function templates that require copyable types. 
+
+```c++
+#include <iostream>
+#include <functional> // Include for std::reference_wrapper
+
+void increment(std::reference_wrapper<int> numRef) {
+    numRef.get()++;
+}
+
+int main() {
+    int x = 5;
+    std::reference_wrapper<int> ref(x); // Creating a std::reference_wrapper
+    
+    std::cout << "Original value of x: " << x << std::endl; // Output: Original value of x: 5
+    
+    increment(ref); // Pass the reference wrapper to a function
+    
+    std::cout << "Updated value of x: " << x << std::endl; // Output: Updated value of x: 6
+
+    int y = 10;
+    // Change the reference dynamically to y
+    ref = std::ref(y);
+
+    // Example with std::vector
+    std::vector<int> vec = {1, 2, 3, 4, 5};
+    std::vector<std::reference_wrapper<int>> vec_refs;
+
+    // Store references to elements in the vector
+    for (int& elem : vec) {
+        vec_refs.push_back(std::ref(elem));
+    }
+
+    // Modify the original vector and observe changes through references
+    vec[0] = 100;
+
+    return 0;
+}
+```
