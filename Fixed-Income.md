@@ -242,6 +242,13 @@ Factors that affect a bond price is - interest rate, credit rating, time to matu
 #### Bond Yield
 A bond yield is the return an investor can expect to earn from a bond over a specific period, typically expressed as an annual percentage rate. It reflects the income (interest) an investor receives relative to the bond’s price, and it can vary depending on the bond’s type, price, maturity, and prevailing market conditions.
 
+YTM: You can think of Yield to Maturity (YTM) as the single discount rate that equates the present value (PV) of all future cash flows (coupon payments and the face value to be repaid at maturity) to the current price (market price) of the bond
+
+- If the bond price is below par (at a discount), the YTM will be higher than the coupon rate.
+- If the bond price is above par (at a premium), the YTM will be lower than the coupon rate.
+
+In other words, YTM is the rate that makes the sum of the discounted cash flows equal to the bond’s current market price.
+
 There are several types of **bond yields** that investors use to assess the profitability and risk associated with bonds. Below is a summary of the key types of bond yields:
 
 | **Type of Yield** | **Definition** | **Formula** (if applicable) | **Purpose/Usage** |
@@ -255,3 +262,56 @@ There are several types of **bond yields** that investors use to assess the prof
 | **Yield to Taxable Equivalent** | The yield an investor would need from a taxable bond to match the yield of a tax-exempt bond, considering tax implications. | Yield to Taxable Equivalent\=Tax-Exempt Yield1−Tax Rate\\text{Yield to Taxable Equivalent} = \\frac{\\text{Tax-Exempt Yield}}{1 - \\text{Tax Rate}}Yield to Taxable Equivalent\=1−Tax RateTax-Exempt Yield​ | Used to compare taxable and tax-exempt bonds, particularly for investors in high tax brackets. |
 | **Real Yield** | The yield on a bond adjusted for inflation, reflecting the actual purchasing power of the bond’s return. | Real Yield\=1+Nominal Yield1+Inflation Rate−1\\text{Real Yield} = \\frac{1 + \\text{Nominal Yield}}{1 + \\text{Inflation Rate}} - 1Real Yield\=1+Inflation Rate1+Nominal Yield​−1 | Measures the actual return after accounting for inflation. |
 | **Yield to Maturity (YTM) for a Zero-Coupon Bond** | For zero-coupon bonds, YTM represents the discount rate that equates the bond's price to its face value. | YTM\=Face ValuePrice1T−1\\text{YTM} = \\frac{\\text{Face Value}}{\\text{Price}}^{\\frac{1}{T}} - 1YTM\=PriceFace Value​T1​−1 | Applies to zero-coupon bonds, which do not make periodic interest payments but are sold at a discount. |
+
+
+### Derivatives
+A derivative is a financial instrument whose value is derived from the price or value of an underlying asset, index, or other financial instrument. Derivatives are essentially contracts between two or more parties, and their price or payoff is linked to the performance of the underlying asset.
+
+### **Summary of Derivatives Types:**
+
+| Type | Definition | Key Use Cases | Example |
+| --- | --- | --- | --- |
+| **Forward Contracts** | Customized agreement to buy/sell an asset in the future at a specified price. | Hedging, locking in future prices. | Currency forward contract for importers. |
+| **Futures Contracts** | Standardized contract to buy/sell an asset on an exchange at a future date. | Hedging, speculation, portfolio management. | Crude oil futures contract. |
+| **Options** | Right to buy/sell an asset at a specified price within a specific time frame. | Hedging, speculation, income generation. | Stock call option. |
+| **Swaps** | Exchange of cash flows based on specified terms, such as interest rates or currencies. | Hedging interest rate risk, credit risk. | Interest rate swap to convert floating to fixed payments. |
+| **Credit Derivatives** | Instruments to manage credit risk, like CDS. | Hedging against default, credit events. | Credit Default Swap (CDS). |
+| **Warrants** | Long-term options to buy stock at a specific price. | Capital raising, hedging. | Warrant attached to a bond issue. |
+| **Swaptions** | Option to enter into an interest rate swap. | Hedging interest rate changes. | Payer swaption to hedge rising rates. |
+| **Commodity Derivatives** | Derivatives based on the price of commodities. | Hedging commodity price risk. | Wheat futures to hedge agricultural risk. |
+
+### **Swaps**
+
+*   **Definition**: A swap is a **contract** in which two parties agree to exchange cash flows or assets based on certain conditions (usually at regular intervals).
+*   **Key Types**:
+    *   **Interest Rate Swap**: Exchange fixed-rate payments for floating-rate payments or vice versa, often used to hedge interest rate risk.
+    *   **Currency Swap**: Exchange cash flows in one currency for cash flows in another currency.
+    *   **Commodity Swap**: Exchange cash flows based on commodity prices (e.g., oil, gold).
+    *   **Credit Default Swap (CDS)**: A contract that allows one party to buy protection against the default of a bond or loan issuer.
+*   **Example**: A company with floating-rate debt may enter into an **interest rate swap** to convert the floating payments into fixed payments, mitigating the risk of rising interest rates.
+
+### **Credit Derivatives**
+
+*   **Definition**: Credit derivatives are financial instruments used to manage credit risk by allowing parties to hedge or take on exposure to credit events (like default or credit downgrades).
+*   **Key Types**:
+    *   **Credit Default Swap (CDS)**: A contract that allows one party to buy protection against the default of a bond or loan issuer, while the seller assumes the default risk.
+    *   **Total Return Swap (TRS)**: Involves the exchange of the total return on a bond or other asset, including income and capital appreciation, for fixed or floating rate payments.
+*   **Example**: A CDS buyer may make periodic payments in exchange for protection against a bond issuer defaulting on its debt.
+
+### **Warrants**
+
+*   **Definition**: A **warrant** is a financial instrument that gives the holder the right to buy the underlying asset (usually stock) at a specific price (exercise price) before a certain expiration date.
+*   **Key Characteristics**:
+    *   **Issued by companies**: Often issued alongside bonds or preferred stocks to enhance the attractiveness of the issuance.
+    *   **Long-term options**: Usually have a longer life than standard options (years instead of months).
+    *   Similar to **call options**, but typically issued by the company itself and often with lower premiums.
+*   **Example**: A company issues warrants alongside a bond, allowing the holder to purchase the company’s stock at a specified price in the future.
+
+### **Swaptions**
+
+*   **Definition**: A **swaption** is an option to enter into an interest rate swap, providing the buyer the right (but not the obligation) to enter into an interest rate swap at a specified future date.
+*   **Key Characteristics**:
+    *   Used to hedge or speculate on future interest rate changes.
+    *   Two types: **payer swaption** (right to enter a swap where you pay fixed and receive floating) and **receiver swaption** (right to enter a swap where you receive fixed and pay floating).
+*   **Example**: A company might buy a payer swaption to protect against the risk of rising interest rates.
+
