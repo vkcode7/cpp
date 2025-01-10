@@ -50,6 +50,10 @@ Interest Payment:
 Monthly interest = (5%/12) × 1,000,000 = 4,166.67.
 ```
 
+### ISDA vs Swap Dealers
+- ISDA (International Swaps and Derivatives Association) is an important organization that provides standardized documentation and promotes sound risk management practices in the global derivatives market.
+- Swap Dealers are key market participants that facilitate the trading of swaps and other derivative products by providing liquidity, acting as counterparties, and managing risks.
+
 ### What is a Swap?
 A swap is a financial derivative contract in which two parties agree to exchange cash flows based on a specified notional amount over a defined period. The most common type is the interest rate swap, where one party exchanges fixed-rate cash flows for floating-rate cash flows (or vice versa).
 
@@ -114,6 +118,17 @@ Calculate the PV of Floating Payments:
 Set the Fixed Rate to Equalize PVs:
 - Calculate the fixed cash flows, ensuring their PV equals the PV of the floating payments:
 - Solve for the fixed rate (FixedRate) that balances PV-Floating = PV-FixedRate
+
+#### How an Interest Rate Swap is Used to Hedge FR Debt:
+
+| **Step** | **Explanation** |
+| --- | --- |
+| **Hedge Objective** | Protect against rising interest rates on floating-rate debt |
+| **Enter Swap** | Enter a swap to **pay a fixed rate** and **receive floating** |
+| **Floating Debt Payments** | Still pay floating rates on the debt (e.g., LIBOR + spread) |
+| **Fixed Swap Payments** | Pay a fixed rate on the swap |
+| **Floating Swap Receipts** | Receive the floating rate on the swap, offsetting higher floating debt payments |
+| **Result** | Convert floating debt into a more predictable, hedged fixed cost |
 
 ### Capital Markets
 **Capital Markets** are financial markets where long-term debt and equity instruments are traded. These markets enable businesses, governments, and institutions to raise funds for investments, operations, or expansions, and they allow investors to invest in financial assets for potential returns.
@@ -263,6 +278,174 @@ There are several types of **bond yields** that investors use to assess the prof
 | **Real Yield** | The yield on a bond adjusted for inflation, reflecting the actual purchasing power of the bond’s return. | Real Yield\=1+Nominal Yield1+Inflation Rate−1\\text{Real Yield} = \\frac{1 + \\text{Nominal Yield}}{1 + \\text{Inflation Rate}} - 1Real Yield\=1+Inflation Rate1+Nominal Yield​−1 | Measures the actual return after accounting for inflation. |
 | **Yield to Maturity (YTM) for a Zero-Coupon Bond** | For zero-coupon bonds, YTM represents the discount rate that equates the bond's price to its face value. | YTM\=Face ValuePrice1T−1\\text{YTM} = \\frac{\\text{Face Value}}{\\text{Price}}^{\\frac{1}{T}} - 1YTM\=PriceFace Value​T1​−1 | Applies to zero-coupon bonds, which do not make periodic interest payments but are sold at a discount. |
 
+Bullet bonds: principal is paid at maturuty in **lump sum and no partial payment** is done; it is a single bond that is issued and principal paid at maturity. Bond holder recieves coupons periodically.
+Term bond: A series of bonds are issued such as 10000 2$ 10y treasury bonds and they all **mature at same time**. Bond holder recieves coupons periodically.
+Zero coupon: principal is paid at maturity; bond is issued at discount to account for interest rate.
+
+Actually, bonds can be both bullet bonds and term bonds. The term "term bond" refers to the maturity structure of a bond issue, whereas the term "bullet bond" refers to the structure of how the principal is repaid.
+
+| **Feature** | **Bill** | **Note** | **Bond** |
+| --- | --- | --- | --- |
+| **Maturity** | Short-term (up to 1 year) | Medium-term (1–10 years) | Long-term (more than 10 years) |
+| **Interest** | Issued at a discount (no coupons) | Pays periodic coupons | Pays periodic coupons |
+| **Issuer** | Governments, corporations | Governments, corporations | Governments, corporations, municipalities |
+| **Common Examples** | Treasury bills (T-bills), commercial paper | Treasury notes (T-notes), corporate notes | Treasury bonds (T-bonds), corporate bonds |
+
+**Bond pricing convention** refers to the standard methods and rules used to calculate the price of a bond in the financial markets. This includes how bond prices are quoted, how interest (coupon) payments are accounted for, and how to determine the bond's price based on its yield, maturity, and coupon rate. Here are the key components of bond pricing conventions:
+
+### **1\. Price Quotation**
+
+*   **Bond Price**: The price of a bond is typically quoted as a percentage of its **face value** (par value), which is usually **$1,000**.
+*   **Example**: A bond priced at **98** means it is priced at **98% of its par value**, or $980. A bond priced at **102** means it is priced at **102% of its par value**, or $1,020.
+
+### **2\. Accrued Interest**
+
+*   **Accrued Interest** refers to the interest that has accumulated on a bond since the last coupon payment date, but has not yet been paid.
+*   **Formula**: Accrued Interest\=Coupon Rate×Face Value×Days Since Last CouponDays in Coupon Period\\text{Accrued Interest} = \\frac{\\text{Coupon Rate} \\times \\text{Face Value} \\times \\text{Days Since Last Coupon}}{\\text{Days in Coupon Period}}Accrued Interest\=Days in Coupon PeriodCoupon Rate×Face Value×Days Since Last Coupon​
+*   **Example**: If a bond pays an annual coupon of 6% on a $1,000 face value bond, the accrued interest for 90 days would be: 6%×1,000×90365\=14.79\\frac{6\\% \\times 1,000 \\times 90}{365} = 14.793656%×1,000×90​\=14.79 If the bond is bought between coupon payments, the buyer pays the seller the accrued interest in addition to the price of the bond.
+
+### **3\. Clean vs. Dirty Price**
+
+*   **Clean Price**: The price quoted for a bond **without** including the accrued interest.
+    *   This is the standard way bonds are quoted in the market.
+    *   For example, if a bond's price is quoted at 98, it means **98% of par**, and this is the clean price.
+*   **Dirty Price**: The price of the bond **including the accrued interest**.
+    
+    *   If the clean price of a bond is 98, and there’s accrued interest of $14.79, the dirty price would be:
+    
+    Dirty Price\=Clean Price+Accrued Interest\=980+14.79\=994.79\\text{Dirty Price} = \\text{Clean Price} + \\text{Accrued Interest} = 980 + 14.79 = 994.79Dirty Price\=Clean Price+Accrued Interest\=980+14.79\=994.79
+
+### **4\. Yield and Yield to Maturity (YTM)**
+
+*   The price of a bond is directly related to its **yield**. The bond price changes to ensure that the bond’s yield matches the required return for an investor.
+    *   **Yield to Maturity (YTM)**: The rate of return an investor will earn if the bond is held until maturity. YTM takes into account the bond's current market price, coupon payments, and the difference between the bond's face value and the price paid for the bond.
+*   **Price Calculation**: The bond price is the **present value** of its future cash flows (coupons and principal repayment) discounted at the bond’s yield. P\=∑i\=1nC(1+YTM)i+F(1+YTM)nP = \\sum\_{i=1}^{n} \\frac{C}{(1 + YTM)^i} + \\frac{F}{(1 + YTM)^n}P\=i\=1∑n​(1+YTM)iC​+(1+YTM)nF​ Where:
+    *   PPP = Price of the bond
+    *   CCC = Coupon payment
+    *   FFF = Face value of the bond
+    *   YTMYTMYTM = Yield to maturity
+    *   nnn = Number of periods (e.g., years or semi-annual periods)
+
+### **5\. Day Count Conventions**
+
+*   **Day Count Conventions** specify how the days between coupon periods are calculated for pricing purposes, as it impacts accrued interest.
+*   Common conventions include:
+    *   **Actual/Actual**: Uses the actual number of days in the month/year.
+    *   **30/360**: Assumes 30 days per month and 360 days per year.
+    *   **Actual/360**: Uses the actual number of days in the period, but assumes a 360-day year.
+    *   **30/365**: Assumes 30 days per month and 365 days per year.
+
+### **6\. Price-Yield Relationship**
+
+*   Bond prices and yields have an **inverse relationship**:
+    *   When **interest rates rise**, bond prices fall.
+    *   When **interest rates fall**, bond prices rise.
+
+### **7\. Premium vs. Discount Bonds**
+
+*   **Premium Bond**: A bond priced above its face value (i.e., above 100% of par). This usually happens when the bond’s coupon rate is higher than current market rates.
+*   **Discount Bond**: A bond priced below its face value (i.e., below 100% of par). This occurs when the bond’s coupon rate is lower than the market interest rates.
+
+- - -
+
+### **Summary of Key Bond Pricing Conventions:**
+
+| **Concept** | **Explanation** |
+| --- | --- |
+| **Price Quotation** | Bonds are quoted as a percentage of par value (usually $1,000). |
+| **Accrued Interest** | The interest accumulated since the last coupon payment is added to the price when purchasing the bond. |
+| **Clean Price** | The price of the bond excluding accrued interest. |
+| **Dirty Price** | The price of the bond including accrued interest. |
+| **Yield and YTM** | Bond price is the present value of future cash flows, and the yield adjusts to match market conditions. |
+| **Day Count Conventions** | Rules used to calculate the number of days for accrued interest (e.g., 30/360, Actual/Actual). |
+| **Premium/Discount** | Premium bonds are priced above par, discount bonds are priced below par. |
+
+**Bond duration** is a measure of the **interest rate sensitivity** of a bond or a bond portfolio. It represents the **weighted average time** it takes for a bond’s cash flows (coupons and principal repayments) to be repaid, and it helps investors assess how much a bond’s price will change in response to changes in interest rates.
+
+### **Key Concepts of Bond Duration:**
+
+1.  **Duration as a Risk Measure**:
+    
+    *   Duration quantifies how much the price of a bond will change with a **1% change in interest rates**.
+    *   A **longer duration** implies that the bond’s price is more sensitive to interest rate changes, while a **shorter duration** means the bond’s price is less sensitive.
+2.  **Types of Duration**:
+    
+    *   **Macaulay Duration**: The weighted average time to receive the bond’s cash flows. It is expressed in years.
+    *   **Modified Duration**: A more practical measure that reflects the percentage change in the bond price for a 1% change in interest rates. It is derived from the Macaulay duration and gives a better indication of price sensitivity to interest rate changes.
+
+### **Formula for Macaulay Duration**:
+
+The **Macaulay duration** can be calculated using the following formula:
+
+D\=∑t\=1Tt×C(1+y)t+T×M(1+y)T∑t\=1TC(1+y)t+M(1+y)TD = \\frac{ \\sum\_{t=1}^{T} \\frac{t \\times C}{(1 + y)^t} + \\frac{T \\times M}{(1 + y)^T} }{ \\sum\_{t=1}^{T} \\frac{C}{(1 + y)^t} + \\frac{M}{(1 + y)^T} }D\=∑t\=1T​(1+y)tC​+(1+y)TM​∑t\=1T​(1+y)tt×C​+(1+y)TT×M​​
+
+Where:
+
+*   DDD = Duration (in years)
+*   CCC = Coupon payment
+*   MMM = Maturity value (face value)
+*   yyy = Yield to maturity (YTM)
+*   ttt = Time period (in years)
+*   TTT = Total number of periods (years to maturity)
+
+### **Formula for Modified Duration**:
+
+The **Modified duration** is derived from the Macaulay duration and can be calculated as:
+
+Dmod\=Dmac(1+y/n)D\_{mod} = \\frac{D\_{mac}}{(1 + y/n)}Dmod​\=(1+y/n)Dmac​​
+
+Where:
+
+*   DmodD\_{mod}Dmod​ = Modified duration
+*   DmacD\_{mac}Dmac​ = Macaulay duration
+*   yyy = Yield to maturity (YTM)
+*   nnn = Number of compounding periods per year
+
+### **Interpretation**:
+
+*   If a bond has a **modified duration of 5**, it means that for every **1% change in interest rates**, the bond’s price will move in the **opposite direction** by approximately **5%**. If interest rates go up by 1%, the bond price will decrease by around 5%, and if interest rates fall by 1%, the bond price will increase by about 5%.
+    
+*   **Longer duration bonds** (such as long-term bonds) are more sensitive to interest rate changes than **shorter duration bonds** (such as short-term bonds).
+    
+
+### **Factors Influencing Bond Duration**:
+
+1.  **Coupon Rate**:
+    *   **Higher coupon bonds** tend to have **shorter durations** because the investor receives more cash flow early on, reducing the weighted average time to receive payments.
+    *   **Lower coupon bonds** (or zero-coupon bonds) tend to have **longer durations** because the bondholder receives most of the cash flow at maturity.
+2.  **Time to Maturity**:
+    *   **Bonds with longer maturities** tend to have **longer durations** because the principal repayment is further in the future, increasing the weighted average time.
+3.  **Yield to Maturity (YTM)**:
+    *   **Higher YTM** generally reduces the duration because higher discount rates lower the present value of future cash flows, shortening the time it takes to recoup the bond's price.
+
+### **Example**:
+
+Let's consider a bond with:
+
+*   A **$1,000 face value**,
+*   A **5% coupon rate** (annual coupon),
+*   A **10-year maturity**,
+*   A **YTM of 6%**.
+
+By calculating the bond's duration (either Macaulay or modified), we can determine the sensitivity of the bond's price to changes in interest rates. If the bond’s **modified duration** is 7 years, then a **1% increase in interest rates** would result in an approximate **7% decline in the bond's price**.
+
+### **Why is Duration Important?**:
+
+*   **Interest Rate Risk Management**: Duration helps investors understand how much risk they are taking in terms of price fluctuations due to interest rate changes.
+*   **Immunization**: Bond portfolios with a **duration matching the investor's investment horizon** can be used to **immunize** against interest rate risk, ensuring a more predictable return.
+*   **Portfolio Construction**: Duration is often used by fixed-income portfolio managers to align the portfolio’s interest rate sensitivity with the investor’s goals and risk tolerance.
+
+### **Summary**:
+
+| **Duration Type** | **Description** |
+| --- | --- |
+| **Macaulay Duration** | Weighted average time to receive cash flows. |
+| **Modified Duration** | Measures price sensitivity to interest rate changes. |
+| **Longer Duration** | More price sensitivity to interest rate changes. |
+| **Shorter Duration** | Less price sensitivity to interest rate changes. |
+
+Duration is a key concept for understanding bond price fluctuations in response to interest rate changes and for managing interest rate risk effectively.
+
 
 ### Derivatives
 A derivative is a financial instrument whose value is derived from the price or value of an underlying asset, index, or other financial instrument. Derivatives are essentially contracts between two or more parties, and their price or payoff is linked to the performance of the underlying asset.
@@ -340,8 +523,81 @@ The **Greeks** are a set of risk measures that describe how the price of an opti
 
 | **Greek** | **Measures** | **Impact on Option Price** | **Positive for** |
 | --- | --- | --- | --- |
-| **Delta (Δ)** | Sensitivity to changes in underlying stock price by $1 | For calls: increases as stock price rises; For puts: decreases as stock price rises | Calls (positive) |
+| **Delta (Δ)** | Sensitivity to changes in underlying stock price by $1. A delta of 0.5 means that for every $1 increase in the stock price, the call option’s price will increase by $0.50. | For calls: increases as stock price rises; For puts: decreases as stock price rises | Calls (positive) |
 | **Gamma (Γ)** | Sensitivity of delta to changes in underlying stock price | High gamma = faster changes in delta for small price changes | Both calls and puts (higher near ATM) |
-| **Theta (Θ)** | Sensitivity to time decay | Negative for long options; options lose value as expiration nears | Both calls and puts |
-| **Vega (ν)** | Sensitivity to changes in volatility | Higher volatility increases option price | Both calls and puts (positive) |
-| **Rho (ρ)** | Sensitivity to changes in risk-free interest rates | Calls rise with interest rates; Puts fall with interest rates | Calls (positive) |
+| **Theta (Θ)** | Sensitivity to time decay. If theta is -0.05, the option’s value will decrease by $0.05 per day due to time decay. | Negative for long options; options lose value as expiration nears | Both calls and puts |
+| **Vega (ν)** | Sensitivity to changes in volatility by 1%. A vega of 0.10 means that for every 1% increase in volatility, the option’s price will increase by $0.10. | Higher volatility increases option price | Both calls and puts (positive) |
+| **Rho (ρ)** | Sensitivity to changes in risk-free interest rates for 1% change. A rho of 0.20 means that if interest rates increase by 1%, the price of the call option will increase by $0.20.| Calls rise with interest rates; Puts fall with interest rates | Calls (positive) |
+
+
+### Black-Scholes Model
+The Black-Scholes formula calculates the fair market value of an option by taking into account the current stock price, the option's strike price, the time to expiration, the volatility of the underlying asset, and the risk-free interest rate.
+
+The Black-Scholes model is a cornerstone in modern financial markets, particularly for pricing European-style options. Despite its assumptions and limitations, it provides a closed-form solution for option pricing, offering insight into how factors such as stock price, strike price, time, volatility, and interest rates interact to determine option value.
+
+### **Limitations of the Black-Scholes Model:**
+
+1.  **Constant volatility assumption**: In reality, volatility is not constant over time. It fluctuates based on market conditions.
+2.  **European-style options**: The model is designed for options that can only be exercised at expiration. It does not apply to American-style options, which can be exercised at any time before expiration.
+3.  **No dividends**: The Black-Scholes model assumes that the underlying asset does not pay dividends. However, in practice, many stocks pay dividends, and this can significantly affect the option's price.
+4.  **No transaction costs**: The model assumes that there are no transaction fees or taxes, which may not reflect real-world conditions.
+5.  **Efficient market assumption**: The model assumes that markets are efficient, meaning that there are no arbitrage opportunities. In reality, markets can be inefficient, and arbitrage opportunities may exist.
+
+**Implied Volatility:** In practice, market participants often calculate implied volatility, which is the volatility figure that makes the Black-Scholes formula match the market price of the option.
+
+#### Volatility Smile
+The volatility smile refers to the shape of a graph that shows implied volatility (IV) for options with the same expiration date but different strike prices. In a volatility smile, implied volatility tends to be higher for deep out-of-the-money (OTM) and deep in-the-money (ITM) options and lower for at-the-money (ATM) options.
+
+#### Volatility Skew
+The volatility skew (also called volatility slope) refers to the tendency of implied volatility to vary with the strike price in a way that does not form a smile but instead shows a sloping pattern. This occurs when implied volatility is higher on one side of the strike. Whichever way the smile is skewing, U/L price is likely to move in that direction.
+
+
+### An Eurodollar (ED) future - provides Liquidity, Leveraging and Hedging
+An Eurodollar (ED) future is a financial contract that represents a bet on the future value of U.S. dollar interest rates. It specifically tracks the three-month U.S. dollar LIBOR (London Interbank Offered Rate), which is the interest rate at which banks lend to each other in U.S. dollars in the international interbank market.
+
+Eurodollar futures are one of the most widely traded futures contracts in the world and are used primarily by institutional investors, hedgers, and traders to manage interest rate risk or to speculate on future interest rate movements.
+
+Example of Eurodollar Future:
+- Suppose an investor is looking to hedge against the possibility that interest rates might rise in the near future. They might buy a Eurodollar futures contract at a price of 98.50 (which implies a LIBOR rate of 1.50%).
+- If the LIBOR rate increases by 0.25% to 1.75% by the time the contract expires, the price of the futures contract will fall (to 98.25), and the investor can sell the contract for a profit.
+
+**Eurodollar (ED) futures** are still actively traded, but there has been a significant shift toward trading **SOFR futures** due to the transition away from LIBOR.
+
+### **Background: Transition from LIBOR to SOFR**
+
+*   The **LIBOR (London Interbank Offered Rate)**, which was the reference rate used for Eurodollar futures, has been gradually phased out. This decision came after **regulatory concerns** regarding LIBOR's reliability and manipulation risks. As a result, the **U.S. Federal Reserve** and other regulators introduced **SOFR (Secured Overnight Financing Rate)** as a replacement benchmark for U.S. dollar-based interest rates.
+
+### **Eurodollar Futures vs SOFR Futures**:
+
+1.  **Eurodollar Futures**:
+    
+    *   These futures contracts are based on the **three-month LIBOR** rate.
+    *   Eurodollar futures are still actively traded on exchanges like the **CME Group** and are widely used by market participants, especially for hedging and speculating on U.S. short-term interest rates.
+2.  **SOFR Futures**:
+    
+    *   **SOFR futures** are newer contracts introduced to replace Eurodollar futures as the market moves away from LIBOR-based products.
+    *   These futures are based on the **SOFR rate**, which is a transaction-based, overnight, secured rate derived from the U.S. Treasury repurchase agreements market. SOFR is considered more robust and transparent compared to LIBOR.
+    *   **SOFR futures** are also traded on the **CME Group** and serve a similar purpose to Eurodollar futures, such as managing short-term interest rate exposure or hedging future rate movements.
+
+### **Current Status**:
+
+*   **Eurodollar futures** are still actively traded for legacy contracts but no new ones are issued, while **SOFR futures** are gaining prominence as the market transitions to the new benchmark.
+*   The **transition from LIBOR to SOFR** is being driven by financial regulators, and over time, **SOFR futures** are expected to replace Eurodollar futures for most market participants.
+
+### **Differences Between Eurodollar Futures and SOFR Futures**:
+
+| **Feature** | **Eurodollar Futures** | **SOFR Futures** |
+| --- | --- | --- |
+| **Underlying Rate** | Three-month LIBOR | SOFR (Secured Overnight Financing Rate) |
+| **Settlement** | Cash-settled based on LIBOR rate for the contract month | Cash-settled based on SOFR rate for the contract month |
+| **Market Usage** | Hedging, Speculation on LIBOR rates | Hedging, Speculation on short-term interest rates based on SOFR |
+| **Liquidity** | Highly liquid, still widely traded | Growing liquidity, particularly in post-LIBOR markets |
+| **Transition** | Gradually being replaced by SOFR futures | Gaining adoption as the primary benchmark for U.S. dollar rates |
+| **Expiration** | Quarterly and monthly expirations | Quarterly and monthly expirations |
+
+### **Which Futures Should You Use?**
+
+*   **Eurodollar futures** are still widely used in the market for legacy reasons, especially by those who want to hedge or speculate on LIBOR-based products or existing legacy LIBOR contracts.
+*   **SOFR futures** are becoming the standard as financial markets move away from LIBOR. These futures are expected to be the main vehicle for hedging and speculation on U.S. interest rates going forward, particularly as more products and derivatives transition to SOFR.
+
+The CME Group has ceased issuing new Eurodollar futures contracts for most maturities following the transition away from LIBOR. This shift is part of the broader move away from the LIBOR benchmark to the SOFR benchmark, as LIBOR is being phased out due to concerns over its reliability and manipulation risks.
