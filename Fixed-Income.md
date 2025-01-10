@@ -570,7 +570,7 @@ Eurodollar futures are one of the most widely traded futures contracts in the wo
 
 Example of Eurodollar Future:
 - Suppose an investor is looking to hedge against the possibility that interest rates might rise in the near future. They might buy a Eurodollar futures contract at a price of 98.50 (which implies a LIBOR rate of 1.50%).
-- If the LIBOR rate increases by 0.25% to 1.75% by the time the contract expires, the price of the futures contract will fall (to 98.25), and the investor can sell the contract for a profit.
+- If the LIBOR rate increases by 0.25% to 1.75% by the time the contract expires, the price of the futures contract will fall (to 98.25), and the investor can sell the contract for a loss.
 
 **Eurodollar (ED) futures** are still actively traded, but there has been a significant shift toward trading **SOFR futures** due to the transition away from LIBOR.
 
@@ -599,7 +599,7 @@ Example of Eurodollar Future:
 
 | **Feature** | **Eurodollar Futures** | **SOFR Futures** |
 | --- | --- | --- |
-| **Underlying Rate** | Three-month LIBOR | SOFR (Secured Overnight Financing Rate) |
+| **Underlying Rate** | Three-month LIBOR | 30 days average SOFR (Secured Overnight Financing Rate) |
 | **Settlement** | Cash-settled based on LIBOR rate for the contract month | Cash-settled based on SOFR rate for the contract month |
 | **Market Usage** | Hedging, Speculation on LIBOR rates | Hedging, Speculation on short-term interest rates based on SOFR |
 | **Liquidity** | Highly liquid, still widely traded | Growing liquidity, particularly in post-LIBOR markets |
