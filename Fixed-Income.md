@@ -50,6 +50,17 @@ Interest Payment:
 Monthly interest = (5%/12) × 1,000,000 = 4,166.67.
 ```
 
+### FedFunds vs SOFR
+FedFunds is set by FOMC cmmittee of Fed Reserve.
+
+| Aspect | Fed Funds Rate | SOFR |
+| --- | --- | --- |
+| **Type** | Unsecured (based on credit worthiness) | Secured by Treasury bills/bonds |
+| **Market** | Federal funds market | Repo market |
+| **Credit Risk** | Yes | No  |
+| **Purpose** | Bank-to-bank overnight lending | Broad market benchmark |
+| **Use Cases** | Fed policy rate, loans | LIBOR replacement, derivatives |
+
 ### ISDA vs Swap Dealers
 - ISDA (International Swaps and Derivatives Association) is an important organization that provides standardized documentation and promotes sound risk management practices in the global derivatives market.
 - Swap Dealers are key market participants that facilitate the trading of swaps and other derivative products by providing liquidity, acting as counterparties, and managing risks.
