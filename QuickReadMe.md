@@ -198,3 +198,35 @@ int main() {
     return 0;
 }
 ```
+
+R-Value Reference - '&&'
+An rvalue reference is a reference that can bind to temporary objects or to objects that are about to be moved. It's a feature introduced in C++11 to enable move semantics and perfect forwarding.
+```c++
+#include <iostream>
+
+void foo(int&& x) {
+    std::cout << "Received rvalue reference: " << x << std::endl;
+    x = 100;
+}
+
+int main() {
+    int a = 10; // 'a' is an lvalue
+    //foo(a); <= Error: expects an rvalue for 1st argument
+    foo(5); // 5 is an rvalue, it's a temporary object
+    foo(std::move(a)); // 'a' is explicitly cast to an rvalue using std::move
+    std::cout << "a is now: " << a << std::endl;
+
+    return 0;
+}
+
+Output:
+Received rvalue reference: 5
+Received rvalue reference: 10
+a is now: 100
+```
+This is what happens at low level:
+
+- A temporary variable of type int is created on the stack of main. It's assigned with value 5.
+- The address of the temporary is passed to fn.
+- fn writes 100 by that address, changing the value of the temporary.
+- The function exits, the temporary dies at the end of the full expression involving the call.
