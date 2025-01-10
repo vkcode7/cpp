@@ -115,3 +115,143 @@ Set the Fixed Rate to Equalize PVs:
 - Calculate the fixed cash flows, ensuring their PV equals the PV of the floating payments:
 - Solve for the fixed rate (FixedRate) that balances PV-Floating = PV-FixedRate
 
+### Capital Markets
+**Capital Markets** are financial markets where long-term debt and equity instruments are traded. These markets enable businesses, governments, and institutions to raise funds for investments, operations, or expansions, and they allow investors to invest in financial assets for potential returns.
+
+### **Key Components of Capital Markets**
+
+1.  **Types of Instruments**:
+    
+    *   **Equity Instruments**: Stocks or shares that represent ownership in a company.
+    *   **Debt Instruments**: Bonds, debentures, or other fixed-income securities that represent a loan made by an investor to a borrower.
+2.  **Participants**:
+    
+    *   **Issuers**: Companies, governments, or other entities that raise funds by issuing stocks or bonds.
+    *   **Investors**: Individuals, institutional investors (e.g., mutual funds, pension funds), or hedge funds that invest in these instruments.
+    *   **Intermediaries**: Investment banks, brokers, and dealers that facilitate transactions.
+3.  **Markets**:
+    
+    *   **Primary Market**: Where new securities are issued and sold for the first time (e.g., IPOs or new bond issuances).
+    *   **Secondary Market**: Where existing securities are traded between investors (e.g., stock exchanges like NYSE or NASDAQ).
+4.  **Regulators**:
+    
+    *   Regulatory bodies oversee and ensure transparency and fairness in the markets (e.g., the **Securities and Exchange Commission (SEC)** in the U.S.).
+
+- - -
+
+### **Functions of Capital Markets**
+
+1.  **Raising Capital**: Companies and governments can issue bonds or stocks to raise funds for projects and operations.
+2.  **Price Discovery**: Markets determine the fair value of securities based on supply and demand.
+3.  **Liquidity**: Investors can buy and sell securities, converting them into cash when needed.
+4.  **Risk Management**: Derivatives in capital markets allow participants to hedge against risks like interest rate changes or currency fluctuations.
+
+- - -
+
+### **Types of Capital Markets**
+
+1.  **Stock Markets**:
+    
+    *   Facilitate trading of equity instruments (e.g., common and preferred shares).
+    *   Example: NYSE, NASDAQ.
+2.  **Bond Markets**:
+    
+    *   Allow trading of fixed-income securities like government bonds, corporate bonds, and municipal bonds.
+    *   Example: U.S. Treasury market.
+3.  **Foreign Exchange Markets**:
+    
+    *   Facilitate currency trading and are crucial for cross-border capital flows.
+4.  **Derivatives Markets**:
+    
+    *   Instruments like options, futures, and swaps derived from underlying assets.
+5.  **Commodities Markets**:
+    
+    *   Trading of physical goods or commodity-linked financial instruments.
+
+### **Role in the Economy**
+
+1.  **Economic Growth**: Facilitates efficient allocation of capital, supporting economic expansion.
+2.  **Wealth Creation**: Offers investment opportunities for wealth accumulation.
+3.  **Corporate Governance**: Publicly traded companies are subject to scrutiny, promoting transparency and accountability.
+
+
+### Yield Auctions
+**Yield auctions** are a type of auction used by governments or institutions to sell debt securities, such as Treasury bonds, bills, or notes, to investors. In these auctions, the bidders specify the **yield** (or return) they are willing to accept rather than the price they are willing to pay for the security.
+
+### **Example of a Yield Auction**
+
+#### **Treasury Auction**
+
+*   The U.S. Treasury uses yield auctions to issue bonds.
+*   Suppose the Treasury wants to issue $10 billion in 10-year notes:
+    1.  **Investors Submit Bids**:
+        *   Investor A: Bids a yield of 3.00%.
+        *   Investor B: Bids a yield of 3.10%.
+        *   Investor C: Bids a yield of 3.20%.
+    2.  **Treasury Sets a Cutoff Yield**:
+        *   The Treasury accepts bids up to the 3.10% yield to raise the required $10 billion.
+    3.  **Pricing**:
+        *   In a **uniform price auction**, all winning bidders receive the securities at the same price, corresponding to the 3.10% yield.
+        *   In a **multiple price auction**, each bidder pays a price based on their individual yield.
+
+### **Advantages of Yield Auctions**
+
+1.  **Efficient Pricing**: Yield auctions let the market determine the price and interest rate of the securities.
+2.  **Transparency**: Competitive bidding ensures fairness and market-driven outcomes.
+3.  **Broad Participation**: Institutional and retail investors can participate in auctions.
+
+
+### Financial intermediaries and institutions
+Financial intermediaries and institutions play a critical role in secondary markets, where previously issued financial securities (e.g., stocks, bonds, derivatives) are traded between investors. Their role is central to providing liquidity, enabling price discovery, and ensuring market efficiency.
+
+Role of **financial intermediaries and institutions** in **secondary markets** in a tabular format:
+
+| **Role** | **Description** | **Example Institutions** |
+| --- | --- | --- |
+| **Liquidity Providers** | Ensure securities can be bought or sold easily, creating a continuous market. | Market Makers (Investment Banks, Broker-Dealers), Brokerage Firms |
+| **Price Discovery** | Help determine the fair market value of securities through active trading. | Exchanges (NYSE, NASDAQ), Asset Managers, Hedge Funds |
+| **Market Efficiency** | Facilitate smooth operations by matching buyers and sellers and minimizing price distortions. | Asset Managers, Hedge Funds, Brokers |
+| **Risk Management** | Use secondary markets for hedging and diversification to manage portfolio risks. | Hedge Funds, Insurance Companies, Asset Managers |
+| **Access to Capital** | Provide liquidity to attract investors and enable easy buying/selling of securities. | Mutual Funds, Pension Funds, Investment Banks |
+| **Investor Confidence** | Ensure transparency, fairness, and regulatory compliance in trading activities. | Regulated Exchanges (NYSE, NASDAQ), Broker-Dealers |
+
+### Bond
+A bond is a debt security that represents a loan made by an investor (the bondholder) to a borrower (usually a corporation, government, or municipality). In return for the loan, the issuer of the bond agrees to make periodic interest payments (called coupons) to the bondholder and repay the principal (face value) of the bond at maturity.
+
+Key features are Issuer, Face Value, Coupon Rate and Payment frequency, Maturity date and Issuer rating
+
+#### Bond Risks
+
+| **Risk** | **Description** | **Impact** |
+| --- | --- | --- |
+| **Interest Rate Risk** | Risk of bond prices falling due to rising interest rates. | Longer-duration bonds are more sensitive to interest rate changes. |
+| **Credit Risk** | Risk that the issuer will default on its payments or be unable to meet obligations. | Can lead to partial or complete loss of principal and interest. |
+| **Inflation Risk** | Risk that inflation erodes the purchasing power of bond interest payments. | Bonds with fixed interest payments lose real value during inflation. |
+| **Liquidity Risk** | Risk that the bond cannot be sold quickly without affecting its price. | Can result in lower prices and difficulty in executing trades. |
+| **Call Risk** | Risk that the issuer may call (redeem) the bond before maturity, often when interest rates decline. | Investors may be forced to reinvest at lower rates. |
+| **Reinvestment Risk** | Risk that cash flows (coupon payments or principal) are reinvested at lower rates. | Reduces the expected return if reinvestment rates fall. |
+| **Currency Risk** | Risk that exchange rate fluctuations impact the value of bonds in foreign currencies. | Affects bonds issued in foreign currencies or by foreign issuers. |
+| **Duration Risk** | Risk related to the bond’s sensitivity to interest rate changes, influenced by its maturity, coupon rate, and yield. | Longer duration bonds are more affected by interest rate changes. |
+| **Event Risk** | Risk that unexpected events (e.g., mergers, acquisitions, natural disasters) affect the issuer’s ability to pay. | Can negatively impact the issuer’s creditworthiness and bond prices. |
+
+#### Bond Pricing
+The price of a bond is determined by calculating the present value of its future cash flows, which include the periodic interest payments (coupons) and the principal repayment at maturity. The bond price is the sum of the present values of these future payments, discounted at the market interest rate (or the bond's yield).
+
+Factors that affect a bond price is - interest rate, credit rating, time to maturity and coupon rate
+
+#### Bond Yield
+A bond yield is the return an investor can expect to earn from a bond over a specific period, typically expressed as an annual percentage rate. It reflects the income (interest) an investor receives relative to the bond’s price, and it can vary depending on the bond’s type, price, maturity, and prevailing market conditions.
+
+There are several types of **bond yields** that investors use to assess the profitability and risk associated with bonds. Below is a summary of the key types of bond yields:
+
+| **Type of Yield** | **Definition** | **Formula** (if applicable) | **Purpose/Usage** |
+| --- | --- | --- | --- |
+| **Coupon Yield (Nominal Yield)** | The bond's annual coupon payment divided by its face value (par value). | Coupon Yield\=Coupon PaymentFace Value\\text{Coupon Yield} = \\frac{\\text{Coupon Payment}}{\\text{Face Value}}Coupon Yield\=Face ValueCoupon Payment​ | Measures the bond's fixed interest return relative to its face value. |
+| **Current Yield** | The bond's annual coupon payment divided by its current market price. | Current Yield\=Coupon PaymentCurrent Market Price\\text{Current Yield} = \\frac{\\text{Coupon Payment}}{\\text{Current Market Price}}Current Yield\=Current Market PriceCoupon Payment​ | Provides a measure of income relative to the current price of the bond. |
+| **Yield to Maturity (YTM)** | The total return an investor can expect to earn if the bond is held until maturity. It includes coupon payments and the difference between the purchase price and face value. | YTM\=Solve for r in ∑t\=1TC(1+r)t+F(1+r)T\=Price of Bond\\text{YTM} = \\text{Solve for } r \\text{ in } \\sum\_{t=1}^{T} \\frac{C}{(1 + r)^t} + \\frac{F}{(1 + r)^T} = \\text{Price of Bond}YTM\=Solve for r in ∑t\=1T​(1+r)tC​+(1+r)TF​\=Price of Bond | Assesses the long-term return, assuming the bond is held to maturity and all payments are made. |
+| **Yield to Call (YTC)** | The total return an investor can expect to earn if the bond is called (redeemed early) by the issuer before the maturity date. | Similar to YTM, but assumes the bond is called at the earliest possible date. | Used for callable bonds, which can be redeemed by the issuer before maturity. |
+| **Yield to Worst (YTW)** | The lowest yield an investor can receive if the bond is called or matures early. | Takes the minimum of YTM or YTC, whichever is less. | Provides a conservative estimate of yield, assuming the worst-case scenario. |
+| **Yield to Put (YTP)** | The yield an investor will receive if the bond is put (sold back) to the issuer at the earliest possible date. | Similar to YTM, but assumes the bond is sold back to the issuer before maturity. | Relevant for bonds with a put option, where the holder can sell the bond back to the issuer. |
+| **Yield to Taxable Equivalent** | The yield an investor would need from a taxable bond to match the yield of a tax-exempt bond, considering tax implications. | Yield to Taxable Equivalent\=Tax-Exempt Yield1−Tax Rate\\text{Yield to Taxable Equivalent} = \\frac{\\text{Tax-Exempt Yield}}{1 - \\text{Tax Rate}}Yield to Taxable Equivalent\=1−Tax RateTax-Exempt Yield​ | Used to compare taxable and tax-exempt bonds, particularly for investors in high tax brackets. |
+| **Real Yield** | The yield on a bond adjusted for inflation, reflecting the actual purchasing power of the bond’s return. | Real Yield\=1+Nominal Yield1+Inflation Rate−1\\text{Real Yield} = \\frac{1 + \\text{Nominal Yield}}{1 + \\text{Inflation Rate}} - 1Real Yield\=1+Inflation Rate1+Nominal Yield​−1 | Measures the actual return after accounting for inflation. |
+| **Yield to Maturity (YTM) for a Zero-Coupon Bond** | For zero-coupon bonds, YTM represents the discount rate that equates the bond's price to its face value. | YTM\=Face ValuePrice1T−1\\text{YTM} = \\frac{\\text{Face Value}}{\\text{Price}}^{\\frac{1}{T}} - 1YTM\=PriceFace Value​T1​−1 | Applies to zero-coupon bonds, which do not make periodic interest payments but are sold at a discount. |
