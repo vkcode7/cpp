@@ -1,5 +1,19 @@
 ## Backtracking
 
+1.
+![text](assets/s4.png)
+
+2.
+![text](assets/s5.png)
+
+3.
+![text](assets/s6.png)
+
+4.
+![text](assets/s7.png)
+
+
+
 Problem: 
 https://www.geeksforgeeks.org/problems/permutations-of-a-given-string2041/1<br>
 Given a string s, which may contain duplicate characters, your task is to generate and return an array of all unique permutations of the string. You can return your answer in any order.
@@ -52,9 +66,16 @@ int main() {
         cout << s << endl;
     return 0;
 }
-'''
+```
 
 ### Time complexity of Recursive Tree in above code
-//<== controlled recursion
-![text](assets/example.png)
+
+Time complxity = Time complexity of one node X number of nodes in the tree
+
+Above tree will have nodes like this which comes out to be n!
+![text](assets/s1.png)
+
+A balance tree will be 2 pow n.
+![text](assets/s3.png)
+
 
