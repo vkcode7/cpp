@@ -292,5 +292,57 @@ int main() {
 }
 ```
 
+### Problem: https://www.geeksforgeeks.org/problems/n-digit-numbers-with-digits-in-increasing-order5903/1
+N Digit numbers with digits in increasing order
 
 
+```c++
+#include <iostream>
+#include <vector>
+
+using namespace std;
+
+class Solution {
+private:
+    void backtrack(vector<int>& current, int n, int last_digit, vector<int>& result) {
+        if (current.size() == n) {
+            int num = 0;
+            for (int digit : current) {
+                num = num * 10 + digit;
+            }
+            result.push_back(num);
+            return;
+        }
+        
+        // Try all possible digits from last_digit + 1 to 9
+        for (int i = last_digit + 1; i <= 9; ++i) {
+            current.push_back(i); //Choose
+            backtrack(current, n, i, result); //Explore
+            current.pop_back(); // Backtrack
+        }
+    }
+
+public:
+    vector<int> increasingNumbers(int n) {
+        vector<int> result;
+        vector<int> current;
+        
+        // Start with 0 as last_digit so we start from 1 for the first digit
+        backtrack(current, n, 0, result);
+        
+        return result;
+    }
+};
+
+// Example usage
+int main() {
+    Solution sol;
+    int n = 2; // Example with 2 digits
+    vector<int> numbers = sol.increasingNumbers(n);
+    for (int num : numbers) {
+        cout << num << " ";
+    }
+    cout << endl;
+    return 0;
+}
+```
