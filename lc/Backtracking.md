@@ -56,3 +56,5 @@ int main() {
 
 ### Time complexity of Recursive Tree in above code
 //<== controlled recursion
+![text](assets/example.png)
+
