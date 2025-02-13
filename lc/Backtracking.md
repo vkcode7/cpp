@@ -707,3 +707,10 @@ public:
     }
 };
 ```
+
+### N Queen Problem
+![text](assets/s13.png)
+Queens can move diagnolly or vertically or horizontally so basically in 8 directions
+![text](assets/s14.png)
+
+
