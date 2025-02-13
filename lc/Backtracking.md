@@ -1,4 +1,8 @@
 ## Backtracking:
+acktracking is a general algorithm for finding all (or some) solutions to some computational problems, notably constraint satisfaction problems, that incrementally builds candidates to the solutions, and abandons a candidate ("backtracks") as soon as it determines that the candidate cannot possibly be completed to a valid solution.
+
+This backtracking approach ensures that we explore all permutations systematically by making a choice, exploring the consequences of that choice, and then undoing it to make another choice, which is the essence of backtracking in solving combinatorial problems like permutations.
+
 Key point: Undo the change which you did before calling the recursion 
 - index by Index traversal
 - Work done (index)
@@ -9,16 +13,24 @@ Backtracking needs to be done due to - wrong choice or to - try other possibilit
 1.
 ![text](assets/s4.png)
 
-2.
-![text](assets/s5.png)
+2. Identification and Flow of BT
+- Choices & Decisions: Make and explore choices.
+- All Combinations: Explores every possible combination.
+- Controlled Recursion: Uses recursion to explore paths.
+- Number of Choices: Considers multiple options at each step.
+- Constraints: Manages problem constraints.
+- Avoid Greed: Not greedy, explores all paths.
+
+3. Recap
+- Recursion → Parent: Indicates that backtracking involves recursion where the control returns to the parent call when a path is not viable.
+- Number of choices large: Backtracking is used when there are many possible choices to explore.
+- Controlled Recursion: The recursion in backtracking is managed to explore different paths systematically.
+- Pass by Reference: Data structures or variables are often passed by reference to avoid unnecessary copying, especially in recursive calls.
 
 3.
-![text](assets/s6.png)
-
-4.
 ![text](assets/s7.png)
 
-5.
+4.
 ![text](assets/s8.png)
 
 Problem: 
