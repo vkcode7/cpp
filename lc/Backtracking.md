@@ -809,3 +809,71 @@ public:
     }
 };
 ```
+
+### Sudoku Solver
+https://leetcode.com/problems/sudoku-solver/description/
+
+### **Steps to Solve Sudoku Using Backtracking**  
+1. **Find the next empty cell** ('.').  
+2. **Try placing digits `1-9`** while ensuring validity:  
+   - Check the **row**, **column**, and **3×3 subgrid**.  
+3. **Recursively solve** for the next cell.  
+4. **Backtrack** if a choice leads to an invalid state.  
+5. **Return true** when the board is completely filled. 🚀
+   
+```c++
+#include <vector>
+using namespace std;
+
+class Solution {
+public:
+    bool canNumBePlaced(char num, int ri, int ci, vector<vector<char>>& board) {
+        // Check row
+        for (int j = 0; j < 9; j++) {
+            if (board[ri][j] == num) return false;
+        }
+
+        // Check column
+        for (int i = 0; i < 9; i++) {
+            if (board[i][ci] == num) return false;
+        }
+
+        // Check 3x3 subgrid
+        int sr = (ri / 3) * 3;
+        int sc = (ci / 3) * 3;
+        for (int i = sr; i < sr + 3; i++) {
+            for (int j = sc; j < sc + 3; j++) {
+                if (board[i][j] == num) return false;
+            }
+        }
+        return true;
+    }
+
+    bool helper(int rowIndex, int colIndex, vector<vector<char>>& board) {
+        // Base case: If we reach row 9, a valid solution is found
+        if (rowIndex == 9) return true;
+
+        // Move to next row if we reach the last column
+        if (colIndex == 9) return helper(rowIndex + 1, 0, board);
+
+        // Skip pre-filled cells
+        if (board[rowIndex][colIndex] != '.') {
+            return helper(rowIndex, colIndex + 1, board);
+        }
+
+        // Try placing digits 1-9
+        for (char num = '1'; num <= '9'; num++) {
+            if (canNumBePlaced(num, rowIndex, colIndex, board)) {
+                board[rowIndex][colIndex] = num;
+                if (helper(rowIndex, colIndex + 1, board)) return true;
+                board[rowIndex][colIndex] = '.'; // Backtrack
+            }
+        }
+        return false;
+    }
+
+    void solveSudoku(vector<vector<char>>& board) {
+        helper(0, 0, board);
+    }
+};
+```
