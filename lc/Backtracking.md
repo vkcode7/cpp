@@ -1,5 +1,8 @@
 ## Backtracking:
 Key point: Undo the change which you did before calling the recursion 
+- index by Index traversal
+- Work done (index)
+- Next call based on Work done
 
 1.
 ![text](assets/s4.png)
@@ -661,3 +664,6 @@ public:
 ### Problem: Iterative Letter Combinations of a Phone Number
 Given an integer array arr[] containing digits from [0, 9], the task is to print all possible letter combinations that the numbers could represent. A mapping of digits to letters (just like on the telephone buttons) is being followed. Note that 0 and 1 do not map to any letters. 
 ![text](assets/s11.png)
+
+https://www.geeksforgeeks.org/iterative-letter-combinations-of-a-phone-number/
+
