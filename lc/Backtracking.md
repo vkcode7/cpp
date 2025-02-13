@@ -666,4 +666,44 @@ Given an integer array arr[] containing digits from [0, 9], the task is to print
 ![text](assets/s11.png)
 
 https://www.geeksforgeeks.org/iterative-letter-combinations-of-a-phone-number/
+![text](assets/s12.png)
+The helper function is the core of the backtracking algorithm, where it builds the combinations by adding each letter from the mapping of the current digit, then recursively calls itself for the next digit, and backtracks by removing the last added letter after each recursive call.
 
+```c++
+class Solution {
+public:
+    vector<string> ans;
+
+    void helper(int idx, string &digits, map<char, string> &mapping, string &curr_str) {
+        if (idx == digits.size()) {
+            ans.push_back(curr_str);
+            return;
+        }
+        
+        char ch = digits[idx];
+        for (char letter : mapping[ch]) {
+            curr_str += letter;
+            helper(idx + 1, digits, mapping, curr_str);
+            curr_str.pop_back(); //backtracking step, just to add the character at this current place
+        }
+    }
+
+    vector<string> letterCombinations(string digits) {
+        if (digits.size() == 0) return ans;
+        
+        map<char, string> mapping;
+        mapping['2'] = "abc";
+        mapping['3'] = "def";
+        mapping['4'] = "ghi";
+        mapping['5'] = "jkl";
+        mapping['6'] = "mno";
+        mapping['7'] = "pqrs";
+        mapping['8'] = "tuv";
+        mapping['9'] = "wxyz";
+        
+        string curr_str;
+        helper(0, digits, mapping, curr_str);
+        return ans;
+    }
+};
+```
