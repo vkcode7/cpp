@@ -4,6 +4,8 @@ Key point: Undo the change which you did before calling the recursion
 - Work done (index)
 - Next call based on Work done
 
+Backtracking needs to be done due to - wrong choice or to - try other possibilities
+
 1.
 ![text](assets/s4.png)
 
@@ -710,7 +712,74 @@ public:
 
 ### N Queen Problem
 ![text](assets/s13.png)
+Hint: Perform col by col traversal as the asnwer expects col wise answer
+
 Queens can move diagnolly or vertically or horizontally so basically in 8 directions
 ![text](assets/s14.png)
 
+```c++
 
+class Solution {
+public:
+    vector<vector<int>> ans;
+
+    // Function to check if it's safe to place a queen at board[rowIdx][colIdx]
+    bool check(int rowIdx, int colIdx, int n, vector<vector<int>>& board) {
+        // Check this row on left side
+        for (int i = 0; i < colIdx; i++) {
+            if (board[rowIdx][i] == 1) {
+                return false;
+            }
+        }
+        
+        // Check upper diagonal on left side
+        for (int i = rowIdx, j = colIdx; i >= 0 && j >= 0; i--, j--) {
+            if (board[i][j] == 1) {
+                return false;
+            }
+        }
+        
+        // Check lower diagonal on left side
+        for (int i = rowIdx, j = colIdx; j >= 0 && i < n; i++, j--) {
+            if (board[i][j] == 1) {
+                return false;
+            }
+        }
+        
+        return true;
+    }
+
+    void helper(int colIdx, vector<vector<int>>& board, int n, vector<int>& temp) {
+        if (colIdx == n) {
+            ans.push_back(temp);
+            return;
+        }
+        
+        // col-wise traversal
+        // for colIdx, trying all rowIdx
+        for (int rowIdx = 0; rowIdx < n; rowIdx++) {
+            // try placing at this cell
+            if (check(rowIdx, colIdx, n, board)) {
+                // some changes
+                temp.push_back(rowIdx + 1); //1 based indexing for the answer
+                board[rowIdx][colIdx] = 1;
+
+		//go to next col
+                helper(colIdx + 1, board, n, temp); 
+                
+                // undo those changes
+                temp.pop_back();
+                board[rowIdx][colIdx] = 0;
+            }
+        }
+    }
+
+    vector<vector<int>> nQueen(int n) {
+        // code here
+        vector<vector<int>> board(n, vector<int>(n, 0));
+        vector<int> temp;
+        helper(0, board, n, temp);
+        return ans;
+    }
+};
+```
