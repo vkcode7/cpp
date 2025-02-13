@@ -10,10 +10,10 @@ Key point: Undo the change which you did before calling the recursion
 
 Backtracking needs to be done due to - wrong choice or to - try other possibilities
 
-1.
+#### Example
 ![text](assets/s4.png)
 
-2. Identification and Flow of BT
+#### Identification and Flow of BT
 - Choices & Decisions: Make and explore choices.
 - All Combinations: Explores every possible combination.
 - Controlled Recursion: Uses recursion to explore paths.
@@ -21,14 +21,28 @@ Backtracking needs to be done due to - wrong choice or to - try other possibilit
 - Constraints: Manages problem constraints.
 - Avoid Greed: Not greedy, explores all paths.
 
-3. Recap
+#### Recap
 - Recursion → Parent: Indicates that backtracking involves recursion where the control returns to the parent call when a path is not viable.
 - Number of choices large: Backtracking is used when there are many possible choices to explore.
 - Controlled Recursion: The recursion in backtracking is managed to explore different paths systematically.
 - Pass by Reference: Data structures or variables are often passed by reference to avoid unnecessary copying, especially in recursive calls.
 
-3.
-![text](assets/s7.png)
+#### Code Structure
+```c++
+void solve(C, V) {
+    if (isSolved(C) == true) {
+        Print Solution
+    }
+    
+    for (c in all choices) {
+        if (isValid(c) == true) {
+            // make choice with V
+            solve(C, V)
+            // revert changes in V
+        }
+    }
+}
+```
 
 4.
 ![text](assets/s8.png)
