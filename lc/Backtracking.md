@@ -657,3 +657,7 @@ public:
     }
 };
 ```
+
+### Problem: Iterative Letter Combinations of a Phone Number
+Given an integer array arr[] containing digits from [0, 9], the task is to print all possible letter combinations that the numbers could represent. A mapping of digits to letters (just like on the telephone buttons) is being followed. Note that 0 and 1 do not map to any letters. 
+![text](assets/s11.png)
