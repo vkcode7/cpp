@@ -11,18 +11,17 @@
   
 
 ### Type of Problems
-Most of them are just variations of these
-	1.	Dynamic Programming<br>
-	2.	0-1 knapsack (6)<br>
-	3.	Unbounded knapsack (5)<br>
-	4.	Fibonacci (+)<br>
-	5.	LCS (15)<br>
-	6.	LIS (10)<br>
-	7.	Kadane's Algorithm (6)<br>
-	8.	Matrix chain multiplication (7)<br>
-	9.	DP on Trees (4)<br>
-	10.	DP on Grid (14)<br>
-	11.	Others (5)<br>
+Most of them are just variations of these<br>
+⁃	0-1 knapsack (6)<br>
+⁃	Unbounded knapsack (5)<br>
+⁃	Fibonacci (+)<br>
+⁃	LCS (15)<br>
+⁃	LIS (10)<br>
+⁃	Kadane's Algorithm (6)<br>
+⁃	Matrix chain multiplication (7)<br>
+⁃	DP on Trees (4)<br>
+⁃	DP on Grid (14)<br>
+⁃	Others (5)<br>
 
 ### KnapSack Problem
 Here's an explanation of each variation mentioned:
