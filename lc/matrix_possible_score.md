@@ -6,7 +6,11 @@ Problem Description
 - Your task is to determine the maximum possible total score you can achieve.
 
 Example 1:
-- Input: grid = [[10, 3, 6, 4], [5, 11, 2, 9], [7, 8, 15, 2], [4, 6, 5, 1]]
+- Input: grid = <br>
+[[10, 3, 6, 4], <br>
+[5, 11, 2, 9], <br>
+[7, 8, 15, 2], <br>
+[4, 6, 5, 1]]<br>
 - Output: 13
 
 Explanation:
@@ -17,19 +21,22 @@ Explanation:
 The total score is 8 + 4 = 12.
 
 Example 2:
-- Input: grid = [[7, 5, 3], [6, 4, 2]]
+- Input: grid = <br>
+[[7, 5, 3], <br>
+[6, 4, 2]]<br>
 - Output: -1
 
 Explanation:
 - Start at the cell (0, 0) (value 7).
 - Make one move: from (0, 0) to (0, 1) (value 5), with a score of 5 - 7 = -2.
-- Hence, the maximum score is -1.
+
+Hence, the maximum score is -1.
 
 Constraints:
-m == grid.length
-n == grid[i].length
-1 <= m, n <= 100
-1 <= grid[i][j] <= 1000
+m == grid.length<br>
+n == grid[i].length<br>
+2 <= m, n <= 1000<br>
+1 <= grid[i][j] <= 100000<br>
 
 
 ```c++
