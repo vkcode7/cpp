@@ -577,3 +577,341 @@ Result type is: i
 Result type is: d
 ```
 
+### using
+using simplifies the syntax for defining function pointers, and function objects. Can NOT be used with lambdas.
+
+```c++
+#include <iostream>
+#include <functional> // Include this header for std::function
+
+// Define a type alias for a function pointer
+using FuncPtr = void(*)(int);
+//typedef void(*FunctPtr)(int);
+
+int main() {
+    // Use the type alias for function pointers
+    FuncPtr ptr = [](int x) { std::cout << "Function pointer: " << x << std::endl; };
+    ptr(10);
+
+    // Define a lambda function directly using auto or std::function
+    auto lambda = [](int x) { return x * x; };
+    std::cout << "Lambda: " << lambda(5) << std::endl;
+
+    return 0;
+}
+```
+
+### Functors aka Function Objects
+A functor in C++ is an object that acts like a function. It's a type that can be called as if it were a function, typically by using the function call operator operator(). Functors provide a way to encapsulate behavior and pass it around as a first-class citizen, similar to function pointers or lambda expressions.
+
+```c++
+#include <iostream>
+
+// Functor class
+class MyFunctor {
+public:
+    void operator()(int x) const {
+        std::cout << "Value passed to functor: " << x << std::endl;
+    }
+};
+
+int main() {
+    MyFunctor functor; // Create an instance of the functor
+
+    // Call the functor as if it were a function
+    functor(42);
+
+    return 0;
+}
+```
+
+### tuple
+"tuple" is a standard header file in C++ that provides the std::tuple class template, introduced in C++11. It's part of the Standard Template Library (STL) and is used for creating heterogeneous collections of elements. A tuple is similar to an array or struct but can hold elements of different types, making it a versatile container for storing related but different types of data.
+
+It's often used as a return type for functions that need to return multiple values, or in algorithms that need to operate on collections of heterogeneous data.
+```c++
+#include <iostream>
+#include <tuple>
+
+int main() {
+    // Creating a tuple with three elements of different types
+    std::tuple<int, double, std::string> myTuple(42, 3.14, "Hello");
+
+    // Creating a tuple using std::make_tuple
+    auto myTuple2 = std::make_tuple(42, 3.14, "Hello");
+
+    // Accessing elements by index
+    std::cout << "First element: " << std::get<0>(myTuple) << std::endl;
+    std::cout << "Second element: " << std::get<1>(myTuple) << std::endl;
+    std::cout << "Third element: " << std::get<2>(myTuple) << std::endl;
+
+    // Accessing elements by type
+    std::cout << "Element with type int: " << std::get<int>(myTuple) << std::endl;
+    std::cout << "Element with type double: " << std::get<double>(myTuple) << std::endl;
+    std::cout << "Element with type string: " << std::get<std::string>(myTuple) << std::endl;
+
+    return 0;
+}
+
+output:
+First element: 42
+Second element: 3.14
+Third element: Hello
+Element with type int: 42
+Element with type double: 3.14
+Element with type string: Hello
+```
+
+### tie example
+```c++
+#include <iostream>
+#include <tuple>
+
+// Function that returns a tuple
+std::tuple<int, double, std::string> getValues() {
+    return std::make_tuple(42, 3.14, "Hello");
+}
+
+int main() {
+    // Call the function and unpack the returned tuple into variables
+    int intValue;
+    double doubleValue;
+    std::string stringValue;
+    
+    std::tie(intValue, doubleValue, stringValue) = getValues();
+
+    // Output the unpacked values
+    std::cout << "Int value: " << intValue << std::endl;
+    std::cout << "Double value: " << doubleValue << std::endl;
+    std::cout << "String value: " << stringValue << std::endl;
+
+    return 0;
+}
+```
+
+### constexpr
+constexpr is a keyword introduced in C++11 (and further expanded in later standards) that indicates that a function or object's value can be computed at compile time. It stands for "constant expression". constexpr can be applied to variables, functions, and constructors, enabling compile-time evaluation and optimization. Can be applied to constructors as well to create objects at compile time.
+```c++
+constexpr int SIZE = 10; // Compile-time constant
+
+constexpr int square(int x) {
+    return x * x;
+}
+
+constexpr int result = square(5); // Compile-time evaluation
+
+class MyClass {
+public:
+    constexpr MyClass(int x) : value(x) {}
+
+    int getValue() const { return value; }
+
+private:
+    int value;
+};
+
+constexpr MyClass obj(42); // Compile-time object construction
+```
+
+### friend
+In C++, the friend keyword is used to grant access to private or protected members of a class to functions or other classes that are not members of that class. It allows designated external functions or classes to access the private and protected members of a class as if they were their own members.
+```c++
+class MyClass {
+private:
+    int privateMember;
+
+public:
+    // Declare an external function as a friend
+    friend void externalFunction(MyClass& obj);
+
+    // Declare an entire class as a friend
+    friend class FriendClass;
+};
+
+// Define the friend function
+void externalFunction(MyClass& obj) {
+    std::cout << "Value of private member accessed by friend function: " << obj.privateMember << std::endl;
+}
+```
+
+### Operator Overloading
+
+```c++
+    // Overload the + operator for adding two complex numbers
+    Complex operator+(const Complex& other) const {
+        return Complex(real + other.real, imaginary + other.imaginary);
+    }
+```
+usage:
+```c++
+    Complex c1(2.0, 3.0);
+    Complex c2(1.0, 4.0);
+
+    Complex result = c1 + c2; // Using overloaded + operator
+```
+
+**internally resolved as c1.operator+(c2);**
+
+```c++
+    // Overload the -> operator
+    MyClass* operator->() {
+        return this;
+    }
+
+    int getValue() const {
+        return value;
+    }
+
+    //usage
+    MyClass obj(42);
+    auto v = obj->getValue();
+```
+
+### Casts
+- Static Cast (static_cast): Used for conversions that are well-defined and checked at compile-time.
+- Dynamic Cast (dynamic_cast): Used for converting pointers and references to polymorphic types. primarily used in inheritance hierarchies to perform downcasting.
+- Const Cast (const_cast): Used to add or remove const or volatile qualifiers from a variable.
+- Reinterpret Cast (reinterpret_cast): Used for low-level, type-unsafe conversions between unrelated types.
+- C-style: traditional
+
+```c++
+//static
+double d = 3.14;
+int i = static_cast<int>(d); // Convert double to int
+
+//dynamic
+class Base {
+public:
+    virtual ~Base() {}
+};
+
+class Derived : public Base {};
+
+Base* basePtr = new Derived();
+Derived* derivedPtr = dynamic_cast<Derived*>(basePtr); // Downcasting
+if (derivedPtr) {
+    // Conversion succeeded
+} else {
+    // Conversion failed
+}
+
+//const
+const int x = 10;
+int* ptr = const_cast<int*>(&x); // Remove const qualifier
+*ptr = 20; // Modifying a const object
+
+//add const-ness
+int x = 42;
+int* ptr = &x;
+
+// Add const qualifier to the pointer
+const int* constPtr = const_cast<const int*>(ptr);
+
+// Now you cannot modify the value through constPtr
+// *constPtr = 10; // Error: assignment of read-only location
+
+// Add volatile qualifier to the pointer
+volatile int* volatilePtr = const_cast<volatile int*>(ptr);
+
+// Now you can treat volatilePtr as a pointer to a volatile variable
+// *volatilePtr = 10; // OK
+
+//reinterpret
+int* ptr = reinterpret_cast<int*>(0x1000); // Convert integer to pointer
+uintptr_t addr = reinterpret_cast<uintptr_t>(ptr); // Convert pointer to integer
+
+//c-style
+float f = 3.14;
+int i = (int)f; // C-style cast
+```
+
+# Lambdas
+https://learn.microsoft.com/en-us/cpp/cpp/lambda-expressions-in-cpp?view=msvc-170
+```c++
+//(1)   (2)  (3)      (4)      (5)
+//===   ===  =======  ======   =======
+  [=]   ()   mutable  throw()   -> int
+  { //<== lambda body starts here (6)
+    int n = x+y;
+    x = y;
+    y = n;
+    return n;
+  } //<== lambda body ends here
+```
+1. capture clause (Also known as the lambda-introducer in the C++ specification.) [&, =]
+2. parameter list Optional. (Also known as the lambda declarator)
+3. mutable specification Optional.
+4. exception-specification Optional.
+5. trailing-return-type Optional.
+6. lambda body.
+
+```c++
+struct S { void f(int i); };
+
+void S::f(int i) {
+    [&, i]{};      // OK
+    [&, &i]{};     // ERROR: i preceded by & when & is the default
+    [=, this]{};   // ERROR: this when = is the default
+    [=, *this]{ }; // OK: captures this by value. See below.
+    [i, i]{};      // ERROR: i repeated
+}
+```
+
+A capture followed by an ellipsis is a pack expansion, as shown in this variadic template example:
+```c++
+template<class... Args>
+void f(Args... args) {
+    auto x = [args...] { return g(args...); };
+    x();
+}
+```
+
+To use lambda expressions in the body of a class member function, pass the this pointer to the capture clause to provide access to the member functions and data members of the enclosing class.
+
+# CPP - Containers and Algorithms
+
+## STL consists of
+- Containers - Hold objects
+- Iterators - Manipulates STL elements
+- Algorithms - Perform common manipulations
+
+## Containers library
+The Containers library is a generic collection of class templates and algorithms that allow programmers to easily implement common data structures like queues, lists and stacks. There are two(until C++11)three(since C++11) classes of containers:<br>
+sequence containers, <br>
+associative containers, and<br>
+unordered associative containers,(since C++11)<br>
+
+each of which is designed to support a different set of operations.
+
+## Sequence containers (Linear Data Structures)
+Sequence containers implement data structures which can be accessed sequentially.
+- array (static contiguous memory), 
+- vector (dynamic contiguous memory), 
+- forward_list (singly linked list), 
+- list (doubly linked list), 
+- deque (double ended queue)
+
+## Associative containers (Non Linear)
+Associative containers implement sorted data structures that can be quickly searched (O(log n) complexity).
+- set - collection of unique keys, sorted by keys
+- multiset -same as set but multiple keys of same value are allowed
+- map - collection of key-value pairs, sorted by keys, keys are unique
+- multimap - same as map but multiple keys of same value are allowed
+
+## Unordered associative containers (since C++11)
+Unordered associative containers implement unsorted (hashed) data structures that can be quickly searched (O(1) average, O(n) worst-case complexity).
+- unordered_set - collection of unique keys, hashed by keys
+- unordered_multiset -same as set but multiple keys of same value are allowed
+- unordered_map - collection of key-value pairs, hashed by keys, keys are unique
+- unordered_multimap - same as map but multiple keys of same value are allowed
+
+## Container adaptors
+Container adaptors provide a different interface for sequential containers.
+- stack: adapts a container to provide stack (LIFO data structure)
+- queue: adapts a container to provide queue (FIFO data structure)
+- priority_queue: adapts a container to provide priority queue
+
+- flat_set: (C++23): adapts a container to provide a collection of unique keys, sorted by keys
+- flat_map:(C++23):adapts two containers to provide a collection of key-value pairs, sorted by unique keys
+- flat_multiset: (C++23): adapts a container to provide a collection of keys, sorted by keys
+- flat_multimap: (C++23): adapts two containers to provide a collection of key-value pairs, sorted by keys
