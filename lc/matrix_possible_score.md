@@ -1,11 +1,11 @@
-Problem Description
+## Problem Description:
 - You are provided with a matrix grid of size m x n, where each cell contains a positive integer. The rules for movement are as follows:
 - You can move from any cell in the grid to another cell that is either directly below or to the right of it. Note that the cells don't have to be adjacent.
 - The score of a move from a cell with value c1 to a cell with value c2 is calculated as c2 - c1.
 - You can begin at any cell in the matrix, but you must make at least one move.
 - Your task is to determine the maximum possible total score you can achieve.
 
-Example 1:
+**Example 1:**
 - Input: grid = <br>
 [[10, 3, 6, 4], <br>
 [5, 11, 2, 9], <br>
@@ -13,20 +13,20 @@ Example 1:
 [4, 6, 5, 1]]<br>
 - Output: 13
 
-Explanation:
+**Explanation:**
 - Start at the cell (0, 1) (value 3).
 - Move from the cell (0, 1) to (1, 1) (value 11), with a score of 11 - 3 = 8.
 - Move from the cell (1, 1) to (2, 3) (value 15), with a score of 15 - 11 = 4.
 
 The total score is 8 + 4 = 12.
 
-Example 2:
+**Example 2:**
 - Input: grid = <br>
 [[7, 5, 3], <br>
 [6, 4, 2]]<br>
 - Output: -1
 
-Explanation:
+**Explanation:**
 - Start at the cell (0, 0) (value 7).
 - Make one move: from (0, 0) to (0, 1) (value 5), with a score of 5 - 7 = -2.
 
@@ -38,7 +38,7 @@ n == grid[i].length<br>
 2 <= m, n <= 1000<br>
 1 <= grid[i][j] <= 100000<br>
 
-
+**Top Down DP with memoization**
 ```c++
 //Top Down DP with memoization
 #include <bits/stdc++.h>
