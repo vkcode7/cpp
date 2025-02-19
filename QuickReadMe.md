@@ -507,7 +507,7 @@ int main() {
 
 
 ### Templates Specialization
-allows you to provide specialized implementations of function templates or class templates for specific types or values. 
+Allows you to provide specialized implementations of function templates or class templates for specific types or values. 
 ```c++
 #include <iostream>
 
@@ -522,6 +522,7 @@ template<>
 void print<int>(int value) {
     std::cout << "Specialized for int: " << value << std::endl;
 }
+```
 
 ### type traits
 Type traits in C++ provide a way to query and manipulate properties of types at compile time. They are commonly used in template metaprogramming to enable conditional behavior based on type properties. C++ provides the <type_traits> header, which contains a collection of type traits.
