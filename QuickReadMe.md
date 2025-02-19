@@ -381,6 +381,7 @@ Destructor called. Deleting data: 42
 - Type Traits
 - STL and Generic Algorithms
 
+```c++
 // Function template to find the maximum of two values
 template<typename T>
 T max(T a, T b) {
