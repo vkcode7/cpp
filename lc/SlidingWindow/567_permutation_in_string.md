@@ -297,8 +297,11 @@ Example 1:
 Input: root = [5,4,8,11,null,13,4,7,2,null,null,null,1], targetSum = 22
 Output: true
 Explanation: The root-to-leaf path with the target sum is shown.
-Example 2:
+```
+<img src="../assets/pathsum1.jpg" width="40%">
 
+```py
+Example 2:
 
 Input: root = [1,2,3], targetSum = 5
 Output: false
@@ -306,6 +309,10 @@ Explanation: There are two root-to-leaf paths in the tree:
 (1 --> 2): The sum is 3.
 (1 --> 3): The sum is 4.
 There is no root-to-leaf path with sum = 5.
+```
+<img src="../assets/pathsum2.jpg" width="20%">
+
+```py
 Example 3:
 
 Input: root = [], targetSum = 0
@@ -355,6 +362,10 @@ Example 1:
 
 Input: root = [3,9,20,null,null,15,7]
 Output: [[15,7],[9,20],[3]]
+```
+<img src="../assets/tree1.jpg" width="20%">
+
+```py
 Example 2:
 
 Input: root = [1]
@@ -450,6 +461,10 @@ Example 1:
 
 Input: root = [1,null,3,2,4,null,5,6]
 Output: [1,3,5,6,2,4]
+```
+<img src="../assets/narytreeexample.png" width="40%">
+
+```py
 Example 2:
 
 Input: root = [1,null,2,3,4,5,null,null,6,7,null,8,null,9,10,null,null,11,null,12,null,13,null,null,14]
@@ -463,6 +478,53 @@ The height of the n-ary tree is less than or equal to 1000.
  
 Follow up: Recursive solution is trivial, could you do it iteratively?
 ```
+<img src="../assets/sample_4_964.png" width="40%">
 
+```c++
+/*
+// Definition for a Node.
+class Node {
+public:
+    int val;
+    vector<Node*> children;
 
+    Node() {}
+
+    Node(int _val) {
+        val = _val;
+    }
+
+    Node(int _val, vector<Node*> _children) {
+        val = _val;
+        children = _children;
+    }
+};
+*/
+
+class Solution {
+public:
+    
+    void Traverse(Node *node, vector<int>& vOut) {
+        if(node == nullptr)
+            return;
+        
+        for(auto& n : node->children) {
+            if(n) {
+                vOut.push_back(n->val);
+                Traverse(n, vOut);  
+            }
+        }
+    }
+    
+    vector<int> preorder(Node* root) {
+        vector<int> vOut;
+        if(root) {
+            vOut.push_back(root->val);
+            Traverse(root, vOut);
+        }  
+        
+        return vOut;
+    }
+};
+```
 
