@@ -875,3 +875,188 @@ public:
    - Space Complexity: O(n) for the hash map
 The interleaved approach is preferred as it achieves O(1) space complexity (excluding output).
 
+
+# 430. Flatten a Multilevel Doubly Linked List - Linked List, Depth-First Search, Doubly-Linked List
+
+This document describes the solution to the "Flatten a Multilevel Doubly Linked List" problem (LeetCode #430).
+
+## Problem Description
+You are given a doubly linked list, which contains nodes that have a next pointer, a previous pointer, and an additional child pointer. This child pointer may point to a separate doubly linked list, forming a multilevel structure. Flatten the list so that all nodes appear in a single-level, doubly linked list. The nodes should appear in the order of a pre-order traversal of the multilevel structure. Return the head of the flattened list.
+
+### Example
+```
+Input: head = [1,2,3,4,5,6,null,null,null,7,8,9,10,null,null,11,12]
+```
+<img src="../assets/flatten11.jpg" width="20%">
+
+```
+Output: [1,2,3,7,8,11,12,9,10,4,5,6]
+Explanation: The multilevel list with child pointers (e.g., 3->7, 8->11) is flattened into a single list in pre-order.
+```
+<img src="../assets/flatten12.jpg" width="20%">
+
+```
+Input: head = [1,2,null,3]
+Output: [1,3,2]
+Explanation: The child list [3] from node 1 is integrated into the main list.
+```
+<img src="../assets/flatten2.jpg" width="20%">
+
+```
+Input: head = []
+Output: []
+Explanation: An empty list remains empty.
+```
+
+
+
+### Constraints
+- The number of nodes in the list is in the range `[0, 1000]`.
+- `1 <= Node.val <= 10^5`
+
+## Solution Approach
+The problem can be solved using a recursive approach that processes each node and its child list, integrating the child list into the main list while maintaining the doubly linked list properties.
+
+### Recursive Flattening Approach
+1. Traverse the list starting from the head.
+2. For each node:
+   - If it has a child, recursively flatten the child list.
+   - Integrate the flattened child list between the current node and its next node.
+   - Update the `prev` and `next` pointers accordingly.
+   - Set the `child` pointer to `null`.
+3. Continue processing the next node in the list.
+4. Return the head of the flattened list.
+
+### Node Structure
+```cpp
+class Node {
+public:
+    int val;
+    Node* prev;
+    Node* next;
+    Node* child;
+    Node() : val(0), prev(nullptr), next(nullptr), child(nullptr) {}
+    Node(int _val) : val(_val), prev(nullptr), next(nullptr), child(nullptr) {}
+    Node(int _val, Node* _prev, Node* _next, Node* _child) :
+        val(_val), prev(_prev), next(_next), child(_child) {}
+};
+```
+
+### Example Implementation (C++)
+```cpp
+/*
+// Definition for a Node.
+class Node {
+public:
+    int val;
+    Node* prev;
+    Node* next;
+    Node* child;
+};
+*/
+
+class Solution {
+public:
+    Node* flatten(Node* head) {
+        Node * current = head;
+        
+        while (current) {
+            if (current->child) {
+                
+                // Save the current next and connect the child to next
+                Node * tmp_next = current->next;
+                current->next = current->child;
+                current->next->prev = current;
+                current->child = NULL;
+                
+                // Run till the end of the current list and connect last node to saved next
+                Node * runner = current->next; //basically child
+                while (runner->next) 
+                    runner = runner->next;
+                
+                runner->next = tmp_next;
+                if (runner->next) 
+                    runner->next->prev = runner;
+            }
+            
+            current = current->next;
+        }
+        
+        return head;
+    }
+};
+```
+
+```cpp
+class Solution {
+public:
+    Node* flatten(Node* head) {
+        flattenHelper(head);
+        return head;
+    }
+    
+private:
+    Node* flattenHelper(Node* head) {
+        Node* curr = head;
+        while (curr) {
+            if (curr->child) {
+                // Flatten the child list
+                Node* childTail = flattenHelper(curr->child);
+                
+                // Connect child list to current node
+                Node* nextNode = curr->next;
+                curr->next = curr->child;
+                curr->child->prev = curr;
+                curr->child = nullptr;
+                
+                // Connect child tail to next node
+                childTail->next = nextNode;
+                if (nextNode) {
+                    nextNode->prev = childTail;
+                }
+                
+                // Move to the next node after child integration
+                curr = childTail->next;
+            } else {
+                curr = curr->next;
+            }
+        }
+        
+        // Return the tail of the flattened list starting from head
+        curr = head;
+        while (curr && curr->next) {
+            curr = curr->next;
+        }
+        return curr ? curr : head;
+    }
+};
+```
+
+### How It Works
+- **Traversal**:
+  - Process each node in the list.
+  - If a node has a child, flatten the child list recursively.
+- **Integration**:
+  - Connect the flattened child list between the current node and its `next` node.
+  - Update `prev` and `next` pointers to maintain doubly linked list properties.
+  - Set `child` to `null` after integration.
+- **Tail Tracking**:
+  - The helper function returns the tail of the flattened list to facilitate connections.
+- **Edge Cases**:
+  - Empty list: Return `nullptr`.
+  - No child pointers: List remains unchanged.
+  - Single node with child: Child list is appended after the node.
+- **Result**: The list is flattened in pre-order, with all nodes in a single-level doubly linked list.
+
+### Time and Space Complexity
+- **Time Complexity**: O(n), where `n` is the total number of nodes in the multilevel list, as each node is processed once.
+- **Space Complexity**: O(h), where `h` is the maximum depth of the multilevel structure, due to the recursion stack. In the worst case (deeply nested), this is O(n).
+
+### Alternative Approach
+1. **Iterative with Stack**:
+   - Use a stack to store nodes and process them in pre-order, adjusting pointers iteratively.
+   - Time Complexity: O(n)
+   - Space Complexity: O(h) for the stack
+The recursive approach is preferred for its clarity and natural handling of the pre-order traversal required for flattening.
+
+
