@@ -705,3 +705,146 @@ public:
 - Strictly increasing array: Return `n` (e.g., `[1,2,3,4]`).
 - Large array: Handles up to `n = 2500` within constraints.
 
+
+# 2272. Substring with Largest Variance Solution
+
+## Problem Description
+Given a string `s` consisting of lowercase letters, return the largest variance of any substring. The variance of a substring is defined as the largest difference between the frequencies of any two distinct characters in that substring. If no substring contains at least two distinct characters, return 0.
+
+### Example
+```
+Example 1:
+Input: s = "aababbb"
+Output: 3
+Explanation: The substring "babbb" has 3 'b's and 2 'a's, so the variance is 3 - 2 = 1. Another substring "abbb" has 3 'b's and 1 'a', giving variance 3 - 1 = 2. The largest variance among all substrings is 3 from "aabbb" (4 'b's - 1 'a' = 3).
+
+Example 2:
+Input: s = "abcde"
+Output: 0
+Explanation:
+No letter occurs more than once in s, so the variance of every substring is 0.
+```
+
+## Solution
+Below is the C++ solution to find the largest variance in a substring using a modified Kadane's algorithm approach.
+
+```cpp
+class Solution {
+public:
+
+    int largestVariance(string s) {
+        int result = 0;
+        for (char highFreqChar = 'a'; highFreqChar <= 'z'; ++highFreqChar) {
+            for (char lowFreqChar = 'a'; lowFreqChar <= 'z'; ++lowFreqChar) {
+                if (highFreqChar == lowFreqChar) continue;
+                
+                int highFreq = 0;
+                int lowFreq = 0;
+                bool lowFreqAbandoned = false;
+                
+                for (const char& ch : s) {
+                    if (ch == highFreqChar) ++highFreq;
+                    if (ch == lowFreqChar) ++lowFreq;
+                    
+                    if (lowFreq > 0) {
+                        result = max(result, highFreq - lowFreq);
+                    } else {
+                        // Edge case: there are no `lowFreqChar` in current interval.
+                        // In case if we re-started Kadane algo calculation - 
+                        // we can "extend" current interval with 1 previously abandoned 'lowFreqChar'
+                        if (lowFreqAbandoned) {
+                            result = max(result, highFreq - 1);
+                        }
+                    } 
+                    
+                    if (lowFreq > highFreq) {
+                        // Kadane's algo calculation re-start: abandon previous chars and their freqs.
+                        // Important: the last abandoned char is the `lowFreqChar` - this can be used on further iterations.
+                        lowFreq = 0;
+                        highFreq = 0;
+                        lowFreqAbandoned = true;
+                    }
+                }
+            }
+        }
+        return result;
+    }
+
+    int largestVariance2(string s) {
+        int ans = 0;
+        set<char> alphabet(s.begin(), s.end());
+        for (char c1: alphabet) {
+            for (char c2: alphabet) {
+                if (c1 == c2) {
+                    continue;
+                }
+                                
+                int v1 = 0; //c1 is high freq
+                int v2 = 0; //c2 is low freq
+                int now = 0;
+                bool flag = false;
+                for (char &c : s) {
+                    if (c == c2) flag = true;
+                    v1 += c == c1;
+                    v2 += c == c2;
+                    if (v2 > v1) { //low freq > high freq so reset
+                        v1 = v2 = 0;
+                    }
+                    
+                    if (v2 > 0) 
+                        now = max(now, v1-v2);
+                }
+                
+                if (v1 > 0 && v2 == 0) {
+                    if (v1 == s.length()) return 0;
+                    if (flag) {
+                        v2 = 1;
+                        //edge case such as "abbb"
+                        // where c1='b', and c2='a', v2 will be reset to 0 in that case
+                        //after 1st character is processed as v1 will be 0 
+                        //triggering(v2 > v1)
+                        now = max(now, v1-v2);
+                    }
+                }
+                
+                ans = max(ans, now);            
+            }
+        }
+        return ans;
+    }
+};
+```
+
+## Explanation
+1. **Problem Insight**:
+   - The variance is the maximum difference between the counts of any two characters in a substring.
+   - We need to consider all possible pairs of characters (c1, c2) and find the substring where `count(c1) - count(c2)` is maximized, provided both characters appear.
+2. **Frequency Precomputation**:
+   - Compute the frequency of each character in `s` to skip pairs where either character is absent.
+3. **Pairwise Character Comparison**:
+   - Iterate over all pairs of characters `(c1, c2)` where `c1` is the major character (higher count) and `c2` is the minor character (lower count).
+   - Skip pairs where `c1 == c2` or either character has zero frequency.
+4. **Modified Kadane’s Algorithm**:
+   - For each pair `(c1, c2)`, process the string twice (forward and reverse) to handle cases where the optimal substring depends on the order of characters.
+   - Maintain two counters:
+     - `count1`: Number of `c1` in the current substring.
+     - `count2`: Number of `c2` in the current substring.
+   - For each character in the string:
+     - Increment `count1` if the character is `c1`.
+     - Increment `count2` if the character is `c2`.
+     - If `count2 > 0`, compute the variance as `count1 - count2` and update `maxVariance`.
+     - If `count1 > 0` but `count2 == 0`, reset both counts to 0 (like Kadane’s algorithm) to start a new substring, as we need at least one `c2` for a valid variance.
+5. **Result**:
+   - Return `maxVariance`, the largest variance found across all substrings and character pairs.
+
+## Time and Space Complexity
+- **Time Complexity**: O(n * 26 * 26 * 2), where `n` is the length of the string. We iterate over all pairs of characters (26 * 26), process the string twice (forward and reverse) for each pair, and each string traversal takes O(n). Simplifies to O(n) since 26 * 26 * 2 is constant.
+- **Space Complexity**: O(1), as we use a fixed-size frequency array (size 26) and a constant amount of extra space for variables. The reversed string in the second pass uses O(n) temporarily, but this can be considered part of the processing.
+
+## Edge Cases
+- Single character: `s = "a"` returns 0 (no substring with two distinct characters).
+- No valid substring: `s = "aaaa"` returns 0 (all characters identical).
+- All distinct characters: `s = "abc"` returns 1 (e.g., substring "ab" has 1 'a' - 0 'b' = 1).
+- Repeated characters: `s = "aababbb"` handles correctly (returns 3 for "aabbb").
+- Large string: Efficiently processes up to `n = 10^4` with constant factors.
+- All possible character pairs: Tests all relevant pairs to find the maximum variance.
