@@ -13,6 +13,8 @@ public:
 };
 ```
 
+
+
 ## 70. Climbing Stairs
 https://leetcode.com/problems/climbing-stairs/
 
@@ -60,6 +62,87 @@ public:
     }
 };
 ```
+
+# 152. Maximum Product Subarray Solution
+
+## Problem Description
+Given an integer array `nums`, find a contiguous non-empty subarray within the array that has the largest product, and return the maximum product. The array may contain positive, negative, and zero values.
+
+### Example
+```
+Input: nums = [2,3,-2,4]
+Output: 6
+Explanation: The subarray [2,3] has the largest product 6.
+
+Input: nums = [-2,0,-1]
+Output: 0
+Explanation: The result cannot be 2, because [-2,-1] is not a subarray.
+```
+
+## Solution
+Below is the C++ solution to find the maximum product subarray using a dynamic programming approach.
+
+```cpp
+class Solution {
+public:
+    int maxProduct(vector<int>& nums) {
+        auto curr_prod_l = 1;
+        auto curr_prod_r = 1;
+               
+        auto n = nums.size();
+        auto best = INT_MIN;
+        for(int i = 0, j = n-1; i < n; i++, j--) {
+            
+            auto ix = nums[i];
+            auto jx = nums[j];
+            
+            curr_prod_l = ix * curr_prod_l;
+            curr_prod_r = jx * curr_prod_r;
+
+            best = max(best, max(curr_prod_l, curr_prod_r));
+
+            if(!ix)
+                curr_prod_l = 1;
+
+            if(!jx)
+                curr_prod_r = 1;
+        }
+        
+        return best;
+    }
+};
+
+
+class Solution {
+public:
+    int maxProduct(vector<int>& nums) {
+        if (nums.empty()) {
+            return 0;
+        }
+        
+        int maxProd = nums[0]; // Tracks the overall maximum product
+        int currMax = nums[0]; // Maximum product ending at current index
+        int currMin = nums[0]; // Minimum product ending at current index
+        
+        for (int i = 1; i < nums.size(); ++i) {
+            // Store currMax for use in currMin calculation
+            int tempMax = currMax;
+            
+            // Update currMax: max of current element, product with max, product with min
+            currMax = max({nums[i], currMax * nums[i], currMin * nums[i]});
+            
+            // Update currMin: min of current element, product with previous max, product with previous min
+            currMin = min({nums[i], tempMax * nums[i], currMin * nums[i]});
+            
+            // Update overall maximum product
+            maxProd = max(maxProd, currMax);
+        }
+        
+        return maxProd;
+    }
+};
+```
+
 
 ## 121. Best Time to Buy and Sell Stock - Array, Dynamic Programming
 #### https://leetcode.com/problems/best-time-to-buy-and-sell-stock/description/
