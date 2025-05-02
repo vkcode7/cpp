@@ -1195,3 +1195,114 @@ public:
     }
 };
 ```
+
+
+# 98. Validate Binary Search Tree Solution
+
+## Problem Description
+Given the root of a binary tree, determine if it is a valid binary search tree (BST). A valid BST is defined as follows:
+- The left subtree of a node contains only nodes with keys less than the node's key.
+- The right subtree of a node contains only nodes with keys greater than the node's key.
+- Both the left and right subtrees must also be binary search trees.
+
+### Example
+```
+Input: root = [2,1,3]
+Output: true
+Explanation: The tree is a valid BST (1 < 2 < 3).
+```
+<img src="../assets/bstree1.jpg” width="20%">
+
+### Example
+```
+Input: root = [5,1,4,null,null,3,6]
+Output: false
+Explanation: The root node's value is 5 but its right child's value is 4.
+```
+<img src="../assets/bstree2.jpg” width="20%">
+
+## Solution
+Below is the C++ solution to validate a binary search tree using recursive inorder traversal.
+
+```cpp
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode() : val(0), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+ * };
+ */
+class Solution {
+public:
+    bool isValidBST(TreeNode* root) {
+        return help(root, INT_MIN, INT_MAX);
+    }
+    
+    bool help(TreeNode* root, long min, long max){
+        if(!root)   return true;
+        //left should always be between -inf and max=root->val
+        //right between min=root->val and +inf
+        if(root->val <= min || root->val >= max)  return false;
+        return help(root->left, min, root->val) && help(root->right, root->val, max);
+    }
+};
+
+class Solution {
+public:
+    bool isValidBST(TreeNode* root) {
+        return validate(root, nullptr, nullptr);
+    }
+    
+private:
+    bool validate(TreeNode* node, TreeNode* minNode, TreeNode* maxNode) {
+        // Empty node is valid
+        if (!node) {
+            return true;
+        }
+        
+        // Check if current node's value is within valid range
+        if ((minNode && node->val <= minNode->val) || (maxNode && node->val >= maxNode->val)) {
+            return false;
+        }
+        
+        // Recursively validate left and right subtrees
+        // Left subtree: all values must be < node->val
+        // Right subtree: all values must be > node->val
+        return validate(node->left, minNode, node) && validate(node->right, node, maxNode);
+    }
+};
+```
+
+## Explanation
+1. **Recursive Validation with Range**:
+   - Use a helper function `validate` that takes the current node and pointers to `minNode` and `maxNode` to define the valid range for the node's value.
+   - For each node:
+     - If the node is `nullptr`, return `true` (empty subtree is valid).
+     - Check if the node's value is within the valid range:
+       - Must be greater than `minNode->val` (if `minNode` exists).
+       - Must be less than `maxNode->val` (if `maxNode` exists).
+     - If the value is out of range, return `false`.
+   - Recursively validate:
+     - Left subtree: Update `maxNode` to the current node (all values must be < `node->val`).
+     - Right subtree: Update `minNode` to the current node (all values must be > `node->val`).
+2. **Initial Call**:
+   - Start with `minNode` and `maxNode` as `nullptr` to allow any value at the root.
+3. **Correctness**:
+   - This approach ensures each node's value is strictly within the valid range for its position in the BST, handling cases where duplicate values are invalid.
+
+## Time and Space Complexity
+- **Time Complexity**: O(n), where `n` is the number of nodes in the tree. Each node is visited exactly once.
+- **Space Complexity**: O(h), where `h` is the height of the tree, due to the recursion stack. In the worst case (skewed tree), this is O(n); in a balanced tree, it is O(log n).
+
+## Edge Cases
+- Empty tree: Return `true`.
+- Single node: Return `true` (valid BST).
+- Invalid BST with duplicates: `node->val == minNode->val` or `node->val == maxNode->val` returns `false`.
+- Deep skewed tree: Handled by recursive calls.
+- Large valid BST: Efficiently validates within constraints.
+- Invalid subtree: Detects cases like `[5,4,6,null,null,3,7]` where `3` violates the BST property in the right subtree.
+
