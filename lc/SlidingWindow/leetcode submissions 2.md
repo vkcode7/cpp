@@ -307,6 +307,152 @@ public:
 - Reversal at tail: Correctly connects to `nullptr`.
 - Full list reversal: Works when `left = 1` and `right = length`.
 
+# 234. Palindrome Linked List Solution
+
+## Problem Description
+Given the head of a singly linked list, determine if it is a palindrome. A linked list is a palindrome if it reads the same forward and backward.
+
+### Example
+```
+Input: head = [1,2,2,1]
+Output: true
+
+Input: head = [1,2]
+Output: false
+```
+
+## Solution
+Below is the C++ solution to check if a linked list is a palindrome.
+
+```cpp
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode() : val(0), next(nullptr) {}
+ *     ListNode(int x) : val(x), next(nullptr) {}
+ *     ListNode(int x, ListNode *next) : val(x), next(next) {}
+ * };
+ */
+class Solution {
+public:
+    
+typedef ListNode Node;
+    Node * reverse(Node * node)
+    {
+        Node * prev = nullptr;
+        while(node)
+        {
+            Node * next = node->next;
+            node->next = prev;
+            prev = node;
+            node = next;
+        }
+        
+        return prev;
+    }
+    
+    bool isPalindrome(ListNode* head) {
+        if(!head || !head->next)
+            return true;
+        
+        Node * slow = head;
+        Node * fast = head;
+        while(fast && fast->next) {
+            slow = slow->next;
+            fast = fast->next->next;
+        }
+        
+        //now slow is at middle
+        Node * revhead = reverse(slow);
+        
+        Node * fnode = head;
+        Node * snode = revhead;
+        
+        while(fnode && snode)
+        {
+            if(fnode->val != snode->val)
+                return false;
+            
+            fnode = fnode->next;
+            snode = snode->next;
+        }
+            
+        reverse(revhead);
+        return true;
+    }
+};
+
+class Solution {
+public:
+    bool isPalindrome(ListNode* head) {
+        if (!head || !head->next) {
+            return true;
+        }
+        
+        // Step 1: Find the middle of the linked list
+        ListNode *slow = head, *fast = head;
+        while (fast->next && fast->next->next) {
+            slow = slow->next;
+            fast = fast->next->next;
+        }
+        
+        // Step 2: Reverse the second half
+        ListNode* secondHalf = reverseList(slow->next);
+        
+        // Step 3: Compare the first half with the reversed second half
+        ListNode* firstHalf = head;
+        while (secondHalf) {
+            if (firstHalf->val != secondHalf->val) {
+                return false;
+            }
+            firstHalf = firstHalf->next;
+            secondHalf = secondHalf->next;
+        }
+        
+        return true;
+    }
+    
+private:
+    ListNode* reverseList(ListNode* head) {
+        ListNode *prev = nullptr, *curr = head, *next = nullptr;
+        while (curr) {
+            next = curr->next;
+            curr->next = prev;
+            prev = curr;
+            curr = next;
+        }
+        return prev;
+    }
+};
+```
+
+## Explanation
+1. **Edge Cases**:
+   - If the list is empty or has one node, it is a palindrome (return `true`).
+2. **Find Middle**:
+   - Use two pointers: `slow` and `fast`. `fast` moves twice as fast as `slow`.
+   - When `fast` reaches the end, `slow` is at the middle (or just before the middle for even-length lists).
+3. **Reverse Second Half**:
+   - Reverse the list starting from `slow->next` using a helper function `reverseList`.
+   - This creates a reversed second half for comparison.
+4. **Compare Halves**:
+   - Compare the first half (starting from `head`) with the reversed second half.
+   - If any values differ, return `false`.
+   - If all values match, return `true`.
+5. **No Restoration Needed**: The problem does not require restoring the original list.
+
+## Time and Space Complexity
+- **Time Complexity**: O(n), where `n` is the number of nodes in the list. Finding the middle takes O(n/2), reversing the second half takes O(n/2), and comparing takes O(n/2).
+- **Space Complexity**: O(1), as we only use a constant amount of extra space for pointers (excluding recursive stack if recursion were used).
+
+## Edge Cases
+- Empty list: Return `true`.
+- Single node: Return `true`.
+- Two nodes (e.g., `[1,1]` or `[1,2]`): Correctly identifies palindrome or non-palindrome.
+- Odd-length list (e.g., `[1,2,1]`): Compares first and second halves correctly.
+- Even-length list (e.g., `[1,2,2,1]`): Handles middle split and comparison.
 
 # 451. Sort Characters By Frequency - Hash Table, Sorting, Heap (Priority Queue), Bucket Sort, Counting
 
