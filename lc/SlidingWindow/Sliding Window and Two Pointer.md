@@ -1,3 +1,83 @@
+# 26. Remove Duplicates from Sorted Array Solution
+
+## Problem Description
+Given a sorted array `nums`, remove the duplicates in-place such that each element appears only once and return the new length. Do not allocate extra space for another array; you must do this by modifying the input array in-place with O(1) extra memory.
+
+### Example
+```
+Input: nums = [1,1,2]
+Output: 2, nums = [1,2,_]
+Explanation: The function returns length = 2, with the first two elements of nums being [1,2]. The remaining elements are not important.
+```
+
+## Solution
+Below is the C++ solution to remove duplicates from a sorted array in-place.
+
+```cpp
+class Solution {
+public:
+    int removeDuplicates(vector<int>& nums) {
+        int k = 0;
+        int n = nums.size();
+        for(int i =1; i < nums.size(); i++)
+        {
+            if(nums[i] == nums[i-1]) {
+                nums.erase(nums.begin()+i);
+                k++;
+                i--;
+            }
+        }
+        
+        return n - k;
+    }
+};
+
+class Solution {
+public:
+    int removeDuplicates(vector<int>& nums) {
+        if (nums.empty()) {
+            return 0;
+        }
+        
+        int writePos = 1; // Position to write the next unique element
+        for (int i = 1; i < nums.size(); ++i) {
+            if (nums[i] != nums[i - 1]) {
+                nums[writePos] = nums[i];
+                writePos++;
+            }
+        }
+        
+        return writePos;
+    }
+};
+```
+
+## Explanation
+1. **Edge Case**:
+   - If the array is empty, return 0.
+2. **Two-Pointer Approach**:
+   - Use `writePos` to track the position where the next unique element should be placed (starts at 1 since the first element is always unique).
+   - Iterate through the array starting from index 1 (`i`).
+   - If the current element `nums[i]` is different from the previous element `nums[i - 1]`, it is unique:
+     - Copy `nums[i]` to `nums[writePos]`.
+     - Increment `writePos`.
+3. **In-Place Modification**:
+   - The array is modified such that all unique elements are moved to the front.
+   - Elements beyond `writePos` are irrelevant.
+4. **Return**: The new length of the array with duplicates removed (`writePos`).
+
+## Time and Space Complexity
+- **Time Complexity**: O(n), where `n` is the length of the array, as we traverse the array once.
+- **Space Complexity**: O(1), as we only use a constant amount of extra space for pointers.
+
+## Edge Cases
+- Empty array: Return 0.
+- Single element: Return 1, no duplicates.
+- All elements identical (e.g., `[1,1,1]`): Return 1, `nums` becomes `[1,_,_]`.
+- No duplicates (e.g., `[1,2,3]`): Return original length, array unchanged.
+- Large sorted array with duplicates: Efficiently handles all cases.
+
+
 ## 567. Permutation in String - Hash Table, Two Pointers, String, Sliding Window
 #### https://leetcode.com/problems/permutation-in-string/description/
 Given two strings s1 and s2, return true if s2 contains a permutation of s1, or false otherwise.
