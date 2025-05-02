@@ -204,6 +204,110 @@ public:
 The iterative approach is preferred for its constant space complexity and simplicity.
 
 
+# 92. Reverse Linked List II Solution
+
+## Problem Description
+Given the head of a singly linked list and two integers `left` and `right` where `1 <= left <= right <= length of list`, reverse the nodes of the list from position `left` to position `right`, and return the reversed list.
+
+### Example
+```
+Input: head = [1,2,3,4,5], left = 2, right = 4
+Output: [1,4,3,2,5]
+```
+
+## Solution
+Below is the C++ solution to reverse the linked list from position `left` to `right`.
+
+```cpp
+class Solution {
+public:
+    ListNode* reverseBetween(ListNode* head, int left, int right) {
+        ListNode *dummy = new ListNode(0); // created dummy node
+        dummy->next = head;
+        ListNode *prev = dummy; // intialising prev pointer on dummy node
+        
+        for(int i = 0; i < left - 1; i++)
+            prev = prev->next; // adjusting the prev pointer on it's actual index
+        
+        ListNode *curr = prev->next; // curr pointer will be just after prev
+        // reversing
+        for(int i = 0; i < right - left; i++){
+            ListNode *forw = curr->next; // forw pointer will be after curr
+            curr->next = forw->next;
+            forw->next = prev->next;
+            prev->next = forw;
+        }
+        return dummy->next;
+    }
+};
+```
+
+```cpp
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode() : val(0), next(nullptr) {}
+ *     ListNode(int x) : val(x), next(nullptr) {}
+ *     ListNode(int x, ListNode *next) : val(x), next(next) {}
+ * };
+ */
+class Solution {
+public:
+    ListNode* reverseBetween(ListNode* head, int left, int right) {
+        // If no reversal needed
+        if (!head || left == right) {
+            return head;
+        }
+        
+        // Dummy node to handle cases where reversal starts at head
+        ListNode dummy(0);
+        dummy.next = head;
+        ListNode* pre = &dummy;
+        
+        // Step 1: Reach the node just before position 'left'
+        for (int i = 0; i < left - 1; ++i) {
+            pre = pre->next;
+        }
+        
+        // Step 2: Start reversing from 'left' to 'right'
+        ListNode* curr = pre->next;
+        for (int i = 0; i < right - left; ++i) {
+            // Store the next node
+            ListNode* next_node = curr->next;
+            // Update pointers to reverse the link
+            curr->next = next_node->next;
+            next_node->next = pre->next;
+            pre->next = next_node;
+        }
+        
+        return dummy.next;
+    }
+};
+```
+
+## Explanation
+1. **Dummy Node**: Simplifies cases where reversal starts at the head by providing a node before the head.
+2. **Traverse to `pre`**: Move to the node just before position `left` using a loop.
+3. **Reverse Sublist**: Iteratively reverse links from `left` to `right` by adjusting pointers:
+   - Store the next node (`next_node`).
+   - Update `curr->next` to skip `next_node`.
+   - Link `next_node` to the current head of the reversed sublist (`pre->next`).
+   - Update `pre->next` to point to `next_node`.
+4. **Reconnect**: Return the modified list starting from `dummy.next`.
+
+## Time and Space Complexity
+- **Time Complexity**: O(n), where `n` is the length of the list. We traverse to position `left` and reverse `right - left` nodes.
+- **Space Complexity**: O(1), as only a constant amount of extra space is used for pointers.
+
+## Edge Cases
+- Single node or `left == right`: No reversal needed.
+- Reversal at head: Handled by the dummy node.
+- Reversal at tail: Correctly connects to `nullptr`.
+- Full list reversal: Works when `left = 1` and `right = length`.
+
+
 # 451. Sort Characters By Frequency - Hash Table, Sorting, Heap (Priority Queue), Bucket Sort, Counting
 
 This document describes the solution to the "Sort Characters By Frequency" problem (LeetCode #451).
