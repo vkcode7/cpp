@@ -247,6 +247,101 @@ The priority queue approach is preferred for its clarity and efficiency, as it a
 
 
 
+## 217. Contains Duplicate - Array, Hash Table, Sorting
+
+This document describes the solution to the "Contains Duplicate" problem from LeetCode.
+
+## Problem Description
+Given an integer array `nums`, return `true` if any value appears at least twice in the array, and return `false` if every element is distinct.
+
+### Example
+```
+Input: nums = [1,2,3,1]
+Output: true
+Explanation: The element 1 appears twice.
+
+Input: nums = [1,2,3,4]
+Output: false
+Explanation: All elements are distinct.
+
+Input: nums = [1,1,1,3,3,4,3,2,4,2]
+Output: true
+Explanation: Multiple elements (1, 2, 3, 4) appear more than once.
+```
+
+### Constraints
+- `1 <= nums.length <= 10^5`
+- `-10^9 <= nums[i] <= 10^9`
+
+```c++
+class Solution {
+public:
+    bool containsDuplicate(vector<int>& nums) {
+    sort(nums.begin(),nums.end());
+        int i=0;
+        while(i<nums.size()-1){
+            if((nums[i]^nums[i+1])==0){
+                return true;
+                break;
+            }
+            else{
+                i++;
+            }
+        }
+        return false;
+    }
+};
+```
+
+## Solution Approach
+The most efficient way to check for duplicates is to use a hash set to track seen elements.
+
+### Hash Set Approach
+1. Create an empty hash set to store encountered numbers.
+2. Iterate through the array:
+   - If the current number is already in the set, return `true` (duplicate found).
+   - Otherwise, add the number to the set.
+3. If the loop completes without finding a duplicate, return `false`.
+
+### Example Implementation (C++)
+```cpp
+class Solution {
+public:
+    bool containsDuplicate(vector<int>& nums) {
+        unordered_set<int> seen;
+        for (int num : nums) {
+            if (seen.count(num) > 0) {
+                return true;
+            }
+            seen.insert(num);
+        }
+        return false;
+    }
+};
+```
+
+### How It Works
+- **Hash Set**: The `unordered_set` provides O(1) average-case time complexity for lookups and insertions.
+- **Iteration**: For each element, check if it exists in the set. If it does, a duplicate is found. If not, add it to the set.
+- **Edge Case**: The array is guaranteed to have at least one element, so no additional checks are needed for empty arrays.
+
+### Time and Space Complexity
+- **Time Complexity**: O(n), where `n` is the length of the array, as we traverse the array once.
+- **Space Complexity**: O(n), as the hash set may store up to `n` elements in the worst case (no duplicates).
+
+### Alternative Approaches
+1. **Sorting**:
+   - Sort the array and check adjacent elements for equality.
+   - Time Complexity: O(n log n)
+   - Space Complexity: O(1) (if sorting in-place)
+2. **Brute Force**:
+   - Compare each element with every other element.
+   - Time Complexity: O(n²)
+   - Space Complexity: O(1)
+The hash set approach is preferred due to its optimal time complexity.
+
+
+
 
 
 
