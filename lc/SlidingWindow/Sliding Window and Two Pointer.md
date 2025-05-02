@@ -1,3 +1,95 @@
+# 844. Backspace String Compare Solution
+
+## Problem Description
+Given two strings `s` and `t`, return `true` if they are equal when both are typed into empty text editors, where `'#'` represents a backspace character. A backspace deletes the character before it (if any).
+
+### Example
+```
+Input: s = "ab#c", t = "ad#c"
+Output: true
+Explanation: Both s and t become "ac" after processing backspaces.
+```
+
+## Solution
+Below is the C++ solution to compare two strings after processing backspace characters.
+```cpp
+class Solution {
+public:
+    string clean(string s)
+    {
+        string cleaned = "";
+        stack<char> st;
+        for(auto x: s)
+        {
+            if(x == '#') {
+                if(!st.empty())
+                st.pop();
+            }
+            else
+                st.push(x);
+        }  
+        
+        while(!st.empty()) {
+            cleaned += st.top(), st.pop();
+        }
+
+        return cleaned;
+    }
+    
+    bool backspaceCompare(string s, string t) {
+        s = clean(s);
+        t = clean(t);
+        
+        return s==t;
+    }
+};
+```
+
+```cpp
+class Solution {
+public:
+    bool backspaceCompare(string s, string t) {
+        return processString(s) == processString(t);
+    }
+    
+private:
+    string processString(const string& str) {
+        string result;
+        for (char c : str) {
+            if (c != '#') {
+                result.push_back(c);
+            } else if (!result.empty()) {
+                result.pop_back();
+            }
+        }
+        return result;
+    }
+};
+```
+
+## Explanation
+1. **Processing Strings**:
+   - Use a helper function `processString` to process each string by handling backspace characters.
+   - Iterate through each character in the string:
+     - If the character is not `'#'`, append it to the result string.
+     - If the character is `'#'` and the result string is not empty, remove the last character (simulate backspace).
+2. **Comparison**:
+   - Process both input strings `s` and `t` using `processString`.
+   - Compare the processed strings for equality.
+3. **Efficient Approach**:
+   - The solution builds the final strings by processing each character once, handling backspaces in a single pass.
+
+## Time and Space Complexity
+- **Time Complexity**: O(n + m), where `n` and `m` are the lengths of strings `s` and `t`, respectively. Each string is processed once.
+- **Space Complexity**: O(n + m) in the worst case, for storing the processed strings. (Note: A more space-efficient solution using two pointers exists, but this approach is clearer and still meets constraints.)
+
+## Edge Cases
+- Empty strings: Both `s = ""` and `t = ""` return `true`.
+- Only backspaces: `s = "##"` and `t = "##"` return `true` (both process to empty).
+- Backspace with no characters: `s = "a#"` and `t = ""` return `true` (both process to empty).
+- Multiple backspaces: `s = "ab##"` and `t = "c#d#"` return `true` (both process to empty).
+- Normal strings: `s = "abc"` and `t = "abc"` return `true`.
+
 # 26. Remove Duplicates from Sorted Array Solution
 
 ## Problem Description
