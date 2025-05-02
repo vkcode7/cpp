@@ -523,4 +523,155 @@ The hash map approach is preferred due to its linear time complexity.
 
 
 
+# 15. 3Sum Solution
 
+## Problem Description
+Given an integer array `nums`, return all the triplets `[nums[i], nums[j], nums[k]]` such that `i != j != k`, and `nums[i] + nums[j] + nums[k] == 0`. The solution set must not contain duplicate triplets.
+
+### Example
+```
+Input: nums = [-1,0,1,2,-1,-4]
+Output: [[-1,-1,2],[-1,0,1]]
+Explanation: The triplets [-1,-1,2] and [-1,0,1] sum to 0 and are unique.
+```
+
+## Solution
+Below is the C++ solution to find all unique triplets that sum to zero using a two-pointer approach after sorting the array.
+
+```cpp
+class Solution {
+public:
+    void searchPair(vector<int>& nums, int targetSum, int s, vector<vector<int>>& res) {
+        int e = nums.size()-1;
+        
+        while(s < e)
+        {
+            if(nums[s] + nums[e] > targetSum)
+            {
+                e--;
+            }
+            else if( nums[s] + nums[e] < targetSum)
+            {
+                s++;
+            }
+            else
+            {
+                vector<int> triplet = {-targetSum, nums[s], nums[e]};
+                res.push_back(triplet);
+                s++;
+                e--;
+                while(s < e && nums[s] == nums[s-1])
+                    s++;
+                
+                while(s < e && nums[e] == nums[e+1])
+                    e--;
+            }
+        }     
+    }
+
+    vector<vector<int>> threeSum(vector<int>& nums) {
+        sort(nums.begin(), nums.end());
+        
+        vector<vector<int>> res;
+        
+        for(int i = 0; i < nums.size(); i++)
+        {
+            int targetSum = nums[i];
+            if (i > 0 && targetSum == nums[i-1]) { //we have already seen this target sum so skip it
+                continue;
+            }
+            
+            //a+b+c = 0 => b+c = -a
+            if(i+2 < nums.size())
+                searchPair(nums, -1 * targetSum, i +1, res);
+        }
+           
+        return res;
+    }
+};
+
+class Solution {
+public:
+    vector<vector<int>> threeSum(vector<int>& nums) {
+        vector<vector<int>> result;
+        int n = nums.size();
+        if (n < 3) {
+            return result;
+        }
+        
+        // Sort the array to use two-pointer technique and handle duplicates
+        sort(nums.begin(), nums.end());
+        
+        // Fix the first element and use two pointers for the remaining two
+        for (int i = 0; i < n - 2; ++i) {
+            // Skip duplicates for the first element
+            if (i > 0 && nums[i] == nums[i - 1]) {
+                continue;
+            }
+            
+            // Use two pointers: left starts after i, right at the end
+            int left = i + 1, right = n - 1;
+            while (left < right) {
+                int sum = nums[i] + nums[left] + nums[right];
+                
+                if (sum == 0) {
+                    // Found a valid triplet
+                    result.push_back({nums[i], nums[left], nums[right]});
+                    
+                    // Skip duplicates for left
+                    while (left < right && nums[left] == nums[left + 1]) {
+                        left++;
+                    }
+                    // Skip duplicates for right
+                    while (left < right && nums[right] == nums[right - 1]) {
+                        right--;
+                    }
+                    
+                    left++;
+                    right--;
+                } else if (sum < 0) {
+                    // Sum too small, increment left
+                    left++;
+                } else {
+                    // Sum too large, decrement right
+                    right--;
+                }
+            }
+        }
+        
+        return result;
+    }
+};
+```
+
+## Explanation
+1. **Edge Case**:
+   - If the array has fewer than 3 elements, return an empty result.
+2. **Sorting**:
+   - Sort the array to enable the two-pointer technique and to easily skip duplicates.
+3. **Two-Pointer Approach**:
+   - Iterate through each index `i` as the first element of the triplet.
+   - Skip duplicate values for `i` to avoid duplicate triplets (if `nums[i] == nums[i-1]`).
+   - For each `i`, use two pointers:
+     - `left` starts at `i + 1`.
+     - `right` starts at the end (`n - 1`).
+   - Compute the sum: `nums[i] + nums[left] + nums[right]`.
+     - If `sum == 0`, add the triplet to the result and skip duplicates for both `left` and `right` (move `left` forward and `right` backward).
+     - If `sum < 0`, increment `left` to increase the sum.
+     - If `sum > 0`, decrement `right` to decrease the sum.
+4. **Duplicate Handling**:
+   - Skip duplicate values for `i`, `left`, and `right` to ensure unique triplets.
+5. **Result**:
+   - Return the list of all valid triplets.
+
+## Time and Space Complexity
+- **Time Complexity**: O(n²), where `n` is the length of the array. Sorting takes O(n log n), and the two-pointer approach for each `i` takes O(n), resulting in O(n * n) for the main loop.
+- **Space Complexity**: O(1) auxiliary space, excluding the space for the output and the space used by the sorting algorithm (which may be O(log n) for stack space in some implementations).
+
+## Edge Cases
+- Empty array or fewer than 3 elements: Return `[]`.
+- No valid triplets: `nums = [0,0,0,0]` returns `[[0,0,0]]`; `nums = [1,2,3]` returns `[]`.
+- All zeros: `nums = [0,0,0]` returns `[[0,0,0]]`.
+- Duplicate numbers: `nums = [-1,-1,-1,0,0,1,1]` correctly handles duplicates.
+- Large array: Handles up to `n = 3000` efficiently.
+- Negative and positive numbers: Works with mixed values like `[-2,0,1,1,2]`.
