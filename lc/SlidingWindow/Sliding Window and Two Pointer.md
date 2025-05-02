@@ -392,3 +392,849 @@ private:
    - Time Complexity: O(n)
    - Space Complexity: O(n)
 The Expand Around Center approach is simpler to implement and sufficient for the given constraints.
+
+
+
+# 451. Sort Characters By Frequency - Hash Table, Sorting, Heap (Priority Queue), Bucket Sort, Counting
+
+This document describes the solution to the "Sort Characters By Frequency" problem (LeetCode #451).
+
+## Problem Description
+Given a string `s`, sort it in decreasing order based on the frequency of the characters. The frequency of a character is the number of times it appears in the string. If two characters have the same frequency, their relative order in the output is not specified.
+
+### Example
+```
+Input: s = "tree"
+Output: "eert"
+Explanation: 'e' appears twice, while 'r' and 't' appear once. Thus, "eert" is valid (as is "eetr").
+
+Input: s = "cccaaa"
+Output: "aaaccc"
+Explanation: Both 'c' and 'a' appear three times, so "aaaccc" is valid (as is "cccaaa").
+
+Input: s = "Aabb"
+Output: "bbAa"
+Explanation: 'b' appears twice, 'A' and 'a' appear once. Case is preserved.
+```
+
+### Constraints
+- `1 <= s.length <= 5 * 10^5`
+- `s` consists of uppercase and lowercase English letters and digits.
+
+## Solution Approach
+The problem can be solved using a frequency map and sorting, or a bucket sort approach for efficiency.
+
+### Frequency Map and Sorting Approach
+1. Count the frequency of each character using a hash map.
+2. Create a list of character-frequency pairs and sort it by frequency in descending order.
+3. Build the result string by repeating each character by its frequency.
+
+### Example Implementation (C++)
+```cpp
+class Solution {
+public:
+    string frequencySort(string s) {
+        string sorted = "";
+        map<char,int> freq;
+        for(auto c : s)
+            freq[c]++;
+        
+        vector<vector<char>> vbucket(s.size()+1);
+        
+        for(auto it : freq)
+            vbucket[it.second].push_back(it.first);    
+        
+        for(int i = vbucket.size()-1; i > 0; i--)
+        {
+            if(vbucket[i].size() == 0)
+                continue;
+            
+            for(auto ch : vbucket[i]) {
+                for(int j=0; j < i; j++)
+                    sorted += ch;
+            }
+        }
+        
+        /*
+        for(int i = 1; i < vbucket.size(); i++)
+        {
+            if(vbucket[i].size() == 0)
+                continue;
+            
+            for(auto ch : vbucket[i]) {
+                for(int j=0; j < i; j++)
+                    sorted = ch + sorted;
+            }
+        }
+        */
+        return sorted;
+    }
+};
+```
+
+```cpp
+class Solution {
+public:
+    string frequencySort(string s) {
+        // Step 1: Count frequency of each character
+        unordered_map<char, int> freq;
+        for (char c : s) {
+            freq[c]++;
+        }
+        
+        // Step 2: Create vector of pairs and sort by frequency
+        vector<pair<char, int>> freqVec(freq.begin(), freq.end());
+        sort(freqVec.begin(), freqVec.end(), 
+             [](const pair<char, int>& a, const pair<char, int>& b) {
+                 return a.second > b.second;
+             });
+        
+        // Step 3: Build result string
+        string result = "";
+        for (auto& p : freqVec) {
+            result += string(p.second, p.first);
+        }
+        
+        return result;
+    }
+};
+```
+
+### How It Works
+- **Frequency Counting**: Use an `unordered_map` to count how many times each character appears.
+- **Sorting**:
+  - Convert the map to a vector of pairs `(character, frequency)`.
+  - Sort the vector by frequency in descending order using a lambda function.
+- **String Construction**: Iterate through the sorted vector, appending each character repeated by its frequency.
+- **Edge Cases**:
+  - Single character: Returns the character itself.
+  - Characters with equal frequency: Order doesn’t matter, handled by sorting.
+- **Result**: The string is sorted by character frequency, preserving character case.
+
+### Time and Space Complexity
+- **Time Complexity**: O(n + k log k), where `n` is the length of the string and `k` is the number of unique characters (up to 128 for ASCII). The sorting step dominates for small `n`.
+- **Space Complexity**: O(k), for the hash map and vector of pairs, plus O(n) for the output string.
+
+### Alternative Approach (Bucket Sort)
+1. Count character frequencies using a hash map.
+2. Group characters by frequency into buckets (max frequency is `n`).
+3. Iterate through buckets in descending order, appending characters.
+- **Time Complexity**: O(n), as bucket sort avoids comparison-based sorting.
+- **Space Complexity**: O(n) for buckets and output.
+The bucket sort approach is more efficient for large strings but slightly more complex to implement.
+
+
+# 2262. Substring with Largest Variance - Dynamic Programming
+
+This document describes the solution to the "Substring with Largest Variance" problem (LeetCode #2262).
+
+## Problem Description
+The variance of a string is defined as the largest difference between the number of occurrences of any two distinct characters in the string. Given a string `s`, return the largest variance possible among all substrings of `s`. A substring is a contiguous sequence of characters within `s`.
+
+### Example
+```
+Input: s = "aababbb"
+Output: 3
+Explanation: The substring "babbb" has 3 'b's and 1 'a', so the variance is 3 - 1 = 2. Another substring "abbb" has 3 'b's and 0 'a', variance is 3 - 0 = 3 (after considering 'a' and 'b').
+
+Input: s = "abcde"
+Output: 0
+Explanation: No two characters appear more than once in any substring, so the variance is 0.
+```
+
+### Constraints
+- `1 <= s.length <= 10^5`
+- `s` consists of lowercase English letters.
+
+```py
+Hint 1
+Think about how to solve the problem if the string had only two distinct characters.
+Hint 2
+If we replace all occurrences of the first character by +1 and those of the second character by -1, can we efficiently calculate the largest possible variance of a string with only two distinct characters?
+Hint 3
+Now, try finding the optimal answer by taking all possible pairs of characters into consideration.
+```
+
+## Solution Approach
+The problem can be solved by considering all pairs of distinct characters and using a Kadane-like algorithm to find the maximum variance for each pair in substrings.
+
+### Modified Kadane’s Algorithm Approach
+1. Iterate over all pairs of characters `(c1, c2)` (e.g., 'a' and 'b') in the string.
+2. For each pair, convert the string into a sequence where:
+   - `c1` is counted as `+1`.
+   - `c2` is counted as `-1`.
+   - Other characters are ignored.
+3. Use a Kadane-like algorithm to find the maximum subarray sum (representing `count(c1) - count(c2)`), but with a constraint:
+   - The substring must contain at least one `c2` (to ensure a valid variance).
+4. Track the global maximum variance across all pairs.
+
+### Example Implementation (C++)
+```cpp
+class Solution {
+public:
+    int largestVariance(string s) {
+        int maxVariance = 0;
+        unordered_set<char> unique(s.begin(), s.end());
+        
+        // Try all pairs of distinct characters
+        for (char c1 : unique) {
+            for (char c2 : unique) {
+                if (c1 == c2) continue;
+                
+                // Kadane-like algorithm for c1 (+1) and c2 (-1)
+                int currVariance = 0; // Current sum of +1/-1
+                bool hasC2 = false;   // Tracks if c2 is in current substring
+                bool hadC2 = false;   // Tracks if c2 was in a previous substring
+                int firstC2 = 0;      // Tracks variance after first c2
+                
+                for (char c : s) {
+                    if (c == c1) {
+                        currVariance++;
+                    } else if (c == c2) {
+                        hasC2 = true;
+                        hadC2 = true;
+                        currVariance--;
+                    }
+                    
+                    if (hasC2) {
+                        // Valid substring with at least one c2
+                        maxVariance = max(maxVariance, currVariance);
+                    }
+                    
+                    if (currVariance < firstC2 && hadC2) {
+                        // Reset to consider new substring with at least one c2
+                        currVariance = firstC2;
+                        hasC2 = false;
+                    }
+                }
+            }
+        }
+        
+        return maxVariance;
+    }
+};
+```
+
+### How It Works
+- **Character Pairs**: Iterate over all pairs of distinct characters (up to 26 * 25 pairs for lowercase letters).
+- **Sequence Conversion**: For each pair `(c1, c2)`, treat `c1` as `+1`, `c2` as `-1`, and ignore others.
+- **Kadane-like Algorithm**:
+  - Track `currVariance` (sum of `+1`/`-1` for the current substring).
+  - Ensure the substring contains at least one `c2` (`hasC2`).
+  - Use `hadC2` and `firstC2` to handle cases where a negative sum can be reset to include a prior `c2`.
+- **Edge Cases**:
+  - Single character type: Variance is 0 (no valid pair).
+  - No `c2` in substring: Invalid for variance calculation.
+- **Result**: The maximum variance is the largest `count(c1) - count(c2)` across all pairs and substrings.
+
+### Time and Space Complexity
+- **Time Complexity**: O(n * k^2), where `n` is the length of the string and `k` is the number of unique characters (up to 26 for lowercase letters). We process the string for each pair of characters.
+- **Space Complexity**: O(k), for the set of unique characters.
+
+### Alternative Approach
+A brute-force approach checking all substrings and calculating variance for each is infeasible (O(n^2 * k)). The modified Kadane’s algorithm is optimal for the given constraints, balancing efficiency and correctness.
+
+
+# 394. Decode String - Stack, Recursion
+
+This document describes the solution to the "Decode String" problem (LeetCode #394).
+
+## Problem Description
+Given an encoded string, return its decoded string. The encoding rule is: `k[encoded_string]`, where the `encoded_string` inside the square brackets is repeated exactly `k` times. `k` is a positive integer. The input string is guaranteed to be valid, with no extra white spaces, well-formed square brackets, and no digits in the original decoded string.
+
+### Example
+```
+Input: s = "3[a]2[bc]"
+Output: "aaabcbc"
+Explanation: Decode "3[a]" to "aaa" and "2[bc]" to "bcbc", resulting in "aaabcbc".
+
+Input: s = "3[a2[c]]"
+Output: "accaccacc"
+Explanation: First decode "2[c]" to "cc", then "3[a2[c]]" becomes "3[acc]" which decodes to "accaccacc".
+
+Input: s = "2[abc]3[cd]ef"
+Output: "abcabccdcdcdef"
+Explanation: Decode "2[abc]" to "abcabc", "3[cd]" to "cdcdcd", then append "ef".
+```
+
+### Constraints
+- `1 <= s.length <= 30`
+- `s` consists of lowercase English letters, digits, and square brackets `[]`.
+- `s` is guaranteed to be a valid input.
+- All integers in `s` are in the range `[1, 300]`.
+
+## Solution Approach
+The problem can be solved using a stack-based approach to handle nested brackets and repetitions.
+
+### Stack-Based Approach
+1. Use two stacks:
+   - One for counts (to store the number of repetitions).
+   - One for strings (to store intermediate decoded strings).
+2. Iterate through the input string:
+   - If a digit is encountered, build the number (may be multi-digit).
+   - If an opening bracket `[` is encountered, push the current number and current string onto their respective stacks, then reset them.
+   - If a letter is encountered, append it to the current string.
+   - If a closing bracket `]` is encountered:
+     - Pop the string and count from the stacks.
+     - Repeat the current string `count` times and append it to the popped string.
+     - Update the current string with the result.
+3. Return the final decoded string.
+
+### Example Implementation (C++)
+```cpp
+class Solution {
+public:
+    string decodeString(string s) {
+        stack<char> st;
+        
+        string enc;
+        for(auto x : s)
+        {
+            if(x == ']')
+            {
+                string sub = "";
+                while(st.top()!='[')
+                {
+                    sub += st.top();
+                    st.pop();
+                }  
+                st.pop(); //throw the '['
+                
+                //get the number now
+                int tens = 1;
+                int num = 0;
+                while(!st.empty() && isdigit(st.top()))
+                {
+                    char dig = st.top();
+                    num = num + (tens * (dig - '0'));
+                    tens = tens * 10;
+                    st.pop();
+                }
+                //now dump it back in stack
+                string encsub = "";
+                //reverse sub
+                string revsub = "";
+                 for(int j = sub.length()-1; j >= 0; j--)
+                    revsub += sub[j];
+                for(int i = 0; i < num; i++)
+                {
+                    encsub += revsub;
+                }
+                
+                for(auto y: encsub)
+                    st.push(y);
+            }
+            else
+                st.push(x);   
+        }
+                
+        while(!st.empty())
+        {
+            enc += st.top();
+            st.pop();  
+        }  
+        string revenc = "";
+        for(int j = enc.length()-1; j >= 0; j--)
+            revenc += enc[j];
+            
+        return revenc;
+    }
+};
+```
+
+```cpp
+class Solution {
+public:
+    string decodeString(string s) {
+        stack<int> countStack;
+        stack<string> stringStack;
+        string currString = "";
+        int currCount = 0;
+        
+        for (char c : s) {
+            if (isdigit(c)) {
+                currCount = currCount * 10 + (c - '0'); // Build multi-digit number
+            } else if (c == '[') {
+                countStack.push(currCount);
+                stringStack.push(currString);
+                currCount = 0;
+                currString = "";
+            } else if (c == ']') {
+                string temp = currString;
+                currString = stringStack.top();
+                stringStack.pop();
+                int count = countStack.top();
+                countStack.pop();
+                for (int i = 0; i < count; i++) {
+                    currString += temp;
+                }
+            } else {
+                currString += c; // Append letter to current string
+            }
+        }
+        
+        return currString;
+    }
+};
+```
+
+### How It Works
+- **Stacks**:
+  - `countStack`: Stores the repetition counts for each bracket.
+  - `stringStack`: Stores the partially decoded strings before entering a new bracket.
+- **Processing**:
+  - Digits: Accumulate to form multi-digit numbers (e.g., "10" as 10).
+  - `[`: Save the current state (count and string) and reset for the new nested section.
+  - Letters: Append to the current string.
+  - `]`: Pop the count and previous string, repeat the current string, and append to the previous string.
+- **Edge Cases**:
+  - Nested brackets: Handled by the stack, which preserves the hierarchy.
+  - No brackets: Treated as a simple string.
+  - Multi-digit numbers: Built correctly by multiplying by 10.
+- **Result**: The final `currString` is the fully decoded string.
+
+### Time and Space Complexity
+- **Time Complexity**: O(n * maxK), where `n` is the length of the input string and `maxK` is the maximum repetition count (up to 300). Each character is processed once, but string repetition may amplify the output size.
+- **Space Complexity**: O(m), where `m` is the maximum nesting level of brackets, for the stacks. The output string is not counted in space complexity.
+
+### Alternative Approach
+1. **Recursive DFS**:
+   - Parse the string recursively, treating each bracketed section as a subproblem.
+   - Time Complexity: O(n * maxK)
+   - Space Complexity: O(m) for the recursion stack
+The stack-based approach is preferred for its iterative nature and clarity in handling nested structures.
+
+# 443. String Compression - Two Pointers
+
+This document describes the solution to the "String Compression" problem (LeetCode #443).
+
+## Problem Description
+Given an array of characters `chars`, compress it using the following algorithm:
+- For each group of consecutive repeating characters:
+  - If the group's length is 1, append the character to the result.
+  - Otherwise, append the character followed by the group's length.
+- The compressed string is stored in the input `chars` array, and the new length of the array is returned.
+- The solution must be in-place, and only the first `new length` elements of `chars` are considered after compression.
+
+### Example
+```
+Input: chars = ["a","a","b","b","c","c","c"]
+Output: 6, chars = ["a","2","b","2","c","3"]
+Explanation: "aa" is compressed to "a2", "bb" to "b2", and "ccc" to "c3". The new length is 6.
+
+Input: chars = ["a"]
+Output: 1, chars = ["a"]
+Explanation: Single character remains unchanged.
+
+Input: chars = ["a","b","b","b","b","b","b","b","b","b","b","b","b"]
+Output: 4, chars = ["a","b","1","2"]
+Explanation: "a" remains "a", "bbbbbbbbbbbb" is compressed to "b12". The new length is 4.
+```
+
+### Constraints
+- `1 <= chars.length <= 2000`
+- `chars[i]` is a lowercase English letter, uppercase English letter, digit, or symbol.
+
+## Solution Approach
+The problem can be solved by iterating through the array, counting consecutive repeating characters, and writing the compressed result in-place.
+
+### Two-Pointer Approach
+1. Use a pointer `write` to track the position where the next character or count should be written.
+2. Iterate through the array with a pointer `read`:
+   - Count consecutive occurrences of the same character.
+   - Write the character at the `write` position.
+   - If the count is greater than 1, convert the count to a string and write its digits.
+3. Return the final `write` position as the new length.
+
+### Example Implementation (C++)
+```cpp
+class Solution {
+public:
+    int compress(vector<char>& chars) {
+        queue<char> q;
+        
+        if(chars.size() <= 1)
+            return chars.size();
+        
+        for(int i = 0; i < chars.size(); i++)
+        {
+            int count = 1;
+            
+            q.push(chars[i]);
+            while(i+1 < chars.size() && chars[i] == chars[i+1]) {
+                count++;
+                i++;
+            }
+            
+            if(count > 1)
+            {
+                string scount = to_string(count);
+                for(auto c: scount)
+                    q.push(c);
+            }  
+        }
+        
+        chars.clear();
+        while(!q.empty())
+        {
+            chars.push_back(q.front());
+            q.pop();
+        }
+        
+        return chars.size();
+    }
+};
+```
+
+```cpp
+class Solution {
+public:
+    int compress(vector<char>& chars) {
+        int write = 0; // Position to write the compressed result
+        int read = 0;  // Position to read the input
+        
+        while (read < chars.size()) {
+            char currentChar = chars[read];
+            int count = 0;
+            
+            // Count consecutive occurrences
+            while (read < chars.size() && chars[read] == currentChar) {
+                count++;
+                read++;
+            }
+            
+            // Write the character
+            chars[write++] = currentChar;
+            
+            // Write the count if greater than 1
+            if (count > 1) {
+                string countStr = to_string(count);
+                for (char c : countStr) {
+                    chars[write++] = c;
+                }
+            }
+        }
+        
+        return write;
+    }
+};
+```
+
+### How It Works
+- **Pointers**:
+  - `write`: Tracks where to place the next character or digit in the compressed array.
+  - `read`: Scans the array to count consecutive characters.
+- **Compression**:
+  - For each group of identical characters, count their occurrences.
+  - Write the character once.
+  - If the count is greater than 1, convert the count to a string and write each digit.
+- **In-Place**:
+  - Overwrite the original array starting at `write`, ensuring the compressed result fits within the first `write` positions.
+- **Edge Cases**:
+  - Single character: Written as is, length 1.
+  - All same characters: Compressed to one character plus count digits (e.g., "aaaaa" to "a5").
+  - No consecutive repeats: Each character written once, length unchanged.
+- **Result**: The array is modified in-place, and the new length (`write`) is returned.
+
+### Time and Space Complexity
+- **Time Complexity**: O(n), where `n` is the length of `chars`, as we traverse the array once and handle counts in linear time.
+- **Space Complexity**: O(1), excluding the output array modification, as we only use a constant amount of extra space (temporary string for counts is small and bounded).
+
+### Alternative Approach
+1. **Two-Pass with Extra Space**:
+   - First pass: Compute the compressed string in a temporary array.
+   - Second pass: Copy back to the input array.
+   - Time Complexity: O(n)
+   - Space Complexity: O(n)
+  The in-place approach is preferred as it meets the problem’s requirement for in-place modification and minimizes space usage.
+
+
+# 387. First Unique Character in a String - Hash Table, Queue
+
+
+This document describes the solution to the "First Unique Character in a String" problem (LeetCode #387).
+
+## Problem Description
+Given a string `s`, find the first non-repeating character in it and return its index. If no such character exists, return `-1`.
+
+### Example
+```
+Input: s = "leetcode"
+Output: 0
+Explanation: The first unique character is 'l' at index 0.
+
+Input: s = "loveleetcode"
+Output: 2
+Explanation: The first unique character is 'v' at index 2.
+
+Input: s = "aabb"
+Output: -1
+Explanation: No character appears exactly once.
+```
+
+### Constraints
+- `1 <= s.length <= 10^5`
+- `s` consists of only lowercase English letters.
+
+## Solution Approach
+The problem can be solved using a frequency map to count character occurrences, followed by a second pass to find the first character with a count of 1.
+
+### Two-Pass Frequency Map Approach
+1. Create a frequency map to count the occurrences of each character in the string.
+2. Iterate through the string again to find the first character whose frequency is 1.
+3. Return the index of that character, or `-1` if no such character exists.
+
+### Example Implementation (C++)
+```cpp
+class Solution {
+public:
+    int firstUniqChar(string s) {
+        if(s.empty())
+            return -1;
+        
+        unordered_map<char, int> unique;
+        int index = 0;
+        for(auto x : s)
+        {
+            if(unique.find(x) != unique.end())
+                unique[x] = -1;
+            else
+                unique[x] = index;
+            
+            index++;
+        }
+        
+        index = s.size();
+        for(auto it : unique)
+        {
+            if(it.second == -1)
+                continue;
+            
+            index = min(index, it.second);
+        }
+        
+        return index == s.size() ? -1 : index;
+    }
+};
+```
+
+```cpp
+class Solution {
+public:
+    int firstUniqChar(string s) {
+        // Frequency map for lowercase letters
+        vector<int> freq(26, 0);
+        
+        // Count occurrences of each character
+        for (char c : s) {
+            freq[c - 'a']++;
+        }
+        
+        // Find first character with frequency 1
+        for (int i = 0; i < s.length(); i++) {
+            if (freq[s[i] - 'a'] == 1) {
+                return i;
+            }
+        }
+        
+        return -1;
+    }
+};
+```
+
+### How It Works
+- **Frequency Map**:
+  - Use a vector of size 26 (for lowercase letters) to store the count of each character.
+  - Iterate through the string and increment the count for each character (`c - 'a'` maps 'a' to  créditos: 0, 'b' to 1, etc.).
+- **Second Pass**:
+  - Iterate through the string and check the frequency of each character.
+  - Return the index of the first character with a frequency of 1.
+- **Edge Cases**:
+  - Single character: Returns 0 (frequency is 1).
+  - No unique character: Returns -1 (e.g., "aabb").
+  - Long string: Vector handles up to 10^5 characters efficiently.
+- **Result**: Returns the index of the first unique character or -1 if none exists.
+
+### Time and Space Complexity
+- **Time Complexity**: O(n), where `n` is the length of the string, as we perform two passes through the string.
+- **Space Complexity**: O(1), as the frequency vector has a fixed size of 26 (constant for lowercase letters).
+
+### Alternative Approach
+1. **Hash Map with Indices**:
+   - Use a hash map to store character frequencies and their first indices.
+   - Iterate through the string once to populate the map.
+   - Find the smallest index of a character with frequency 1.
+   - Time Complexity: O(n)
+   - Space Complexity: O(k), where `k` is the number of unique characters (up to 26).
+The vector-based approach is preferred for its simplicity and guaranteed O(1) space due to the fixed alphabet size.
+
+
+# 273. Integer to English Words
+
+This document describes the solution to the "Integer to English Words" problem (LeetCode #273).
+
+## Problem Description
+Convert a non-negative integer `num` to its English words representation.
+
+### Example
+```
+Input: num = 123
+Output: "One Hundred Twenty Three"
+Explanation: 123 is written as "One Hundred" for 100, "Twenty" for 20, and "Three" for 3.
+
+Input: num = 12345
+Output: "Twelve Thousand Three Hundred Forty Five"
+Explanation: 12345 is broken into groups: 12 (Twelve Thousand), 345 (Three Hundred Forty Five).
+
+Input: num = 1234567
+Output: "One Million Two Hundred Thirty Four Thousand Five Hundred Sixty Seven"
+Explanation: 1234567 is broken into groups: 1 (One Million), 234 (Two Hundred Thirty Four Thousand), 567 (Five Hundred Sixty Seven).
+
+Input: num = 0
+Output: "Zero"
+Explanation: 0 is simply "Zero".
+```
+
+### Constraints
+- `0 <= num <= 2^31 - 1`
+
+## Solution Approach
+The problem can be solved by processing the number in groups of three digits (thousands, millions, billions) and converting each group to words using predefined mappings for numbers 1-19, tens, and larger units.
+
+### Group-by-Three Approach
+1. Define arrays for:
+   - Numbers 1-19 (e.g., "One", "Two", ..., "Nineteen").
+   - Tens (e.g., "Twenty", "Thirty", ..., "Ninety").
+   - Large units (e.g., "Thousand", "Million", "Billion").
+2. Handle the special case of `num = 0` by returning "Zero".
+3. Process the number in groups of three digits from right to left:
+   - Extract the last three digits using modulo (`num % 1000`).
+   - Convert the three-digit number to words (hundreds, tens, ones).
+   - Append the appropriate unit (Thousand, Million, Billion) based on the group position.
+   - Divide `num` by 1000 to process the next group.
+4. Combine the words for each group, ensuring proper spacing and trimming.
+
+### Example Implementation (C++)
+```cpp
+class Solution {
+public:
+    vector<string> below20 = {"", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten", "Eleven", "Twelve", "Thirteen", "Fourteen", "Fifteen", "Sixteen", "Seventeen", "Eighteen", "Nineteen"};
+    
+    vector<string> tens = {"", "Ten", "Twenty", "Thirty", "Forty", "Fifty", "Sixty", "Seventy", "Eighty", "Ninety", "Hundred"};
+    
+    string convert(int n)
+    {
+        if(n >= 1000000000)
+            return convert(n / 1000000000) + " Billion" + convert(n % 1000000000);
+        
+        if(n >= 1000000)
+            return convert(n / 1000000) + " Million" + convert(n % 1000000);
+
+        if(n >= 1000)
+            return convert(n / 1000) + " Thousand" + convert(n % 1000);
+
+        if(n >= 100)
+            return convert(n / 100) + " Hundred" + convert(n % 100);
+
+        if(n >= 20)
+            return " " + tens[n/10] + convert(n % 10);
+        
+        if(n >= 1)
+            return " " + below20[n];
+            
+        return "";
+    }
+    
+    string numberToWords(int num) {
+        if(num == 0)
+            return "Zero";
+        return convert(num).substr(1);
+    }
+};
+```
+
+```cpp
+class Solution {
+public:
+    string numberToWords(int num) {
+        if (num == 0) return "Zero";
+        
+        // Define word mappings
+        vector<string> below20 = {"", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", 
+                                 "Ten", "Eleven", "Twelve", "Thirteen", "Fourteen", "Fifteen", "Sixteen", 
+                                 "Seventeen", "Eighteen", "Nineteen"};
+        vector<string> tens = {"", "", "Twenty", "Thirty", "Forty", "Fifty", "Sixty", "Seventy", "Eighty", "Ninety"};
+        vector<string> thousands = {"", "Thousand", "Million", "Billion"};
+        
+        string result = "";
+        int groupIndex = 0;
+        
+        while (num > 0) {
+            int threeDigits = num % 1000;
+            if (threeDigits > 0) {
+                string group = convertThreeDigits(threeDigits, below20, tens);
+                if (!group.empty()) {
+                    if (!result.empty()) result = " " + result;
+                    result = group + (thousands[groupIndex].empty() ? "" : " " + thousands[groupIndex]) + result;
+                }
+            }
+            num /= 1000;
+            groupIndex++;
+        }
+        
+        return result;
+    }
+    
+private:
+    string convertThreeDigits(int num, const vector<string>& below20, const vector<string>& tens) {
+        string result = "";
+        
+        // Handle hundreds
+        if (num >= 100) {
+            result += below20[num / 100] + " Hundred";
+            num %= 100;
+            if (num > 0) result += " ";
+        }
+        
+        // Handle tens and ones
+        if (num >= 20) {
+            result += tens[num / 10];
+            num %= 10;
+            if (num > 0) result += " " + below20[num];
+        } else if (num > 0) {
+            result += below20[num];
+        }
+        
+        return result;
+    }
+};
+```
+
+### How It Works
+- **Zero Case**: If `num = 0`, return "Zero" directly.
+- **Group Processing**:
+  - Extract three digits at a time (`num % 1000`).
+  - Convert the three-digit number to words using `convertThreeDigits`:
+    - Hundreds: Add the word for `num / 100` followed by "Hundred".
+    - Tens and Ones: If `num >= 20`, add the tens word and optionally the ones word; otherwise, use the `below20` word.
+  - Append the appropriate unit (Thousand, Million, Billion) based on the group index.
+- **Combining**:
+  - Prepend each group’s words to the result, adding spaces as needed.
+  - Skip empty groups (e.g., 1000 has no words for the last three digits).
+- **Edge Cases**:
+  - Single digit: Handled by `below20` in `convertThreeDigits`.
+  - Numbers like 100: Only "One Hundred" is added.
+  - Large numbers: Processed group by group up to billions.
+- **Result**: Returns the English words representation of the number.
+
+### Time and Space Complexity
+- **Time Complexity**: O(log n), where `n` is the input number, as we process up to 4 groups of three digits (since `n <= 2^31 - 1` has at most 10 digits).
+- **Space Complexity**: O(1), as the storage for word mappings and the result string is bounded by a constant (output string excluded).
+
+### Alternative Approach
+1. **Recursive**:
+   - Recursively break the number into groups and convert each group.
+   - Time Complexity: O(log n)
+   - Space Complexity: O(log n) due to recursion stack.
+The iterative approach is preferred for its simplicity and constant space usage, avoiding recursion while clearly handling each group.
+
