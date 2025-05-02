@@ -795,3 +795,403 @@ public:
    - Time Complexity: O(n)
    - Space Complexity: O(w), where `w` is the maximum width of the tree.
 The constant-space approach is preferred for its O(1) space complexity, leveraging the `next` pointers to avoid using a queue, and it handles non-perfect binary trees effectively.
+
+
+
+# 105. Construct Binary Tree from Preorder and Inorder Traversal - Hash Table, Divide and Conquer, Tree, Binary Tree
+
+This document describes the solution to the "Construct Binary Tree from Preorder and Inorder Traversal" problem (LeetCode #105).
+
+## Problem Description
+Given two integer arrays `preorder` and `inorder` where `preorder` is the preorder traversal of a binary tree and `inorder` is the inorder traversal of the same tree, construct and return the binary tree. The values in the arrays are unique.
+
+### Example
+<img src="../assets/tree.jpg" width="20%">
+
+```
+Input: preorder = [3,9,20,15,7], inorder = [9,3,15,20,7]
+Output: [3,9,20,null,null,15,7]
+Explanation:
+- Preorder: [3,9,20,15,7] (root, left, right)
+- Inorder: [9,3,15,20,7] (left, root, right)
+The tree is constructed with 3 as root, 9 as left child, and 20 as right child (with 15 and 7 as its children).
+
+Input: preorder = [-1], inorder = [-1]
+Output: [-1]
+Explanation: Single node tree with value -1.
+```
+
+### Constraints
+- `1 <= preorder.length <= 3000`
+- `inorder.length == preorder.length`
+- `-3000 <= preorder[i], inorder[i] <= 3000`
+- `preorder` and `inorder` consist of unique values.
+- Each value of `inorder` also appears in `preorder`.
+- `preorder` is guaranteed to be the preorder traversal of the tree.
+- `inorder` is guaranteed to be the inorder traversal of the tree.
+
+## Solution Approach
+The problem can be solved using a recursive approach by leveraging the properties of preorder (root, left, right) and inorder (left, root, right) traversals to construct the binary tree.
+
+### Recursive Construction Approach
+1. Use the first element of `preorder` as the root of the current subtree.
+2. Find the root’s position in the `inorder` array to split the inorder array into left and right subtrees.
+3. Recursively:
+   - Construct the left subtree using the elements before the root in `inorder` and the corresponding segment of `preorder`.
+   - Construct the right subtree using the elements after the root in `inorder` and the remaining segment of `preorder`.
+4. Use a hash map to store the indices of `inorder` values for O(1) lookup.
+5. Return the root of the constructed tree.
+
+### TreeNode Structure
+```cpp
+struct TreeNode {
+    int val;
+    TreeNode *left;
+    TreeNode *right;
+    TreeNode() : val(0), left(nullptr), right(nullptr) {}
+    TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+    TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+};
+```
+
+### Example Implementation (C++)
+```cpp
+class Solution {
+    unordered_map<int, int> mapIn;
+
+public:
+    TreeNode* buildTree(vector<int>& preorder, vector<int>& inorder) {
+         for (int i = 0; i < inorder.size(); i++)
+            mapIn[inorder[i]] = i;
+        
+        int rootIndex = 0; //the first element in preorder is root
+        return splitTree(preorder, rootIndex, 0, inorder.size()-1);   
+        
+        //preorder =>root,left,(right=root,left,right)
+        //inorder => left,root,(right=left,root,right)
+    }
+    
+private:
+    TreeNode* splitTree(vector<int>& P, int pivotix, int ileft, int iright) {
+        int rval = P[pivotix];
+        int inPivot = mapIn[rval]; //where is root located in inorder?
+        
+        TreeNode* root = new TreeNode(rval);  
+        
+        if (inPivot > ileft)
+            root->left = splitTree(P, pivotix+1, ileft, inPivot-1);
+        
+        if (inPivot < iright)
+            root->right = splitTree(P, pivotix+inPivot-ileft+1, inPivot+1, iright);
+        
+        return root;
+    }
+};
+```
+
+```cpp
+class Solution {
+public:
+    TreeNode* buildTree(vector<int>& preorder, vector<int>& inorder) {
+        // Map to store inorder value-to-index mappings
+        unordered_map<int, int> inorderMap;
+        for (int i = 0; i < inorder.size(); i++) {
+            inorderMap[inorder[i]] = i;
+        }
+        
+        int preorderIndex = 0;
+        return build(preorder, inorder, 0, inorder.size() - 1, preorderIndex, inorderMap);
+    }
+    
+private:
+    TreeNode* build(vector<int>& preorder, vector<int>& inorder, int inStart, int inEnd, 
+                    int& preorderIndex, unordered_map<int, int>& inorderMap) {
+        if (inStart > inEnd) {
+            return nullptr;
+        }
+        
+        // Create root node from current preorder element
+        TreeNode* root = new TreeNode(preorder[preorderIndex++]);
+        
+        // Find root's position in inorder
+        int inorderRootIndex = inorderMap[root->val];
+        
+        // Recursively build left and right subtrees
+        root->left = build(preorder, inorder, inStart, inorderRootIndex - 1, preorderIndex, inorderMap);
+        root->right = build(preorder, inorder, inorderRootIndex + 1, inEnd, preorderIndex, inorderMap);
+        
+        return root;
+    }
+};
+```
+
+### How It Works
+- **Preorder and Inorder Properties**:
+  - `preorder`: First element is the root, followed by left subtree, then right subtree.
+  - `inorder`: Left subtree, root, right subtree.
+- **Hash Map**:
+  - Maps each `inorder` value to its index for O(1) lookup of the root’s position.
+- **Recursion**:
+  - Use `preorderIndex` to track the current root in `preorder`.
+  - Find the root’s index in `inorder` to split into left (`inStart` to `inorderRootIndex - 1`) and right (`inorderRootIndex + 1` to `inEnd`) subtrees.
+  - Recursively construct left and right subtrees, advancing `preorderIndex`.
+- **Edge Cases**:
+  - Single node: `preorder = [x]`, `inorder = [x]` returns a single node.
+  - Empty tree: Not applicable due to constraints.
+  - Unbalanced tree: Correctly handled by recursive splits.
+- **Result**: Returns the root of the constructed binary tree.
+
+### Time and Space Complexity
+- **Time Complexity**: O(n), where `n` is the length of the input arrays. Building the hash map takes O(n), and each node is processed once during recursion.
+- **Space Complexity**: O(n) for the hash map and O(h) for the recursion stack, where `h` is the tree height (up to O(n) for a skewed tree, O(log n) for a balanced tree). Total is O(n).
+
+### Alternative Approach
+1. **Iterative with Stack**:
+   - Use a stack to mimic the recursive process, building the tree by processing `preorder` and `inorder` iteratively.
+   - Time Complexity: O(n)
+   - Space Complexity: O(h)
+The recursive approach with a hash map is preferred for its clarity and straightforward mapping of preorder and inorder properties, with efficient lookup for splitting subtrees.
+
+
+
+## 112. Path Sum - Tree, Depth-First Search, Breadth-First Search, Binary Tree
+#### https://leetcode.com/problems/path-sum/description/
+Given the root of a binary tree and an integer targetSum, return true if the tree has a root-to-leaf path such that adding up all the values along the path equals targetSum.
+
+A leaf is a node with no children.
+```py
+Example 1:
+
+Input: root = [5,4,8,11,null,13,4,7,2,null,null,null,1], targetSum = 22
+Output: true
+Explanation: The root-to-leaf path with the target sum is shown.
+```
+<img src="../assets/pathsum1.jpg" width="40%">
+
+```py
+Example 2:
+
+Input: root = [1,2,3], targetSum = 5
+Output: false
+Explanation: There are two root-to-leaf paths in the tree:
+(1 --> 2): The sum is 3.
+(1 --> 3): The sum is 4.
+There is no root-to-leaf path with sum = 5.
+```
+<img src="../assets/pathsum2.jpg" width="20%">
+
+```py
+Example 3:
+
+Input: root = [], targetSum = 0
+Output: false
+Explanation: Since the tree is empty, there are no root-to-leaf paths.
+ 
+Constraints:
+
+The number of nodes in the tree is in the range [0, 5000].
+-1000 <= Node.val <= 1000
+-1000 <= targetSum <= 1000
+```
+```c++
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode() : val(0), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+ * };
+ */
+class Solution {
+public:    
+    bool hasPathSum(TreeNode* root, int targetSum) {        
+        if(!root)
+            return false;
+        
+        targetSum -= root->val;
+        
+        if(!root->left && !root->right) 
+            return (targetSum ==0);
+        
+        return hasPathSum(root->left, targetSum) || hasPathSum(root->right, targetSum);
+    }
+};
+```
+
+## 107. Binary Tree Level Order Traversal II - Tree, Breadth-First Search, Binary Tree
+#### https://leetcode.com/problems/binary-tree-level-order-traversal-ii/description/
+Given the root of a binary tree, return the bottom-up level order traversal of its nodes' values. (i.e., from left to right, level by level from leaf to root).
+
+```py
+Example 1:
+
+Input: root = [3,9,20,null,null,15,7]
+Output: [[15,7],[9,20],[3]]
+```
+<img src="../assets/tree1.jpg" width="20%">
+
+```py
+Example 2:
+
+Input: root = [1]
+Output: [[1]]
+Example 3:
+
+Input: root = []
+Output: []
+ 
+Constraints:
+
+The number of nodes in the tree is in the range [0, 2000].
+-1000 <= Node.val <= 1000
+```
+```c++
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode() : val(0), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+ * };
+ */
+class Solution {
+public:
+    
+    int getTreeHeight(TreeNode *node) {
+        if(!node)
+            return 0;
+        
+        int leftH = getTreeHeight(node->left);
+        int rightH = getTreeHeight(node->right);
+ 
+        return max(leftH, rightH) + 1;       
+    }
+    
+    vector<vector<int>> levelOrderBottom(TreeNode* root) {
+        vector<vector<int>> ans;
+        
+        if(!root)
+            return ans;
+        
+        int levels = getTreeHeight(root);
+        
+        queue<TreeNode*> q;
+        
+        q.push(root);
+               
+        ans.resize(levels);
+        int cur_index = levels - 1;
+        
+        while(q.size()>0)
+        {
+            int qSize = q.size(); //gives num of nodes at same level
+
+            vector<int> val(qSize, 0);
+
+            //iterate through all nodes and add their kids
+            for(int i = 0; i < qSize; i++) 
+            {
+                TreeNode * node = q.front();
+                val[i] = node->val;
+
+                if(node->left)
+                    q.push(node->left);
+
+                if(node->right)
+                    q.push(node->right);
+
+                //pop the node just processed
+                q.pop(); //removes the node from Q
+            }
+
+            ans[cur_index]= val; 
+            cur_index--;
+        }
+        
+        return ans;
+    }
+};
+```
+
+## 589. N-ary Tree Preorder Traversal - Stack, Tree, Depth-First Search
+#### https://leetcode.com/problems/n-ary-tree-preorder-traversal/description/
+Given the root of an n-ary tree, return the preorder traversal of its nodes' values.
+
+Nary-Tree input serialization is represented in their level order traversal. Each group of children is separated by the null value (See examples)
+```py
+Example 1:
+
+Input: root = [1,null,3,2,4,null,5,6]
+Output: [1,3,5,6,2,4]
+```
+<img src="../assets/narytreeexample.png" width="40%">
+
+```py
+Example 2:
+
+Input: root = [1,null,2,3,4,5,null,null,6,7,null,8,null,9,10,null,null,11,null,12,null,13,null,null,14]
+Output: [1,2,3,6,7,11,14,4,8,12,5,9,13,10]
+ 
+Constraints:
+
+The number of nodes in the tree is in the range [0, 104].
+0 <= Node.val <= 104
+The height of the n-ary tree is less than or equal to 1000.
+ 
+Follow up: Recursive solution is trivial, could you do it iteratively?
+```
+<img src="../assets/sample_4_964.png" width="40%">
+
+```c++
+/*
+// Definition for a Node.
+class Node {
+public:
+    int val;
+    vector<Node*> children;
+
+    Node() {}
+
+    Node(int _val) {
+        val = _val;
+    }
+
+    Node(int _val, vector<Node*> _children) {
+        val = _val;
+        children = _children;
+    }
+};
+*/
+
+class Solution {
+public:
+    
+    void Traverse(Node *node, vector<int>& vOut) {
+        if(node == nullptr)
+            return;
+        
+        for(auto& n : node->children) {
+            if(n) {
+                vOut.push_back(n->val);
+                Traverse(n, vOut);  
+            }
+        }
+    }
+    
+    vector<int> preorder(Node* root) {
+        vector<int> vOut;
+        if(root) {
+            vOut.push_back(root->val);
+            Traverse(root, vOut);
+        }  
+        
+        return vOut;
+    }
+};
+```
