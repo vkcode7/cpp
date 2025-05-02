@@ -829,3 +829,225 @@ public:
 - More than two types: `fruits = [1,2,3,2,2]` returns 4 (subarray `[2,3,2,2]`).
 - Large array: Handles up to `n = 10^5` efficiently.
 - All different types: `fruits = [1,2,3,4]` returns 2 (e.g., `[1,2]`).
+- 
+
+# 724. Find Pivot Index
+Given an array of integers nums, calculate the pivot index of this array.
+
+The pivot index is the index where the sum of all the numbers strictly to the left of the index is equal to the sum of all the numbers strictly to the index's right.
+
+If the index is on the left edge of the array, then the left sum is 0 because there are no elements to the left. This also applies to the right edge of the array.
+
+Return the leftmost pivot index. If no such index exists, return -1.
+
+```
+Example 1:
+
+Input: nums = [1,7,3,6,5,6]
+Output: 3
+Explanation:
+The pivot index is 3.
+Left sum = nums[0] + nums[1] + nums[2] = 1 + 7 + 3 = 11
+Right sum = nums[4] + nums[5] = 5 + 6 = 11
+Example 2:
+
+Input: nums = [1,2,3]
+Output: -1
+Explanation:
+There is no index that satisfies the conditions in the problem statement.
+Example 3:
+
+Input: nums = [2,1,-1]
+Output: 0
+Explanation:
+The pivot index is 0.
+Left sum = 0 (no elements to the left of index 0)
+Right sum = nums[1] + nums[2] = 1 + -1 = 0
+```
+
+```cpp
+class Solution {
+public:
+    int pivotIndex(vector<int>& nums) {
+        
+        int sumL = 0, sumR = 0;
+        int totalSum = 0;
+        for(auto& x : nums)
+            totalSum += x;
+        
+        int len = nums.size();
+        if(len == 1)
+            return 0;
+        
+        for(int pivot = 0; pivot < len; pivot++)
+        {
+            if(pivot == 0)
+                sumL = 0;
+            else
+                sumL += nums[pivot-1];
+            
+            if(pivot == len -1)
+                sumR = 0;
+            else
+                sumR = totalSum - sumL - nums[pivot];
+            
+            if(sumL == sumR)
+                return pivot;
+        }
+           
+        return -1;
+    }
+};
+```
+
+# 1480. Running Sum of 1d Array
+Given an array nums. We define a running sum of an array as runningSum[i] = sum(nums[0]…nums[i]).
+
+Return the running sum of nums.
+```
+Example 1:
+
+Input: nums = [1,2,3,4]
+Output: [1,3,6,10]
+Explanation: Running sum is obtained as follows: [1, 1+2, 1+2+3, 1+2+3+4].
+Example 2:
+
+Input: nums = [1,1,1,1,1]
+Output: [1,2,3,4,5]
+Explanation: Running sum is obtained as follows: [1, 1+1, 1+1+1, 1+1+1+1, 1+1+1+1+1].
+Example 3:
+
+Input: nums = [3,1,2,10,1]
+Output: [3,4,6,16,17]
+```
+
+```cpp
+class Solution {
+public:
+    vector<int> runningSum(vector<int>& nums) {
+        vector<int> result;
+        int runningSum = 0;
+        for(auto& x: nums)
+            runningSum += x,
+            result.push_back(runningSum);
+            
+        return result;
+    }
+};
+```
+
+# 238. Product of Array Except Self
+Given an integer array nums, return an array answer such that answer[i] is equal to the product of all the elements of nums except nums[i].
+
+The product of any prefix or suffix of nums is guaranteed to fit in a 32-bit integer.
+
+You must write an algorithm that runs in O(n) time and without using the division operation.
+
+```
+Input: nums = [1,2,3,4]
+Output: [24,12,8,6]
+
+Input: nums = [-1,1,0,-3,3]
+Output: [0,0,9,0,0]
+```
+
+```cpp
+class Solution {
+public:
+    vector<int> productExceptSelf(vector<int>& nums) {
+        vector<int> prefixes(nums.size());
+        vector<int> suffixes(nums.size());
+        
+        int pproduct = 1;        
+        int sproduct = 1;
+        
+        int lastindex = nums.size()-1;
+
+        int j = nums.size();
+
+        for(int i =0; i < nums.size(); i++)
+        {
+            j--;
+            pproduct *= nums[i];
+            prefixes[i] = (pproduct);   
+            
+            sproduct *= nums[j];
+            suffixes[j] = sproduct;
+        }
+        
+        vector<int> result;
+        for(int i =0; i < nums.size(); i++) {
+            int p = (i == 0) ? 1 : prefixes[i-1];
+            int s = (i == lastindex) ? 1 : suffixes[i+1];
+            
+            result.push_back(p * s);
+        }
+        
+        return result;
+    }
+};
+
+/*
+class Solution {
+public:
+    vector<int> productExceptSelf(vector<int>& nums) {
+        int product = 1;
+        
+        int zeroCnt = count(nums.begin(), nums.end(), 0);
+        if(zeroCnt > 1)
+        {
+            //product will be 0
+            vector<int> result(nums.size(), 0);
+            return result;
+        }
+                
+        int zeroIndex = -1;
+        for(int i = 0; i< nums.size(); i++) { 
+            if(nums[i])
+                product *= nums[i];
+            else
+                zeroIndex = i;
+        }
+        
+        if(zeroCnt)
+        {
+            vector<int> result(nums.size(), 0);
+            result[zeroIndex] = product;
+            return result;
+        }
+        
+        vector<int> result;
+
+        for(auto& x: nums) {   
+            result.push_back(product / x);
+        }
+        
+        return result;
+    }
+};
+*/
+
+/*
+class Solution {
+public:
+    vector<int> productExceptSelf(vector<int>& nums) {
+        //loop inside a loop
+        vector<int> result;
+        for(int i =0; i < nums.size(); i++) {
+            int product = 1;
+            for(int j = 0; j < nums.size(); j++)
+            {
+                if(i == j)
+                    continue;
+                
+                product *= nums[j];
+            }
+            
+            result.push_back(product);
+        }
+        
+        return result;
+    }
+};
+*/
+```
