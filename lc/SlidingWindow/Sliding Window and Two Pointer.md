@@ -1,3 +1,79 @@
+# 125. Valid Palindrome
+A phrase is a palindrome if, after converting all uppercase letters into lowercase letters and removing all non-alphanumeric characters, it reads the same forward and backward. Alphanumeric characters include letters and numbers.
+
+Given a string s, return true if it is a palindrome, or false otherwise.
+```
+Example 1:
+Input: s = "A man, a plan, a canal: Panama"
+Output: true
+Explanation: "amanaplanacanalpanama" is a palindrome.
+
+Example 2:
+Input: s = "race a car"
+Output: false
+Explanation: "raceacar" is not a palindrome.
+
+Example 3:
+Input: s = " "
+Output: true
+Explanation: s is an empty string "" after removing non-alphanumeric characters.
+Since an empty string reads the same forward and backward, it is a palindrome.
+
+```cpp
+class Solution {
+public:
+    bool isPalindrome(string s) {
+        string data = "";
+        for(auto& x: s)
+        {
+            if(isalnum(x))
+                data += x;
+        }
+        
+        std::for_each(data.begin(), data.end(), 
+            [](char& c) { // modify in-place
+                c = std::tolower(static_cast<unsigned char>(c));
+        });
+        
+        int i, j;
+        for(i =0, j = data.length()-1; i < j && data[i] == data[j]; i++, j--);
+        
+        return ( i == j || i > j);           
+    }
+};
+
+class Solution {
+public:
+    bool isPalindrome(string s) {
+        int left = 0, right = s.size() - 1;
+        
+        while (left < right) {
+            // Skip non-alphanumeric characters from left
+            while (left < right && !isalnum(s[left])) {
+                left++;
+            }
+            // Skip non-alphanumeric characters from right
+            while (left < right && !isalnum(s[right])) {
+                right--;
+            }
+            // Compare characters (case-insensitive)
+            if (tolower(s[left]) != tolower(s[right])) {
+                return false;
+            }
+            left++;
+            right--;
+        }
+        
+        return true;
+    }
+};
+```
+
+## Time and Space Complexity
+- **Time Complexity**: O(n), where `n` is the length of the string. We traverse the string once with two pointers, and each character is checked at most once.
+- **Space Complexity**: O(1), as we only use a constant amount of extra space for the pointers and temporary variables.
+
+
 # 844. Backspace String Compare Solution
 
 ## Problem Description
