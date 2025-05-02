@@ -1,3 +1,67 @@
+# 215. Kth Largest Element in an Array Solution
+
+## Problem Description
+Given an integer array `nums` and an integer `k`, return the `k`th largest element in the array. The `k`th largest element is the element that would appear in the `k`th position if the array were sorted in descending order. You must solve it without sorting the entire array for optimal performance.
+
+### Example
+```
+Input: nums = [3,2,1,5,6,4], k = 2
+Output: 5
+Explanation: The second largest element is 5 (sorted in descending order: [6,5,4,3,2,1]).
+
+Input: nums = [3,2,3,1,2,4,5,5,6], k = 4
+Output: 4
+```
+
+## Solution
+Below is the C++ solution to find the `k`th largest element using a min-heap (priority queue).
+
+```cpp
+class Solution {
+public:
+    int findKthLargest(vector<int>& nums, int k) {
+        // Create a min-heap
+        priority_queue<int, vector<int>, greater<int>> pq;
+        
+        // Process each element
+        for (int num : nums) {
+            pq.push(num);
+            // If heap size exceeds k, remove the smallest element
+            if (pq.size() > k) {
+                pq.pop();
+            }
+        }
+        
+        // The top of the heap is the kth largest element
+        return pq.top();
+    }
+};
+```
+
+## Explanation
+1. **Min-Heap Approach**:
+   - Use a min-heap (`priority_queue` with `greater<int>` for ascending order) to maintain the `k` largest elements.
+   - Iterate through each element in `nums`:
+     - Push the element into the heap.
+     - If the heap size exceeds `k`, pop the smallest element to keep only the `k` largest elements.
+   - After processing all elements, the heap contains the `k` largest elements, and the top (smallest of these) is the `k`th largest.
+2. **Efficiency**:
+   - The heap ensures we only keep track of the `k` largest elements, avoiding the need to sort the entire array.
+3. **Result**:
+   - Return `pq.top()`, which is the `k`th largest element.
+
+## Time and Space Complexity
+- **Time Complexity**: O(n log k), where `n` is the length of the array. Each push/pop operation on the heap takes O(log k), and we process `n` elements.
+- **Space Complexity**: O(k), for storing at most `k` elements in the min-heap.
+
+## Edge Cases
+- `k = 1`: Return the maximum element.
+- `k = nums.size()`: Return the minimum element.
+- Single element: `nums = [1]`, `k = 1` returns 1.
+- Duplicate elements: Correctly handles cases like `[3,3,3,3]`, `k = 2` (returns 3).
+- Large array: Efficiently processes up to `n = 10^5` and `k` within constraints.
+- Negative numbers: Works with any integer values (e.g., `[-1,-2,-3]`, `k = 1` returns -1).
+
 # 295. Find Median from Data Stream - Two Pointers, Design, Sorting, Heap (Priority Queue), Data Stream
 
 This document describes the solution to the "Find Median from Data Stream" problem (LeetCode #295).
