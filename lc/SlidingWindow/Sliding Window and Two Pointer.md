@@ -1411,3 +1411,137 @@ public:
 - `n = 0`: `nums2` is empty, `nums1` remains unchanged.
 - `m + n = 0`: Both arrays are empty, no operation needed.
 - One array is much larger than the other: The solution handles uneven sizes correctly.
+
+# 239. Sliding Window Maximum - Queue, Sliding Window, Heap (Priority Queue), Monotonic Queue
+
+This document describes the solution to the "Sliding Window Maximum" problem (LeetCode #239).
+
+## Problem Description
+Given an array `nums` and an integer `k`, return the maximum value in each sliding window of size `k` as the window moves from left to right. The sliding window moves one position to the right at each step, and there are `n - k + 1` windows, where `n` is the length of the array.
+
+### Example
+```
+Input: nums = [1,3,-1,-3,5,3,6,7], k = 3
+Output: [3,3,5,5,6,7]
+Explanation:
+Window position                Max
+[1 3 -1] -3 5 3 6 7           3
+ 1 [3 -1 -3] 5 3 6 7          3
+ 1 3 [-1 -3 5] 3 6 7          5
+ 1 3 -1 [-3 5 3] 6 7          5
+ 1 3 -1 -3 [5 3 6] 7          6
+ 1 3 -1 -3 5 [3 6 7]          7
+
+Input: nums = [1], k = 1
+Output: [1]
+Explanation: Single element window has max 1.
+
+Hint 1
+How about using a data structure such as deque (double-ended queue)?
+Hint 2
+The queue size need not be the same as the window’s size.
+Hint 3
+Remove redundant elements and the queue should store only elements that need to be considered.
+```
+
+### Constraints
+- `1 <= nums.length <= 10^5`
+- `-10^4 <= nums[i] <= 10^4`
+- `1 <= k <= nums.length`
+
+## Solution Approach
+The problem can be solved efficiently using a deque to maintain indices of potential maximum values in the sliding window, ensuring the front of the deque always holds the index of the maximum.
+
+### Deque-Based Approach
+1. Use a deque to store indices of elements in the current window, maintaining a decreasing order of values (front has the largest value).
+2. For each index `i` in the array:
+   - Remove indices from the front of the deque if they are outside the current window (`i - k`).
+   - Remove indices from the back of the deque if their values are less than `nums[i]`, as they cannot be the maximum in future windows.
+   - Add the current index `i` to the back of the deque.
+3. After processing the first `k` elements, the front of the deque gives the maximum for each window. Store it in the result array for each subsequent step.
+
+### Example Implementation (C++)
+```cpp
+class Solution {
+public:   
+    vector<int> maxSlidingWindow(vector<int>& nums, int k) {
+        vector<int> result;
+        if (k == 0) return result;
+        deque<int> w;
+        for (int i = 0, n = (int)nums.size(); i < n; i++) {
+            while (!w.empty() && w.front() <= i-k) {
+                w.pop_front();
+            }
+            
+            while (!w.empty() && nums[w.back()] <= nums[i])
+                w.pop_back();
+            w.push_back(i);
+            
+            if (i >= k-1)
+                result.push_back(nums[w.front()]);
+        }
+        return result;
+    }
+};
+```
+
+```cpp
+class Solution {
+public:
+    vector<int> maxSlidingWindow(vector<int>& nums, int k) {
+        deque<int> dq; // Stores indices of potential max values
+        vector<int> result;
+        
+        for (int i = 0; i < nums.size(); i++) {
+            // Remove indices outside the current window
+            while (!dq.empty() && dq.front() <= i - k) {
+                dq.pop_front();
+            }
+            
+            // Remove indices of smaller values as they can't be max
+            while (!dq.empty() && nums[dq.back()] < nums[i]) {
+                dq.pop_back();
+            }
+            
+            // Add current index
+            dq.push_back(i);
+            
+            // After first k elements, front of deque is the max
+            if (i >= k - 1) {
+                result.push_back(nums[dq.front()]);
+            }
+        }
+        
+        return result;
+    }
+};
+```
+
+### How It Works
+- **Deque**:
+  - Stores indices of elements in decreasing order of their values.
+  - Front always holds the index of the maximum element in the current window.
+- **Processing**:
+  - Remove out-of-window indices from the front (`i - k` or earlier).
+  - Remove indices of smaller elements from the back, as they’re irrelevant for future maxima.
+  - Add the current index to the back.
+- **Result**:
+  - After processing `k` elements, the front of the deque gives the maximum for each window.
+  - Store `nums[dq.front()]` in the result starting from index `k-1`.
+- **Edge Cases**:
+  - `k = 1`: Each element is its own window maximum.
+  - `k = nums.length`: Single window, return the maximum of the array.
+  - Single element: Deque handles it correctly.
+- **Result**: Returns an array of maximum values for each sliding window.
+
+### Time and Space Complexity
+- **Time Complexity**: O(n), where `n` is the length of the array. Each element is pushed and popped at most once from the deque.
+- **Space Complexity**: O(k), for the deque, which stores at most `k` indices, plus O(n-k+1) for the output array.
+
+### Alternative Approaches
+1. **Brute Force**:
+   - Compute the maximum for each window by scanning all `k` elements.
+   - Time Complexity: O(n * k)
+   - Space Complexity: O(1) (excluding output)
+
+
