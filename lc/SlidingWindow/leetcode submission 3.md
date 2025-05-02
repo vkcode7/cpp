@@ -1760,3 +1760,345 @@ public:
    - Time Complexity: O(n)
    - Space Complexity: O(h) for the recursion stack, where `h` is the tree height (O(log n) for balanced, O(n) for skewed).
 The BFS approach is preferred for its intuitive level-by-level processing, which aligns naturally with the problem’s requirement to capture the rightmost node per level.
+
+
+# 116. Populating Next Right Pointers in Each Node
+
+This document describes the solution to the "Populating Next Right Pointers in Each Node" problem (LeetCode #116).
+
+## Problem Description
+Given a perfect binary tree where all leaves are on the same level, and every parent has two children, populate each node's `next` pointer to point to its next right node on the same level. If there is no next right node, the `next` pointer should be set to `nullptr`. The tree is modified in-place.
+
+### Example
+```
+Input: root = [1,2,3,4,5,6,7]
+Output: [1,#,2,3,#,4,5,6,7,#]
+Explanation: 
+- Level 1: 1->null
+- Level 2: 2->3->null
+- Level 3: 4->5->6->7->null
+The next pointers connect nodes at the same level.
+
+Input: root = []
+Output: []
+Explanation: An empty tree has no nodes to connect.
+```
+<img src="../assets/116_sample.png" width="30%">
+
+
+### Constraints
+- The number of nodes in the tree is in the range `[0, 2^12 - 1]`.
+- `-1000 <= Node.val <= 1000`
+
+## Solution Approach
+The problem can be solved using a level-order traversal (BFS) to connect nodes at each level, leveraging the perfect binary tree property to ensure all levels are fully populated.
+
+### BFS (Level-Order Traversal) Approach
+1. Use a queue to perform a level-order traversal of the tree.
+2. For each level:
+   - Track the number of nodes in the current level.
+   - Process each node, setting its `next` pointer to the next node in the queue (if it exists).
+   - Enqueue the children (left then right) of each node for the next level.
+3. Continue until all levels are processed.
+
+### Node Structure
+```cpp
+class Node {
+public:
+    int val;
+    Node* left;
+    Node* right;
+    Node* next;
+    Node() : val(0), left(nullptr), right(nullptr), next(nullptr) {}
+    Node(int _val) : val(_val), left(nullptr), right(nullptr), next(nullptr) {}
+    Node(int _val, Node* _left, Node* _right, Node* _next)
+        : val(_val), left(_left), right(_right), next(_next) {}
+};
+```
+
+### Example Implementation (C++)
+```cpp
+/* //recursive
+class Solution {
+public:
+Node* connect(Node* root) {
+    //base case
+    if(root == NULL) return NULL;
+    //connects the left subtree of same level with right subtree of that same level 
+    
+    if(root->left) 
+        root->left->next = root->right;
+    //connect the rightmost node of a level to the leftmost node of the next level.
+    if(root->right && root->next) 
+        root->right->next = root->next->left;
+    
+    //recursive calls for left and right subtrees.
+    connect(root->left);
+    connect(root->right);
+    return root;
+   }
+};
+*/
+
+/* //iterative
+void connect(TreeLinkNode *root) {
+    if(!root)
+        return;
+    while(root -> left)
+    {
+        TreeLinkNode *p = root;
+        while(p)
+        {
+            p -> left -> next = p -> right;
+            if(p -> next)
+                p -> right -> next = p -> next -> left;
+            p = p -> next;
+        }
+        root = root -> left;
+    }
+}
+*/
+
+
+//queue
+class Solution {
+public:
+    Node* connect(Node* root) {
+        if(!root)return root;
+        queue<Node*> q;
+        q.push(root);
+        while(!q.empty()){
+            int n=q.size();
+            for(int i=0;i<n;i++){
+                Node* curr_node = q.front(); //left //1-2-3-4
+                q.pop();
+                
+                if(i!=n-1) //this is not last node
+                    curr_node->next=q.front(); //next node is right node to it
+                    
+                if(curr_node->left) q.push(curr_node->left);
+                if(curr_node->right) q.push(curr_node->right);
+            }
+        }
+        return root;
+    }
+};
+```
+
+```cpp
+class Solution {
+public:
+    Node* connect(Node* root) {
+        if (!root) return nullptr;
+        
+        queue<Node*> q;
+        q.push(root);
+        
+        while (!q.empty()) {
+            int levelSize = q.size();
+            
+            // Process all nodes at the current level
+            for (int i = 0; i < levelSize; i++) {
+                Node* node = q.front();
+                q.pop();
+                
+                // Set next pointer to the next node in queue (if not the last node)
+                if (i < levelSize - 1) {
+                    node->next = q.front();
+                }
+                
+                // Enqueue children
+                if (node->left) q.push(node->left);
+                if (node->right) q.push(node->right);
+            }
+        }
+        
+        return root;
+    }
+};
+```
+
+### How It Works
+- **BFS**:
+  - Use a queue to traverse the tree level by level.
+  - For each level, process all nodes and set their `next` pointers.
+- **Level Processing**:
+  - Record the size of the current level (`levelSize`).
+  - For each node, set its `next` pointer to the next node in the queue (the next node at the same level), unless it’s the last node in the level.
+  - Enqueue the left and right children of each node.
+- **Edge Cases**:
+  - Empty tree: Return `nullptr`.
+  - Single node: No `next` pointer to set (handled by `levelSize - 1` check).
+  - Perfect binary tree: Ensures all nodes at each level have children (except leaves).
+- **Result**: The `next` pointers are set to connect nodes at the same level, and the modified tree’s root is returned.
+
+### Time and Space Complexity
+- **Time Complexity**: O(n), where `n` is the number of nodes, as each node is processed exactly once.
+- **Space Complexity**: O(w), where `w` is the maximum width of the tree. For a perfect binary tree, this is O(n/2) ≈ O(n) at the bottom level.
+
+### Alternative Approach
+1. **Constant Space (Using Next Pointers)**:
+   - Leverage the already-set `next` pointers of the current level to connect the next level.
+   - For each node in the current level, set `node->left->next = node->right` and `node->right->next = node->next->left` (if `node->next` exists).
+   - Time Complexity: O(n)
+   - Space Complexity: O(1)
+The BFS approach is presented for its clarity and general applicability, but the constant-space approach is optimal for this specific problem due to the perfect binary tree structure and the availability of `next` pointers.
+
+
+# 117. Populating Next Right Pointers in Each Node II - Linked List, Tree, Depth-First Search, Breadth-First Search, Binary Tree
+
+
+This document describes the solution to the "Populating Next Right Pointers in Each Node II" problem (LeetCode #117).
+
+## Problem Description
+Given a binary tree (not necessarily perfect), populate each node's `next` pointer to point to its next right node on the same level. If there is no next right node, the `next` pointer should be set to `nullptr`. The tree is modified in-place.
+
+### Example
+```
+Input: root = [1,2,3,4,5,null,7]
+Output: [1,#,2,3,#,4,5,7,#]
+Explanation:
+- Level 1: 1->null
+- Level 2: 2->3->null
+- Level 3: 4->5->7->null
+The next pointers connect nodes at the same level.
+
+Input: root = []
+Output: []
+Explanation: An empty tree has no nodes to connect.
+```
+<img src="../assets/117_sample.png" width="30%">
+
+
+### Constraints
+- The number of nodes in the tree is in the range `[0, 6000]`.
+- `-100 <= Node.val <= 100`
+
+## Solution Approach
+The problem can be solved using a constant-space approach by leveraging the `next` pointers of the current level to connect the nodes of the next level, without assuming a perfect binary tree.
+
+### Constant-Space Approach Using Next Pointers
+1. Traverse the tree level by level, using the `next` pointers of the current level to access nodes.
+2. For each level:
+   - Use a pointer to iterate through the nodes of the current level.
+   - Connect the children of these nodes to form the `next` pointers of the next level.
+   - Handle cases where nodes may have only one child or no children.
+3. Move to the next level by finding the first node of the next level.
+4. Continue until no more levels exist.
+
+### Node Structure
+```cpp
+class Node {
+public:
+    int val;
+    Node* left;
+    Node* right;
+    Node* next;
+    Node() : val(0), left(nullptr), right(nullptr), next(nullptr) {}
+    Node(int _val) : val(_val), left(nullptr), right(nullptr), next(nullptr) {}
+    Node(int _val, Node* _left, Node* _right, Node* _next)
+        : val(_val), left(_left), right(_right), next(_next) {}
+};
+```
+
+### Example Implementation (C++)
+```cpp
+class Solution {
+public:
+    Node* connect(Node* root) {
+        if(!root)
+            return root;
+        
+        queue<Node*> q;
+        q.push(root);
+        while(!q.empty())
+        {
+            int n = q.size();
+            
+            for(int i = 0; i < n; i++)
+            {
+                Node * curr = q.front(); //1-2-3-4
+                q.pop();
+                if(i < n-1) //not the last node in this group (!4)
+                {
+                    curr->next = q.front();
+                }
+                
+                if(curr->left)
+                    q.push(curr->left);
+                
+                if(curr->right)
+                    q.push(curr->right);
+            }
+        }
+        
+        return root;
+    }
+};
+```
+
+```cpp
+class Solution {
+public:
+    Node* connect(Node* root) {
+        if (!root) return nullptr;
+        
+        Node* curr = root; // Points to the start of the current level
+        
+        while (curr) {
+            Node* nextLevel = nullptr; // Head of the next level
+            Node* prev = nullptr;      // Tracks the previous node in the next level
+            
+            // Process all nodes in the current level
+            while (curr) {
+                // Process left child
+                if (curr->left) {
+                    if (!nextLevel) nextLevel = curr->left;
+                    if (prev) prev->next = curr->left;
+                    prev = curr->left;
+                }
+                
+                // Process right child
+                if (curr->right) {
+                    if (!nextLevel) nextLevel = curr->right;
+                    if (prev) prev->next = curr->right;
+                    prev = curr->right;
+                }
+                
+                curr = curr->next; // Move to next node in current level
+            }
+            
+            curr = nextLevel; // Move to the next level
+        }
+        
+        return root;
+    }
+};
+```
+
+### How It Works
+- **Level Traversal**:
+  - Use `curr` to traverse nodes in the current level via `next` pointers.
+- **Connecting Next Level**:
+  - For each node in the current level, process its left and right children.
+  - Link children using the `prev` pointer to set `next` pointers for the next level.
+  - Track the head of the next level (`nextLevel`) with the first child encountered.
+- **Level Transition**:
+  - After processing a level, move `curr` to `nextLevel` to process the next level.
+- **Edge Cases**:
+  - Empty tree: Return `nullptr`.
+  - Single node: No `next` pointer to set.
+  - Sparse tree: Handles missing children or unbalanced levels.
+  - Single child: Connects only the existing child to the next node.
+- **Result**: The `next` pointers are set to connect nodes at the same level, and the modified tree’s root is returned.
+
+### Time and Space Complexity
+- **Time Complexity**: O(n), where `n` is the number of nodes, as each node is processed exactly once.
+- **Space Complexity**: O(1), as only a constant amount of extra space is used (pointers), excluding the implicit space of the output.
+
+### Alternative Approach
+1. **BFS (Level-Order Traversal)**:
+   - Use a queue to process nodes level by level, setting `next` pointers for each level.
+   - Time Complexity: O(n)
+   - Space Complexity: O(w), where `w` is the maximum width of the tree.
+The constant-space approach is preferred for its O(1) space complexity, leveraging the `next` pointers to avoid using a queue, and it handles non-perfect binary trees effectively.
