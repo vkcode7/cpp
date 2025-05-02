@@ -697,3 +697,108 @@ public:
    - Time Complexity: O(n)
    - Space Complexity: O(n)
 The two-pointer approach is preferred for its optimal space complexity and simplicity.
+
+
+# 733. Flood Fill Solution
+
+## Problem Description
+Given an `m x n` integer grid `image` representing an image, where `image[i][j]` is a pixel value, perform a flood fill starting from pixel `(sr, sc)`. Replace the color of all connected pixels with the same color as `(sr, sc)` with a new color `newColor`. Two pixels are connected if they are adjacent (up, down, left, or right) and have the same color. Return the modified image.
+
+### Example
+```
+Input: image = [[1,1,1],[1,1,0],[1,0,1]], sr = 1, sc = 1, newColor = 2
+Output: [[2,2,2],[2,2,0],[2,0,1]]
+Explanation: Starting at image[1][1] = 1, all connected pixels with value 1 are changed to 2.
+```
+
+<img src="../assets/flood1-grid.jpg” width="20%">
+
+
+## Solution
+Below is the C++ solution to perform flood fill using depth-first search (DFS).
+
+```cpp
+class Solution {
+public:
+    void floodFillColor(vector<vector<int>>& grid, int row, int col, int rows, int cols, int startColor, int color)
+    {
+        if(row < 0 || col < 0 || row == rows || col == cols) return;
+        
+        if(grid[row][col]==startColor) {
+            grid[row][col] = color;
+            floodFillColor(grid, row-1, col, rows, cols, startColor, color);
+            floodFillColor(grid, row+1, col, rows, cols, startColor, color);
+            floodFillColor(grid, row, col-1, rows, cols, startColor, color);
+            floodFillColor(grid, row, col+1, rows, cols, startColor, color);
+        }
+        
+        return;     
+    }
+    
+    vector<vector<int>> floodFill(vector<vector<int>>& image, int sr, int sc, int color) {
+        int startColor = image[sr][sc];   
+        if(startColor == color)
+            return image;
+        
+        floodFillColor(image, sr, sc, (int)image.size(), (int)image[0].size(), startColor, color);       
+        return image;
+    }
+};
+
+
+class Solution {
+public:
+    vector<vector<int>> floodFill(vector<vector<int>>& image, int sr, int sc, int newColor) {
+        // If the starting pixel is already the new color, no change needed
+        if (image[sr][sc] == newColor) {
+            return image;
+        }
+        
+        // Perform DFS to flood fill
+        dfs(image, sr, sc, image[sr][sc], newColor);
+        return image;
+    }
+    
+private:
+    void dfs(vector<vector<int>>& image, int r, int c, int oldColor, int newColor) {
+        // Check boundaries and if the current pixel has the old color
+        if (r < 0 || r >= image.size() || c < 0 || c >= image[0].size() || image[r][c] != oldColor) {
+            return;
+        }
+        
+        // Change the current pixel to newColor
+        image[r][c] = newColor;
+        
+        // Recursively flood fill in all four directions
+        dfs(image, r + 1, c, oldColor, newColor); // Down
+        dfs(image, r - 1, c, oldColor, newColor); // Up
+        dfs(image, r, c + 1, oldColor, newColor); // Right
+        dfs(image, r, c - 1, oldColor, newColor); // Left
+    }
+};
+```
+
+## Explanation
+1. **Edge Case**:
+   - If the starting pixel `(sr, sc)` already has the `newColor`, return the image unchanged to avoid redundant processing.
+2. **DFS Approach**:
+   - Start at the given pixel `(sr, sc)` and get its original color (`oldColor`).
+   - Use a recursive `dfs` function to:
+     - Check if the current position is within bounds and has the `oldColor`.
+     - If valid, change the pixel to `newColor`.
+     - Recursively apply the same process to the four adjacent pixels (up, down, left, right).
+3. **In-Place Modification**:
+   - The image is modified directly by updating pixel values during DFS.
+4. **Return**:
+   - Return the modified image after the flood fill is complete.
+
+## Time and Space Complexity
+- **Time Complexity**: O(m * n), where `m` is the number of rows and `n` is the number of columns. In the worst case, we visit every pixel once (e.g., when the entire image is the same color).
+- **Space Complexity**: O(m * n) in the worst case due to the recursion stack, which can go as deep as the number of pixels if the entire image is connected.
+
+## Edge Cases
+- Single pixel (`m = 1, n = 1`): Change the pixel if it differs from `newColor`.
+- `newColor` same as starting pixel: Return unchanged image.
+- Empty image: Not applicable due to constraints (`m, n >= 1`).
+- Entire image same color: All pixels changed to `newColor`.
+- No connected pixels: Only the starting pixel changes if its neighbors have different colors.
