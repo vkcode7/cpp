@@ -186,7 +186,77 @@ A divide-and-conquer approach can also solve this problem by splitting the array
 
 
 
+# 42. Trapping Rain Water - Two Pointers, Dynamic Programming, Stack, Monotonic Stack
 
+This document describes the solution to the "Trapping Rain Water" problem (LeetCode #42).
+
+## Problem Description
+Given `n` non-negative integers representing an elevation map where the width of each bar is 1, compute how much water it can trap after raining. The elevation map is represented by an array `height` where `height[i]` is the height of the bar at index `i`.
+
+### Example
+```
+Input: height = [0,1,0,2,1,0,1,3,2,1,2,1]
+Output: 6
+Explanation: Water is trapped at indices 2, 4, 5, 6, 9, and 10, totaling 6 units.
+
+Input: height = [4,2,0,3,2,5]
+Output: 9
+Explanation: Water is trapped at indices 1, 2, 3, and 4, totaling 9 units.
+```
+<img src="../assets/rainwatertrap.png" width="30%">
+
+### Constraints
+- `n == height.length`
+- `1 <= n <= 2 * 10^4`
+- `0 <= height[i] <= 10^5`
+
+## Solution Approach
+The problem can be solved efficiently using a two-pointer technique to calculate the water trapped at each index by determining the minimum of the maximum heights on both sides.
+
+### Two-Pointer Approach
+1. Initialize two pointers: `left` at the start (0) and `right` at the end (`n-1`).
+2. Maintain two variables: `leftMax` (maximum height on the left) and `rightMax` (maximum height on the right).
+3. While `left < right`:
+   - If `height[left] < height[right]`:
+     - Update `leftMax` with `max(leftMax, height[left])`.
+     - Add trapped water at `left` as `leftMax - height[left]`.
+     - Move `left` right.
+   - Else:
+     - Update `rightMax` with `max(rightMax, height[right])`.
+     - Add trapped water at `right` as `rightMax - height[right]`.
+     - Move `right` left.
+4. Return the total water trapped.
+
+### Example Implementation (C++)
+```cpp
+class Solution {
+public:
+    int trap(vector<int>& height)
+    {
+        if(height.empty())
+            return 0;
+        int ans = 0;
+        int size = height.size();
+        vector<int> left_max(size), right_max(size);
+        
+        //[0,1,0,2,1,0,1,3,2,1,2,1]
+        left_max[0] = height[0];
+        right_max[size-1] = height[size-1];
+        cout << right_max[size-1]<<endl;
+        
+        for (int i = 1; i < size; i++) {
+            left_max[i] = max(height[i], left_max[i - 1]);
+            right_max[size - (i+1)] = max(right_max[size-i], height[size - (i+1)]);
+        }
+        
+        for (int i = 0; i < size; i++) {
+            ans += min(left_max[i], right_max[i]) - height[i];
+        }
+        
+        return ans;
+    }
+};
+```
 
 
 
