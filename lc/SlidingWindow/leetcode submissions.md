@@ -209,4 +209,75 @@ public:
    - Space Complexity: O(log x) for the string
 The reverse integer approach is preferred as it avoids string conversion and uses constant space.
 
-https://leetcode.com/submissions/#/3
+# 268. Missing Number Solution
+
+## Problem Description
+Given an array `nums` containing `n` distinct numbers in the range `[0, n]`, return the only number in the range that is missing from the array.
+
+### Example
+```
+Input: nums = [3,0,1]
+Output: 2
+Explanation: n = 3 since there are 3 numbers, so all numbers in range [0,3] are expected: [0,1,2,3]. The missing number is 2.
+```
+
+## Solution
+Below is the C++ solution to find the missing number using the XOR operation.
+
+```cpp
+class Solution {
+public:
+    
+    int missingNumber(vector<int>& nums) {
+        int res = nums.size();
+        
+        //[0,1,3] => 0^1^3^0^1^2^3 => (0^0)^(1^1)^(2^2)^3 => 0^0^0^3 => 0^3 => 3
+        for(int i=0; i<nums.size(); i++){
+            res ^= i;
+            res ^= nums[i];
+        }
+        return res;
+    }
+};
+
+class Solution {
+public:
+    int missingNumber(vector<int>& nums) {
+        int result = nums.size(); // Initialize with n
+        
+        // XOR all indices and values
+        for (int i = 0; i < nums.size(); ++i) {
+            result ^= i;        // XOR with index
+            result ^= nums[i];  // XOR with value
+        }
+        
+        return result;
+    }
+};
+```
+
+## Explanation
+1. **XOR Approach**:
+   - The array contains `n` numbers from the range `[0, n]`, so one number is missing.
+   - Initialize `result` with `n` (the upper bound of the range).
+   - Iterate through the array:
+     - XOR `result` with each index `i` (representing expected numbers `0` to `n-1`).
+     - XOR `result` with each value `nums[i]` (the numbers present in the array).
+   - The final `result` is the missing number because:
+     - XORing a number with itself cancels it out (e.g., `x ^ x = 0`).
+     - The missing number will remain as it is only present in the indices (or `n`) and not in the array.
+2. **Why XOR?**:
+   - XOR is efficient and avoids issues with sum-based approaches (e.g., potential integer overflow for large `n`).
+3. **Result**:
+   - Return `result`, which is the missing number.
+
+## Time and Space Complexity
+- **Time Complexity**: O(n), where `n` is the length of the array, as we iterate through the array once.
+- **Space Complexity**: O(1), as we only use a single variable for the result.
+
+## Edge Cases
+- Single element: `nums = [0]` (n=1, missing 1) or `nums = [1]` (missing 0).
+- Missing 0: `nums = [1,2,3]` returns 0.
+- Missing `n`: `nums = [0,1,2]` returns 3.
+- Large array: Handles up to `n = 10^4` efficiently.
+- All numbers present except one: Correctly identifies the missing number in `[0,n]`.
