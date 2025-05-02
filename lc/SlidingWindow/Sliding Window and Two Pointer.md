@@ -1717,3 +1717,106 @@ public:
    - Space Complexity: O(1) (excluding output)
 
 
+# 299. Bulls and Cows Solution
+
+## Problem Description
+You are playing the Bulls and Cows game. You have a secret number and a friend's guess, both represented as strings of equal length. Each digit in the guess is compared with the secret:
+- A "bull" is a digit that is in the correct position.
+- A "cow" is a digit that is in the secret but in the wrong position.
+Return a hint in the format `"xAyB"`, where `x` is the number of bulls and `y` is the number of cows. Assume the secret and guess contain only digits and are of equal length.
+
+### Example
+```
+Input: secret = "1807", guess = "7810"
+Output: "1A3B"
+Explanation: Bulls: '8' (position 3). Cows: '1', '0', '7' (present but in wrong positions).
+```
+
+## Solution
+Below is the C++ solution to compute the bulls and cows hint.
+
+```cpp
+class Solution {
+public:
+    string getHint(string secret, string guess) {
+        int bulls = 0;
+        int cows = 0;
+        string cowss = "";
+        string cowsg;
+        
+        for(int i = 0; i < secret.length(); i++) {
+            if(secret[i] == guess[i])
+                bulls++;
+            else {
+                cowss += secret[i];
+                cowsg += guess[i];
+            }
+        }
+        
+        for(auto x: cowss) {
+            for(auto&y : cowsg)
+                if(x == y)
+                {
+                    cows++;
+                    y = 'x';
+                    break;
+                }
+        }
+
+        stringstream hint;
+        hint << bulls << "A"<<cows<<"B";
+        return hint.str();
+    }
+};
+
+class Solution {
+public:
+    string getHint(string secret, string guess) {
+        int bulls = 0, cows = 0;
+        unordered_map<char, int> secretCount;
+        
+        // Step 1: Count bulls and store non-bull digits in secret
+        for (int i = 0; i < secret.size(); ++i) {
+            if (secret[i] == guess[i]) {
+                bulls++;
+            } else {
+                secretCount[secret[i]]++;
+            }
+        }
+        
+        // Step 2: Count cows by checking non-bull positions in guess
+        for (int i = 0; i < guess.size(); ++i) {
+            if (secret[i] != guess[i] && secretCount[guess[i]] > 0) {
+                cows++;
+                secretCount[guess[i]]--;
+            }
+        }
+        
+        // Format the result
+        return to_string(bulls) + "A" + to_string(cows) + "B";
+    }
+};
+```
+
+## Explanation
+1. **Bulls Calculation**:
+   - Iterate through both strings simultaneously.
+   - If the digits at position `i` in `secret` and `guess` match (`secret[i] == guess[i]`), increment the `bulls` counter.
+   - For non-matching positions, increment the count of the `secret[i]` digit in a hash map (`secretCount`).
+2. **Cows Calculation**:
+   - Iterate through both strings again.
+   - For positions where digits do not match (`secret[i] != guess[i]`), check if `guess[i]` exists in `secretCount` (i.e., it appears in a non-bull position in `secret`).
+   - If so, increment `cows` and decrement the count in `secretCount` to avoid double-counting.
+3. **Result Formatting**:
+   - Return the hint as a string in the format `"xAyB"`, where `x` is the number of bulls and `y` is the number of cows.
+
+## Time and Space Complexity
+- **Time Complexity**: O(n), where `n` is the length of the strings. We perform two passes through the strings and use hash map operations (O(1) on average).
+- **Space Complexity**: O(1), since the hash map stores at most 10 distinct digits (0-9), which is constant.
+
+## Edge Cases
+- Empty strings: Not applicable due to constraints (strings are non-empty and equal length).
+- No bulls or cows: `secret = "1234"`, `guess = "5678"` returns `"0A0B"`.
+- All bulls: `secret = "1234"`, `guess = "1234"` returns `"4A0B"`.
+- All cows: `secret = "1234"`, `guess = "4321"` returns `"0A4B"`.
+- Repeated digits: `secret = "1122"`, `guess = "2211"` returns `"0A4B"`.
