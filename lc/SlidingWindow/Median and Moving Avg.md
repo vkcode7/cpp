@@ -539,3 +539,92 @@ public:
 The digit-by-digit approach is preferred as it avoids string conversion, uses constant space, and is more efficient.
 
 
+# 1046. Last Stone Weight Solution
+
+## Problem Description
+You are given an array of integers `stones` where each element represents the weight of a stone. In each step, you choose the two heaviest stones and smash them together. If the weights are `x` and `y` (with `x <= y`), the result is:
+- If `x == y`, both stones are destroyed.
+- If `x != y`, the stone of weight `x` is destroyed, and the stone of weight `y` has new weight `y - x`.
+Continue this process until there is at most one stone left. Return the weight of the last remaining stone (or 0 if no stones remain).
+
+### Example
+```
+Input: stones = [2,7,4,1,8,1]
+Output: 1
+Explanation: Smash 8 and 7 (8-7=1), new array = [1,4,1,2]. Smash 4 and 2 (4-2=2), new array = [2,1,1]. Smash 2 and 1 (2-1=1), new array = [1,1]. Smash 1 and 1 (1-1=0), new array = [1]. Return 1.
+```
+
+## Solution
+Below is the C++ solution to find the weight of the last remaining stone using a priority queue.
+
+```cpp
+class Solution {
+public:
+    int lastStoneWeight(vector<int>& stones) {
+        priority_queue<int> pq(stones.begin(), stones.end());
+        
+        while(pq.size() > 1)
+        {
+            int top = pq.top();
+            pq.pop();
+            int top2 = pq.top();
+            pq.pop();
+            if(top > top2)
+            {
+                pq.push(top-top2);
+            }
+        }
+        
+        return pq.empty()? 0: pq.top();
+    }
+};
+
+class Solution {
+public:
+    int lastStoneWeight(vector<int>& stones) {
+        // Create a max-heap
+        priority_queue<int> pq(stones.begin(), stones.end());
+        
+        // Process until 0 or 1 stone remains
+        while (pq.size() > 1) {
+            // Get the two heaviest stones
+            int y = pq.top();
+            pq.pop();
+            int x = pq.top();
+            pq.pop();
+            
+            // If stones are different weights, push back the remaining weight
+            if (x != y) {
+                pq.push(y - x);
+            }
+        }
+        
+        // Return the last stone weight or 0 if none remain
+        return pq.empty() ? 0 : pq.top();
+    }
+};
+```
+
+## Explanation
+1. **Max-Heap Initialization**:
+   - Use a `priority_queue` (max-heap) to store the stones, allowing efficient access to the two heaviest stones.
+   - Initialize the heap with all stone weights from the input array.
+2. **Smashing Process**:
+   - While there are at least two stones in the heap:
+     - Extract the two heaviest stones (`y` and `x`, where `x <= y`).
+     - If `x != y`, compute the new weight (`y - x`) and push it back to the heap.
+     - If `x == y`, both stones are destroyed, so do nothing.
+3. **Result**:
+   - If the heap is empty, return 0 (no stones remain).
+   - If one stone remains, return its weight (top of the heap).
+
+## Time and Space Complexity
+- **Time Complexity**: O(n log n), where `n` is the number of stones. Initial heap construction takes O(n), and each operation (pop or push) takes O(log n). There are up to `n` smash operations, leading to O(n log n).
+- **Space Complexity**: O(n), for storing the stones in the priority queue.
+
+## Edge Cases
+- Single stone: Return its weight.
+- Empty array: Return 0 (not applicable due to constraints, but handled as empty heap).
+- All stones equal: All pairs cancel out (e.g., `[2,2]` returns 0).
+- Two stones: Return their difference or 0 if equal.
+- Large array: Efficiently handles up to 1000 stones within constraints.
