@@ -438,3 +438,394 @@ public:
     }
 };
 ```
+
+# 20. Valid Parentheses Solution
+
+## Problem Description
+Given a string `s` containing only the characters `'('`, `')'`, `'{'`, `'}'`, `'['`, and `']'`, determine if the input string is valid. A string is valid if:
+- Open brackets are closed by the same type of brackets.
+- Open brackets are closed in the correct order.
+- Every close bracket has a corresponding open bracket of the same type.
+
+### Example
+```
+Input: s = "()[]{}"
+Output: true
+Explanation: The string is valid as all brackets are properly matched and closed in the correct order.
+```
+
+## Solution
+Below is the C++ solution to check if a string of parentheses is valid using a stack.
+
+```cpp
+class Solution {
+public:
+    bool isValid(string s) {
+        stack<char> st;
+        
+        map<char, char> smap;
+        smap[')'] = '(';
+        smap[']'] = '[';
+        smap['}'] = '{';    
+        
+        for(auto& x: s){
+            switch(x)
+            {
+                case '(':
+                case '{':
+                case '[':
+                    st.push(x);
+                    break;
+                case ')':
+                case '}':
+                case ']':
+                    if(!st.empty() && st.top() == smap[x]){
+                        st.pop();
+                    }
+                    else
+                        return false;
+            }            
+        }
+        
+        return st.empty();
+    }
+};
+```
+
+## Explanation
+1. **Stack-Based Approach**:
+   - Use a stack to keep track of opening brackets.
+   - Iterate through each character in the string:
+     - If the character is an opening bracket (`'('`, `'{'`, `'['`), push it onto the stack.
+     - If the character is a closing bracket (`')'`, `'}'`, `']'`):
+       - Check if the stack is empty (no matching opening bracket). If so, return `false`.
+       - Pop the top bracket from the stack and verify it matches the current closing bracket:
+         - `')'` must match `'('`.
+         - `'}'` must match `'{'`.
+         - `']'` must match `'['`.
+       - If they don't match, return `false`.
+2. **Final Check**:
+   - After processing all characters, check if the stack is empty. If not, there are unclosed opening brackets, so return `false`.
+   - If the stack is empty, all brackets were properly matched, so return `true`.
+3. **Result**:
+   - Return whether the string is valid based on the stack operations.
+
+## Time and Space Complexity
+- **Time Complexity**: O(n), where `n` is the length of the string. We process each character exactly once.
+- **Space Complexity**: O(n), in the worst case, where the stack stores up to `n/2` opening brackets (e.g., `"((("`).
+
+## Edge Cases
+- Empty string: Return `true` (valid).
+- Single character: `s = "("` or `s = ")"` returns `false`.
+- Unmatched brackets: `s = "([)"` returns `false` (incorrect order).
+- All matching brackets: `s = "()[]{}"` returns `true`.
+- Only closing brackets: `s = "))"` returns `false`.
+- Large string: Handles up to `n = 10^4` efficiently.
+- Nested brackets: `s = "{[()]}"` returns `true`.
+
+# 242. Valid Anagram
+Given two strings s and t, return true if t is an anagram of s, and false otherwise.
+
+```
+Example 1:
+Input: s = "anagram", t = "nagaram"
+Output: true
+
+Example 2:
+Input: s = "rat", t = "car"
+Output: false
+```
+
+```cpp
+class Solution {
+public:
+    bool isAnagram(string s, string t) {
+        
+        if(s.length() != t.length())
+            return false;
+        
+        map<char, int> mS;
+        map<char, int> mT;
+        
+        for(auto& x: s)
+            mS[x]++;
+
+        for(auto& x: t)
+            mT[x]++;
+
+        return (mS == mT);
+    }
+};
+```
+
+# 70. Climbing Stairs - DP
+You are climbing a staircase. It takes n steps to reach the top.
+
+Each time you can either climb 1 or 2 steps. In how many distinct ways can you climb to the top?
+
+```
+Example 1:
+Input: n = 2
+Output: 2
+Explanation: There are two ways to climb to the top.
+1. 1 step + 1 step
+2. 2 steps
+
+Example 2:
+Input: n = 3
+Output: 3
+Explanation: There are three ways to climb to the top.
+1. 1 step + 1 step + 1 step
+2. 1 step + 2 steps
+3. 2 steps + 1 step
+```
+
+```cpp
+class Solution {
+public:
+    int climbStairs(int n) {
+        if(n <= 2)
+            return n;
+        
+        auto pp = 1; //prevpre
+        auto p = 2; //prev
+        int current = 0;
+        
+        for(auto s=3; s<=n; s++)
+        {
+            current = p + pp;
+            pp = p;
+            p = current;
+        }
+        
+        return current;
+    }
+};
+```
+
+# 1004. Max Consecutive Ones III
+
+Given a binary array nums and an integer k, return the maximum number of consecutive 1's in the array if you can flip at most k 0's.
+
+```
+Example 1:
+
+Input: nums = [1,1,1,0,0,0,1,1,1,1,0], k = 2
+Output: 6
+Explanation: [1,1,1,0,0,1,1,1,1,1,1]
+Bolded numbers were flipped from 0 to 1. The longest subarray is underlined.
+Example 2:
+
+Input: nums = [0,0,1,1,0,0,1,1,1,0,1,1,0,0,0,1,1,1,1], k = 3
+Output: 10
+Explanation: [0,0,1,1,1,1,1,1,1,1,1,1,0,0,0,1,1,1,1]
+Bolded numbers were flipped from 0 to 1. The longest subarray is underlined.
+```
+```cpp
+class Solution {
+public:
+    int longestOnes(vector<int>& nums, int k) {
+        
+        int start =0, end =0, zc =0;
+        
+        int ans = 0;
+        
+        while(end < nums.size())
+        {
+            if(nums[end] == 0)
+                zc++;
+            
+            if(zc <= k)
+                ans = max(ans, end - start + 1);
+                
+            while(zc > k)
+            {
+                //shift window ro right
+                if(nums[start] == 0)
+                    zc--;
+                start++;
+            }
+            
+            end++;
+        }
+            
+        
+        return ans;
+    }
+};
+```
+
+# 424. Longest Repeating Character Replacement
+
+You are given a string s and an integer k. You can choose any character of the string and change it to any other uppercase English character. You can perform this operation at most k times.
+
+Return the length of the longest substring containing the same letter you can get after performing the above operations.
+```
+Example 1:
+Input: s = "ABAB", k = 2
+Output: 4
+Explanation: Replace the two 'A's with two 'B's or vice versa.
+
+Example 2:
+Input: s = "AABABBA", k = 1
+Output: 4
+Explanation: Replace the one 'A' in the middle with 'B' and form "AABBBBA".
+The substring "BBBB" has the longest repeating letters, which is 4.
+There may exists other ways to achieve this answer too.
+```
+
+```cpp
+class Solution {
+public:
+    int characterReplacement(string s, int k) {
+        map<char,int> mChars;
+        
+        int start = 0;
+        int end = 0;
+        int n = s.length();
+        
+        if( n <= k + 1)
+            return n;
+        
+        int max_window = 1; //max number of times 'x' char appears in a string
+        int ans = 0;
+        
+        while(end < n)
+        {
+            //add the characters to map and keep count
+            mChars[s[end]]++;
+            max_window = max(max_window, mChars[s[end]]);
+            
+            //if our window exceeds max occurence of same char + k
+            if((end - start + 1) > max_window + k)
+            {
+                //move to right and minus a char from left
+                mChars[s[start]]--;
+                start++;    
+            }
+            
+            ans = max(end-start+1, ans);  
+            end++;
+        }
+            
+         return ans;     
+    }
+};
+```
+
+# 904. Fruit Into Baskets Solution
+
+## Problem Description
+You are visiting a farm with a single row of fruit trees arranged in an array `fruits`, where `fruits[i]` represents the type of fruit on the `i`th tree. You have two baskets, and each basket can hold only one type of fruit with no limit on the amount. Starting at any tree, you can pick one fruit from each tree as you move right, but you must stop if you encounter a fruit type that cannot fit in either basket. Return the maximum number of fruits you can pick.
+
+### Example
+```
+Input: fruits = [1,2,1]
+Output: 3
+Explanation: Start at index 0, pick all fruits [1,2,1] with two baskets (one for type 1, one for type 2). Total = 3.
+
+Example 2:
+Input: fruits = [0,1,2,2]
+Output: 3
+Explanation: We can pick from trees [1,2,2].
+If we had started at the first tree, we would only pick from trees [0,1].
+
+Example 3:
+Input: fruits = [1,2,3,2,2]
+Output: 4
+Explanation: We can pick from trees [2,3,2,2].
+If we had started at the first tree, we would only pick from trees [1,2].
+```
+
+## Solution
+Below is the C++ solution to find the maximum number of fruits that can be picked using a sliding window approach.
+
+```cpp
+class Solution {
+public:
+    int totalFruit(vector<int>& fruits) {
+        if(fruits.size() <= 1)
+            return fruits.size();
+        
+        map<int,int> maxTrees;
+        
+        int i = 0;
+        int maxNumTrees = 2;
+        
+        for(int j=0; j < fruits.size(); j++)
+        {
+            maxTrees[fruits[j]]++;
+            
+
+            while(maxTrees.size() > 2) {
+                maxTrees[fruits[i]]--;
+                if(maxTrees[fruits[i]] == 0)
+                    maxTrees.erase(fruits[i]);
+                i++;
+            }
+            
+            maxNumTrees = max(maxNumTrees, j-i+1);
+        }
+        
+        return maxNumTrees;
+    }
+};
+
+
+class Solution {
+public:
+    int totalFruit(vector<int>& fruits) {
+        unordered_map<int, int> basket; // Tracks fruit type and count
+        int maxFruits = 0;
+        int left = 0;
+        
+        // Slide window to find max fruits with at most two types
+        for (int right = 0; right < fruits.size(); ++right) {
+            basket[fruits[right]]++;
+            
+            // If more than two fruit types, shrink window
+            while (basket.size() > 2) {
+                basket[fruits[left]]--;
+                if (basket[fruits[left]] == 0) {
+                    basket.erase(fruits[left]);
+                }
+                left++;
+            }
+            
+            // Update maxFruits with current window size
+            maxFruits = max(maxFruits, right - left + 1);
+        }
+        
+        return maxFruits;
+    }
+};
+```
+
+## Explanation
+1. **Sliding Window Approach**:
+   - Use a sliding window to track a contiguous subarray of fruits with at most two distinct types.
+   - Maintain a hash map (`basket`) to store the count of each fruit type in the current window.
+   - Use two pointers:
+     - `right`: Expands the window by adding new fruits.
+     - `left`: Shrinks the window when there are more than two fruit types.
+2. **Process**:
+   - Iterate `right` through the array, adding each fruit `fruits[right]` to `basket`.
+   - If `basket` contains more than two fruit types, shrink the window from the left:
+     - Decrease the count of `fruits[left]` in `basket`.
+     - If the count becomes 0, remove the fruit type from `basket`.
+     - Increment `left`.
+   - After each step, update `maxFruits` with the current window size (`right - left + 1`).
+3. **Result**:
+   - Return `maxFruits`, the maximum number of fruits that can be picked with at most two types.
+
+## Time and Space Complexity
+- **Time Complexity**: O(n), where `n` is the length of the `fruits` array. Each element is added to the window once (`right` moves `n` times) and removed at most once (`left` moves at most `n` times).
+- **Space Complexity**: O(1), as the hash map `basket` stores at most three fruit types at any time (when shrinking occurs at size 3), which is constant.
+
+## Edge Cases
+- Empty array: Return 0 (not applicable due to constraints, but handled implicitly).
+- Single fruit type: `fruits = [1,1,1]` returns the array length (e.g., 3).
+- Two fruit types: `fruits = [1,2,1,2]` returns the array length (e.g., 4).
+- More than two types: `fruits = [1,2,3,2,2]` returns 4 (subarray `[2,3,2,2]`).
+- Large array: Handles up to `n = 10^5` efficiently.
+- All different types: `fruits = [1,2,3,4]` returns 2 (e.g., `[1,2]`).
