@@ -408,7 +408,217 @@ public:
 - Large array with varying values: Efficiently computes the maximum using the iterative approach.
 
 
+# 139. Word Break Solution
+
+## Problem Description
+Given a string `s` and a dictionary of strings `wordDict`, return `true` if `s` can be segmented into a space-separated sequence of one or more dictionary words. The same word in the dictionary may be reused multiple times in the segmentation.
+
+### Example
+```
+Example 1:
+Input: s = "leetcode", wordDict = ["leet","code"]
+Output: true
+Explanation: Return true because "leetcode" can be segmented as "leet code".
+
+Example 2:
+Input: s = "applepenapple", wordDict = ["apple","pen"]
+Output: true
+Explanation: Return true because "applepenapple" can be segmented as "apple pen apple".
+Note that you are allowed to reuse a dictionary word.
+
+Example 3:
+Input: s = "catsandog", wordDict = ["cats","dog","sand","and","cat"]
+Output: false
+```
+
+## Solution
+Below is the C++ solution to determine if a string can be segmented into words from a dictionary using dynamic programming.
+
+```cpp
+class Solution {
+public:
+    bool wordBreak(string s, vector<string>& wordDict) {
+        //s = "catsandog";
+        //wordDict = {"cats","dog","sand","and","cat"};
+        //dp[i] indicates whehter substring of length i can be segmented.
+        vector<bool> dp(s.size()+1, false);
+        
+         //assume empty string is always in the wordDict
+        dp[0] = true;
+        
+        // we mark as true every index that we managed to segment so far
+        for (int i = 1; i <= s.length(); i++) {
+            for (int j = 0; j < i; j++) {
+                if(!dp[j])
+                    continue;
+                
+                cout << "j is "<<j << " substr is ";
+                string word = s.substr(j, i-j);
+                cout << word << endl;
+                if (find(wordDict.begin(), wordDict.end(), word) != wordDict.end())                           {
+                    cout << "setting dp["<<i<<"] as true"<<endl;
+                    dp[i] = true;
+                    break;
+                }
+            }
+        }
+        return dp.back();
+    }
+};
+
+class Solution {
+public:
+    bool wordBreak(string s, vector<string>& wordDict) {
+        // Create a set for O(1) lookup
+        unordered_set<string> wordSet(wordDict.begin(), wordDict.end());
+        
+        // dp[i] represents whether s[0:i] can be segmented
+        vector<bool> dp(s.size() + 1, false);
+        dp[0] = true; // Empty string is valid
+        
+        // Check each prefix of s
+        for (int i = 1; i <= s.size(); ++i) {
+            for (int j = 0; j < i; ++j) {
+                // If s[0:j] is valid and s[j:i] is in wordDict
+                if (dp[j] && wordSet.count(s.substr(j, i - j))) {
+                    dp[i] = true;
+                    break;
+                }
+            }
+        }
+        
+        return dp[s.size()];
+    }
+};
+```
+
+## Explanation
+1. **Dynamic Programming Setup**:
+   - Create a set (`wordSet`) from `wordDict` for O(1) lookup of dictionary words.
+   - Use a boolean DP array `dp` where `dp[i]` indicates whether the substring `s[0:i]` can be segmented into words from `wordDict`.
+   - Initialize `dp[0] = true` (empty string is valid).
+2. **DP Transition**:
+   - For each position `i` (1 to `s.size()`), consider all possible prefixes ending at `j` (0 to `i-1`):
+     - If `dp[j] = true` (substring `s[0:j]` is valid) and the substring `s[j:i]` is in `wordSet`, set `dp[i] = true`.
+     - Break the inner loop once `dp[i] = true` to optimize.
+3. **Result**:
+   - Return `dp[s.size()]`, which indicates whether the entire string can be segmented.
+
+## Time and Space Complexity
+- **Time Complexity**: O(n²), where `n` is the length of the string. We iterate over each position `i` and check all previous positions `j`. String substring creation and lookup in the set are O(n) and O(1) on average, respectively, but the dominant factor is the nested loops.
+- **Space Complexity**: O(n) for the `dp` array, plus O(m) for the `wordSet`, where `m` is the total length of words in `wordDict`. Overall, O(n + m).
+
+## Edge Cases
+- Empty string: Return `true` (handled by `dp[0] = true`).
+- Empty dictionary: Return `false` unless `s` is empty.
+- String not segmentable: `s = "catsandog"`, `wordDict = ["cats","dog","sand","and","cat"]` returns `false`.
+- Reusable words: `s = "aaaa"`, `wordDict = ["a"]` returns `true`.
+- Long string with valid segmentation: Efficiently handles constraints (`s.length <= 300`).
 
 
+# 300. Longest Increasing Subsequence Solution
 
+## Problem Description
+Given an integer array `nums`, return the length of the longest strictly increasing subsequence. A subsequence is a sequence that can be derived from an array by deleting some or no elements without changing the order of the remaining elements.
+
+### Example
+```
+Example 1:
+Input: nums = [10,9,2,5,3,7,101,18]
+Output: 4
+Explanation: The longest increasing subsequence is [2,3,7,101], therefore the length is 4.
+
+Example 2:
+Input: nums = [0,1,0,3,2,3]
+Output: 4
+
+Example 3:
+Input: nums = [7,7,7,7,7,7,7]
+Output: 1
+```
+
+## Solution
+Below is the C++ solution to find the length of the longest increasing subsequence using dynamic programming.
+
+```cpp
+class Solution {
+public:
+    int lengthOfLIS(vector<int>& nums) {
+        vector<int> T(nums.size()+1, 1); //initialize to 1
+        
+        for(int i=1; i < nums.size(); i++)
+        {
+            int j = 0;
+            while(j < i)
+            {
+                if(nums[j] < nums[i])
+                {
+                    T[i] = max(T[i], T[j]+1);
+                }
+                
+                ++j;   
+            }            
+        }
+        
+        int maxT = 1;
+        for(auto& t : T)
+            maxT = max(maxT, t);
+        
+        return maxT;
+    }
+};
+
+class Solution {
+public:
+    int lengthOfLIS(vector<int>& nums) {
+        if (nums.empty()) {
+            return 0;
+        }
+        
+        // dp[i] represents the length of the LIS ending at index i
+        vector<int> dp(nums.size(), 1);
+        int maxLength = 1;
+        
+        // Compute LIS for each index
+        for (int i = 1; i < nums.size(); ++i) {
+            for (int j = 0; j < i; ++j) {
+                if (nums[i] > nums[j]) {
+                    dp[i] = max(dp[i], dp[j] + 1);
+                }
+            }
+            maxLength = max(maxLength, dp[i]);
+        }
+        
+        return maxLength;
+    }
+};
+```
+
+## Explanation
+1. **Edge Case**:
+   - If the array is empty, return 0.
+2. **Dynamic Programming Setup**:
+   - Create a DP array `dp` where `dp[i]` represents the length of the longest increasing subsequence (LIS) that ends at index `i`.
+   - Initialize `dp[i] = 1` for all `i`, as each element by itself is an LIS of length 1.
+   - Initialize `maxLength = 1` to track the overall longest LIS.
+3. **DP Transition**:
+   - For each index `i` (1 to `nums.size()-1`):
+     - Check all previous indices `j` (0 to `i-1`).
+     - If `nums[i] > nums[j]`, the element at `i` can extend the LIS ending at `j`.
+     - Update `dp[i] = max(dp[i], dp[j] + 1)` to consider the longest subsequence ending at `j` plus the current element.
+   - Update `maxLength` to track the maximum `dp[i]` seen so far.
+4. **Result**:
+   - Return `maxLength`, the length of the longest increasing subsequence.
+
+## Time and Space Complexity
+- **Time Complexity**: O(n²), where `n` is the length of the array. We have a nested loop where the outer loop runs `n` times and the inner loop runs up to `i` times for each `i`.
+- **Space Complexity**: O(n), for the `dp` array.
+
+## Edge Cases
+- Empty array: Return 0.
+- Single element: Return 1.
+- All elements identical: Return 1 (e.g., `[1,1,1]`).
+- Strictly decreasing array: Return 1 (e.g., `[5,4,3,2,1]`).
+- Strictly increasing array: Return `n` (e.g., `[1,2,3,4]`).
+- Large array: Handles up to `n = 2500` within constraints.
 
