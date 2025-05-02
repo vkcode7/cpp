@@ -1,3 +1,253 @@
+# 56. Merge Intervals
+
+This document describes the solution to the "Merge Intervals" problem (LeetCode #56).
+
+## Problem Description
+Given an array of intervals where `intervals[i] = [start_i, end_i]`, merge all overlapping intervals and return an array of the non-overlapping intervals that cover all the intervals in the input.
+
+### Example
+```
+Input: intervals = [[1,3],[2,6],[8,10],[15,18]]
+Output: [[1,6],[8,10],[15,18]]
+Explanation: Intervals [1,3] and [2,6] overlap, so they are merged into [1,6].
+
+Input: intervals = [[1,4],[4,5]]
+Output: [[1,5]]
+Explanation: Intervals [1,4] and [4,5] touch at 4, so they are merged into [1,5].
+
+Input: intervals = [[1,4],[0,4]]
+Output: [[0,4]]
+Explanation: Intervals [0,4] and [1,4] overlap, so they are merged into [0,4].
+```
+
+### Constraints
+- `1 <= intervals.length <= 10^4`
+- `intervals[i].length == 2`
+- `0 <= start_i <= end_i <= 10^4`
+
+## Solution Approach
+The problem can be solved by sorting the intervals by start time and then merging overlapping intervals in a single pass.
+
+### Sort and Merge Approach
+1. Sort the intervals based on their start times.
+2. Initialize a result array with the first interval.
+3. Iterate through the sorted intervals starting from the second interval:
+   - If the current interval overlaps with the last interval in the result (i.e., `start_i <= end_last`), merge them by updating the end time of the last interval to the maximum of their end times.
+   - Otherwise, add the current interval to the result as a new non-overlapping interval.
+4. Return the result array.
+
+### Example Implementation (C++)
+```cpp
+class Solution {
+public:
+    vector<vector<int>> merge(vector<vector<int>>& intervals) {
+        vector<vector<int>> ans;
+        int start = INT_MAX;
+        int end = INT_MIN;
+        sort(intervals.begin(), intervals.end());
+        for(int i=0; i < intervals.size(); i++) {
+            start = min(start, intervals[i][0]);
+            end = max(end, intervals[i][1]);
+            
+            if(i == intervals.size()-1 || end < intervals[i+1][0]) {
+                ans.push_back(vector<int>({start, end}));
+                start = INT_MAX;
+                end = INT_MIN;
+            }                
+        }
+        
+        return ans;
+    }
+};
+```
+
+```cpp
+class Solution {
+public:
+    vector<vector<int>> merge(vector<vector<int>>& intervals) {
+        // Sort intervals by start time
+        sort(intervals.begin(), intervals.end());
+        
+        vector<vector<int>> result;
+        result.push_back(intervals[0]);
+        
+        for (int i = 1; i < intervals.size(); i++) {
+            if (intervals[i][0] <= result.back()[1]) {
+                // Overlap: Merge by updating the end time
+                result.back()[1] = max(result.back()[1], intervals[i][1]);
+            } else {
+                // No overlap: Add new interval
+                result.push_back(intervals[i]);
+            }
+        }
+        
+        return result;
+    }
+};
+```
+
+### How It Works
+- **Sorting**:
+  - Sort intervals by start time to ensure we process them in order, making it easier to detect overlaps.
+- **Merging**:
+  - Start with the first interval in the result.
+  - For each subsequent interval, check if its start time is less than or equal to the end time of the last interval in the result.
+  - If overlapping, update the end time to the maximum of the two end times.
+  - If not overlapping, append the interval to the result.
+- **Edge Cases**:
+  - Single interval: Returned as is.
+  - Non-overlapping intervals: Each added to the result.
+  - All overlapping: Merged into one interval.
+  - Touching intervals (e.g., `[1,4],[4,5]`): Considered overlapping and merged.
+- **Result**: Returns the array of merged, non-overlapping intervals.
+
+### Time and Space Complexity
+- **Time Complexity**: O(n log n), where `n` is the number of intervals, due to the sorting step. The merging step is O(n).
+- **Space Complexity**: O(n) for the output array. If sorting in-place is not considered, additional O(log n) space may be used by the sorting algorithm.
+
+### Alternative Approach
+1. **Sweep Line**:
+   - Treat start and end times as events (+1 for start, -1 for end) and sort them.
+   - Scan events to track active intervals and construct merged intervals.
+   - Time Complexity: O(n log n)
+   - Space Complexity: O(n)
+The sort and merge approach is preferred for its simplicity and direct handling of intervals without needing to process events separately.
+
+
+# 253. Meeting Rooms II
+
+This document describes the solution to the "Meeting Rooms II" problem (LeetCode #253).
+
+## Problem Description
+Given an array of meeting time intervals `intervals` where `intervals[i] = [start_i, end_i]`, return the minimum number of conference rooms required to accommodate all meetings without conflicts.
+
+### Example
+```
+Input: intervals = [[0,30],[5,10],[15,20]]
+Output: 2
+Explanation: Two rooms are needed as [5,10] and [15,20] overlap with [0,30].
+
+Input: intervals = [[7,10],[2,4]]
+Output: 1
+Explanation: No overlap, so only one room is needed.
+```
+
+### Constraints
+- `1 <= intervals.length <= 10^4`
+- `0 <= start_i < end_i <= 10^6`
+
+## Solution Approach
+The problem can be solved efficiently using a chronological ordering approach by separating start and end times, sorting them, and tracking the maximum number of overlapping meetings.
+
+### Chronological Ordering Approach
+1. Create two arrays: one for start times and one for end times.
+2. Sort both arrays independently.
+3. Use two pointers to scan the sorted arrays:
+   - Increment a counter when encountering a start time (new meeting begins).
+   - Decrement the counter when encountering an end time (meeting ends).
+   - Track the maximum value of the counter, which represents the maximum number of simultaneous meetings.
+4. Return the maximum counter value as the number of rooms needed.
+
+### Example Implementation (C++)
+```cpp
+class Solution {
+public:
+    int minMeetingRooms(vector<vector<int>>& intervals) {
+        sort(intervals.begin(), intervals.end());
+        
+        int rooms = 0;
+        priority_queue<int, vector<int>, std::greater<int>> q;
+        for(int i = 0; i < intervals.size(); i++)
+        {
+            vector<int> m = intervals[i];
+            if(q.empty()) {
+                q.push(m[1]);
+                rooms++;
+                continue;
+            }
+            
+            int top = q.top();
+            if(top <= m[0]) {
+                q.pop();
+                q.push(m[1]);
+            }
+            else
+            {
+                rooms++;
+                q.push(m[1]);
+            }        
+        }
+        
+        return rooms;
+    }
+};
+```
+
+```cpp
+class Solution {
+public:
+    int minMeetingRooms(vector<vector<int>>& intervals) {
+        vector<int> startTimes, endTimes;
+        for (const auto& interval : intervals) {
+            startTimes.push_back(interval[0]);
+            endTimes.push_back(interval[1]);
+        }
+        
+        sort(startTimes.begin(), startTimes.end());
+        sort(endTimes.begin(), endTimes.end());
+        
+        int maxRooms = 0, currentRooms = 0;
+        int start = 0, end = 0;
+        
+        while (start < startTimes.size()) {
+            if (startTimes[start] < endTimes[end]) {
+                currentRooms++;
+                maxRooms = max(maxRooms, currentRooms);
+                start++;
+            } else {
+                currentRooms--;
+                end++;
+            }
+        }
+        
+        return maxRooms;
+    }
+};
+```
+
+### How It Works
+- **Separate Times**:
+  - Extract start and end times into separate arrays.
+- **Sorting**:
+  - Sort start times and end times to process events chronologically.
+- **Two Pointers**:
+  - Compare the next start time with the next end time.
+  - If the start time is earlier, a new meeting begins (`currentRooms++`).
+  - If the end time is earlier or equal, a meeting ends (`currentRooms--`).
+  - Update `maxRooms` to track the peak number of simultaneous meetings.
+- **Edge Cases**:
+  - Single interval: Requires one room.
+  - Non-overlapping intervals: Requires one room.
+  - All overlapping intervals: Requires as many rooms as intervals.
+- **Result**: The maximum number of rooms needed is the peak value of `currentRooms`.
+
+### Time and Space Complexity
+- **Time Complexity**: O(n log n), where `n` is the number of intervals, due to sorting the start and end times.
+- **Space Complexity**: O(n), for storing the start and end times arrays.
+
+### Alternative Approach
+1. **Priority Queue (Min Heap)**:
+   - Sort intervals by start time.
+   - Use a min heap to track end times of active meetings.
+   - For each interval, remove ended meetings (end time <= current start time) and add the new meeting’s end time.
+   - Track the maximum size of the heap.
+   - Time Complexity: O(n log n) for sorting and heap operations
+   - Space Complexity: O(n) for the heap
+The chronological ordering approach is preferred for its simplicity and clarity, avoiding the need for a heap while maintaining the same time complexity.
+
+
+
+
 # 210. Course Schedule II - Depth-First Search - Breadth-First Search, Graph, Topological Sort
 
 This document describes the solution to the "Course Schedule II" problem (LeetCode #210).
