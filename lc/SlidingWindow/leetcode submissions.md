@@ -281,3 +281,160 @@ public:
 - Missing `n`: `nums = [0,1,2]` returns 3.
 - Large array: Handles up to `n = 10^4` efficiently.
 - All numbers present except one: Correctly identifies the missing number in `[0,n]`.
+- 
+
+# 41. First Missing Positive Solution
+
+## Problem Description
+Given an unsorted integer array `nums`, return the smallest missing positive integer. You must implement an algorithm that runs in O(n) time and uses O(1) auxiliary space (i.e., modify the array in-place).
+
+### Example
+```
+Input: nums = [1,2,0]
+Output: 3
+Explanation: The numbers in the range [1,3] are [1,2], so the smallest missing positive integer is 3.
+
+Example 2:
+Input: nums = [3,4,-1,1]
+Output: 2
+Explanation: 1 is in the array but 2 is missing.
+
+Example 3:
+Input: nums = [7,8,9,11,12]
+Output: 1
+Explanation: The smallest positive integer 1 is missing.
+```
+
+## Solution
+Below is the C++ solution to find the first missing positive integer by using the array indices as a hash table.
+
+```cpp
+class Solution {
+public:
+    int firstMissingPositive(vector<int>& nums) {
+        int n = nums.size();
+        vector<int> v(n+1, 0);
+        for(auto& x: nums)
+            if(x > 0 && x <= n)
+                v[x] = x;
+        
+        for(int i=1 ; i <= n ; i++) 
+            if(v[i] != i) 
+                return i;
+        
+        return n+1;
+    }
+};
+
+class Solution {
+public:
+    int firstMissingPositive(vector<int>& nums) {
+        int n = nums.size();
+        
+        // Step 1: Ignore non-positive and numbers > n, mark them as 1
+        bool containsOne = false;
+        for (int i = 0; i < n; ++i) {
+            if (nums[i] == 1) {
+                containsOne = true;
+            } else if (nums[i] <= 0 || nums[i] > n) {
+                nums[i] = 1;
+            }
+        }
+        
+        // If 1 is not present, it is the answer
+        if (!containsOne) {
+            return 1;
+        }
+        
+        // Step 2: Use array indices as hash table
+        // Mark presence of each number x by making nums[x-1] negative
+        for (int i = 0; i < n; ++i) {
+            int index = abs(nums[i]) - 1;
+            nums[index] = -abs(nums[index]);
+        }
+        
+        // Step 3: Find the first index with a positive number
+        for (int i = 0; i < n; ++i) {
+            if (nums[i] > 0) {
+                return i + 1;
+            }
+        }
+        
+        // If all numbers from 1 to n are present, return n + 1
+        return n + 1;
+    }
+};
+```
+
+## Explanation
+1. **Problem Insight**:
+   - The smallest missing positive integer must be in the range `[1, n+1]`, where `n` is the array length, because if all numbers `1` to `n` are present, the answer is `n+1`.
+   - We can use the array itself as a hash table by marking the presence of numbers via their indices.
+2. **Step 1: Clean the Array**:
+   - Iterate through the array:
+     - Check if `1` is present (`containsOne`).
+     - Replace non-positive numbers (`<= 0`) or numbers greater than `n` with `1`, as they cannot be the answer or affect the range `[1, n]`.
+   - If `1` is not found, return `1` as the answer.
+3. **Step 2: Mark Presence**:
+   - Treat the array as a hash table where index `i` corresponds to the number `i+1`.
+   - For each number `x` in the array, mark the presence of `x` by making `nums[x-1]` negative (use `abs` to handle already negative values).
+   - This ensures we don't lose information when numbers are repeated or modified.
+4. **Step 3: Find Missing Number**:
+   - Iterate through the array again.
+   - The first index `i` where `nums[i]` is positive indicates that `i+1` was never marked (i.e., `i+1` is missing).
+   - If no such index is found, all numbers `1` to `n` are present, so return `n+1`.
+5. **In-Place Modification**:
+   - The solution modifies the array to mark presence without using extra space.
+
+## Time and Space Complexity
+- **Time Complexity**: O(n), where `n` is the length of the array. We perform three linear passes: one to clean the array, one to mark presence, and one to find the missing number.
+- **Space Complexity**: O(1), as we only use a constant amount of extra space (a boolean variable) and modify the array in-place.
+
+## Edge Cases
+- Empty array: Return 1 (not applicable due to constraints, but handled implicitly).
+- Single element: `nums = [1]` returns 2; `nums = [2]` returns 1.
+- No positive numbers: `nums = [0,-1,-2]` returns 1.
+- All numbers from 1 to n: `nums = [1,2,3]` returns 4.
+- Missing 1: `nums = [2,3,4]` returns 1.
+- Large array: Handles up to `n = 5 * 10^5` efficiently.
+- Duplicates: Correctly handles cases like `[1,1,1]` (returns 2).
+
+
+
+# 287. Find the Duplicate Number
+Given an array of integers nums containing n + 1 integers where each integer is in the range [1, n] inclusive.
+
+There is only one repeated number in nums, return this repeated number.
+
+You must solve the problem without modifying the array nums and using only constant extra space.
+```
+Example 1:
+
+Input: nums = [1,3,4,2,2]
+Output: 2
+
+Example 2:
+Input: nums = [3,1,3,4,2]
+Output: 3
+
+Example 3:
+Input: nums = [3,3,3,3,3]
+Output: 3
+```
+
+
+```cpp
+class Solution {
+public:
+    int findDuplicate(vector<int>& nums) {
+        sort(nums.begin(), nums.end());
+        for(int i = 1; i < nums.size(); i++)
+        {
+            if((nums[i-1]^nums[i])==0)
+                return nums[i];
+        }
+             
+        return 0;
+    }
+};
+```
