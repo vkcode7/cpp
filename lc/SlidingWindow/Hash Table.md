@@ -1,3 +1,104 @@
+# 409. Longest Palindrome Solution
+
+## Problem Description
+Given a string `s` which consists of lowercase or uppercase letters, return the length of the longest palindrome that can be built with those letters. Letters are case-sensitive (e.g., `'Aa'` is not considered a palindrome).
+
+### Example
+```
+Input: s = "abccccdd"
+Output: 7
+Explanation: One longest palindrome that can be built is "dccaccd", which has length 7.
+```
+
+## Solution
+Below is the C++ solution to find the length of the longest palindrome that can be built from the given string.
+
+```cpp
+class Solution {
+public:
+    int longestPalindrome(string s) {
+        map<char, int> chars;
+        for(auto x: s)
+        {
+            chars[x]++;
+        }
+        
+        char odd = '\0';    
+        int total = 0;
+        
+        for(auto it = chars.begin(); it != chars.end(); it++) {
+            if(it->second %2 == 1) {
+                odd = it->first;
+                it->second -= 1;
+            }
+            
+            total += it->second;
+        }
+        
+        if(odd != '\0')
+            total++;
+        
+        return total;
+    }
+};
+
+class Solution {
+public:
+    int longestPalindrome(string s) {
+        unordered_map<char, int> charCount;
+        
+        // Count frequency of each character
+        for (char c : s) {
+            charCount[c]++;
+        }
+        
+        int length = 0;
+        bool hasOdd = false;
+        
+        // Calculate palindrome length
+        for (const auto& pair : charCount) {
+            int count = pair.second;
+            length += (count / 2) * 2; // Add even count of characters
+            if (count % 2 == 1) {
+                hasOdd = true; // Track if there's any character with odd count
+            }
+        }
+        
+        // Add 1 to length if there is any character with odd count (for center)
+        if (hasOdd) {
+            length += 1;
+        }
+        
+        return length;
+    }
+};
+```
+
+## Explanation
+1. **Character Frequency**:
+   - Use a hash map (`charCount`) to count the frequency of each character in the string `s`.
+2. **Palindrome Construction**:
+   - For a palindrome, characters must be paired (except possibly one character in the center for odd-length palindromes).
+   - For each character count:
+     - Add the largest even number of occurrences (`(count / 2) * 2`) to the palindrome length, as these can form symmetric pairs.
+     - Track if there is any character with an odd count (`hasOdd`), indicating a potential center character.
+3. **Odd Count Handling**:
+   - If any character has an odd count (`hasOdd = true`), add 1 to the length to account for placing one such character in the center of the palindrome.
+4. **Return**:
+   - Return the computed length of the longest palindrome.
+
+## Time and Space Complexity
+- **Time Complexity**: O(n), where `n` is the length of the string. We iterate through the string once to build the hash map and once through the hash map (which has at most 52 entries for uppercase and lowercase letters).
+- **Space Complexity**: O(1), since the hash map stores at most 52 characters (26 lowercase + 26 uppercase), which is constant.
+
+## Edge Cases
+- Empty string: Return 0.
+- Single character: Return 1 (e.g., `"a"`).
+- All same characters: Return the string length (e.g., `"aaaa"` returns 4).
+- No pairs possible: Return 1 if string has distinct characters (e.g., `"abc"` returns 1).
+- Case sensitivity: `"Aa"` treats `'A'` and `'a'` as different, so returns 2.
+
+
 # 560. Subarray Sum Equals K - Hash table
 
 This document describes the solution to the "Subarray Sum Equals K" problem (LeetCode #560).
