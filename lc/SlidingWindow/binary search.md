@@ -1,3 +1,47 @@
+# 704. Binary Search Solution
+
+## Problem Description
+Given a sorted integer array `nums` (in ascending order) and an integer `target`, return the index of `target` in `nums`. If `target` does not exist in the array, return `-1`. You must implement an algorithm with O(log n) time complexity.
+
+### Example
+```
+Input: nums = [-1,0,3,5,9,12], target = 9
+Output: 4
+Explanation: 9 exists in nums and its index is 4.
+
+Input: nums = [-1,0,3,5,9,12], target = 2
+Output: -1
+Explanation: 2 does not exist in nums so return -1
+```
+
+## Solution
+Below is the C++ solution to perform binary search on a sorted array.
+
+```cpp
+class Solution {
+public:
+    int search(vector<int>& nums, int target) {
+        int left = 0, right = nums.size() - 1;
+        
+        while (left <= right) {
+            int mid = left + (right - left) / 2; // Avoid integer overflow
+            if (nums[mid] == target) {
+                return mid;
+            } else if (nums[mid] < target) {
+                left = mid + 1;
+            } else {
+                right = mid - 1;
+            }
+        }
+        
+        return -1;
+    }
+};
+```
+## Time and Space Complexity
+- **Time Complexity**: O(log n), where `n` is the length of the array, as the search space is halved in each step.
+- **Space Complexity**: O(1), as only a constant amount of extra space is used for pointers.
+
 # 33. Search in Rotated Sorted Array
 
 This document describes the solution to the "Search in Rotated Sorted Array" problem (LeetCode #33).
