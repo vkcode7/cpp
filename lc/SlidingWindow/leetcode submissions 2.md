@@ -1093,9 +1093,278 @@ The two-pointer approach is preferred for its optimal space complexity and simpl
 
 
 
+# 394. Decode String - Stack, Recursion
+
+This document describes the solution to the "Decode String" problem (LeetCode #394).
+
+## Problem Description
+Given an encoded string, return its decoded string. The encoding rule is: `k[encoded_string]`, where the `encoded_string` inside the square brackets is repeated exactly `k` times. `k` is a positive integer. The input string is guaranteed to be valid, with no extra white spaces, well-formed square brackets, and no digits in the original decoded string.
+
+### Example
+```
+Input: s = "3[a]2[bc]"
+Output: "aaabcbc"
+Explanation: Decode "3[a]" to "aaa" and "2[bc]" to "bcbc", resulting in "aaabcbc".
+
+Input: s = "3[a2[c]]"
+Output: "accaccacc"
+Explanation: First decode "2[c]" to "cc", then "3[a2[c]]" becomes "3[acc]" which decodes to "accaccacc".
+
+Input: s = "2[abc]3[cd]ef"
+Output: "abcabccdcdcdef"
+Explanation: Decode "2[abc]" to "abcabc", "3[cd]" to "cdcdcd", then append "ef".
+```
+
+### Constraints
+- `1 <= s.length <= 30`
+- `s` consists of lowercase English letters, digits, and square brackets `[]`.
+- `s` is guaranteed to be a valid input.
+- All integers in `s` are in the range `[1, 300]`.
+
+## Solution Approach
+The problem can be solved using a stack-based approach to handle nested brackets and repetitions.
+
+### Stack-Based Approach
+1. Use two stacks:
+   - One for counts (to store the number of repetitions).
+   - One for strings (to store intermediate decoded strings).
+2. Iterate through the input string:
+   - If a digit is encountered, build the number (may be multi-digit).
+   - If an opening bracket `[` is encountered, push the current number and current string onto their respective stacks, then reset them.
+   - If a letter is encountered, append it to the current string.
+   - If a closing bracket `]` is encountered:
+     - Pop the string and count from the stacks.
+     - Repeat the current string `count` times and append it to the popped string.
+     - Update the current string with the result.
+3. Return the final decoded string.
+
+### Example Implementation (C++)
+```cpp
+class Solution {
+public:
+    string decodeString(string s) {
+        stack<char> st;
+        
+        string enc;
+        for(auto x : s)
+        {
+            if(x == ']')
+            {
+                string sub = "";
+                while(st.top()!='[')
+                {
+                    sub += st.top();
+                    st.pop();
+                }  
+                st.pop(); //throw the '['
+                
+                //get the number now
+                int tens = 1;
+                int num = 0;
+                while(!st.empty() && isdigit(st.top()))
+                {
+                    char dig = st.top();
+                    num = num + (tens * (dig - '0'));
+                    tens = tens * 10;
+                    st.pop();
+                }
+                //now dump it back in stack
+                string encsub = "";
+                //reverse sub
+                string revsub = "";
+                 for(int j = sub.length()-1; j >= 0; j--)
+                    revsub += sub[j];
+                for(int i = 0; i < num; i++)
+                {
+                    encsub += revsub;
+                }
+                
+                for(auto y: encsub)
+                    st.push(y);
+            }
+            else
+                st.push(x);   
+        }
+                
+        while(!st.empty())
+        {
+            enc += st.top();
+            st.pop();  
+        }  
+        string revenc = "";
+        for(int j = enc.length()-1; j >= 0; j--)
+            revenc += enc[j];
+            
+        return revenc;
+    }
+};
+```
+
+```cpp
+class Solution {
+public:
+    string decodeString(string s) {
+        stack<int> countStack;
+        stack<string> stringStack;
+        string currString = "";
+        int currCount = 0;
+        
+        for (char c : s) {
+            if (isdigit(c)) {
+                currCount = currCount * 10 + (c - '0'); // Build multi-digit number
+            } else if (c == '[') {
+                countStack.push(currCount);
+                stringStack.push(currString);
+                currCount = 0;
+                currString = "";
+            } else if (c == ']') {
+                string temp = currString;
+                currString = stringStack.top();
+                stringStack.pop();
+                int count = countStack.top();
+                countStack.pop();
+                for (int i = 0; i < count; i++) {
+                    currString += temp;
+                }
+            } else {
+                currString += c; // Append letter to current string
+            }
+        }
+        
+        return currString;
+    }
+};
+```
+
+### How It Works
+- **Stacks**:
+  - `countStack`: Stores the repetition counts for each bracket.
+  - `stringStack`: Stores the partially decoded strings before entering a new bracket.
+- **Processing**:
+  - Digits: Accumulate to form multi-digit numbers (e.g., "10" as 10).
+  - `[`: Save the current state (count and string) and reset for the new nested section.
+  - Letters: Append to the current string.
+  - `]`: Pop the count and previous string, repeat the current string, and append to the previous string.
+- **Edge Cases**:
+  - Nested brackets: Handled by the stack, which preserves the hierarchy.
+  - No brackets: Treated as a simple string.
+  - Multi-digit numbers: Built correctly by multiplying by 10.
+- **Result**: The final `currString` is the fully decoded string.
+
+### Time and Space Complexity
+- **Time Complexity**: O(n * maxK), where `n` is the length of the input string and `maxK` is the maximum repetition count (up to 300). Each character is processed once, but string repetition may amplify the output size.
+- **Space Complexity**: O(m), where `m` is the maximum nesting level of brackets, for the stacks. The output string is not counted in space complexity.
+
+### Alternative Approach
+1. **Recursive DFS**:
+   - Parse the string recursively, treating each bracketed section as a subproblem.
+   - Time Complexity: O(n * maxK)
+   - Space Complexity: O(m) for the recursion stack
+The stack-based approach is preferred for its iterative nature and clarity in handling nested structures.
 
 
 
 
+# 9. Palindrome Number
 
+This document describes the solution to the "Palindrome Number" problem (LeetCode #9).
 
+## Problem Description
+Given an integer `x`, return `true` if `x` is a palindrome, and `false` otherwise. An integer is a palindrome if it reads the same forward and backward.
+
+### Example
+```
+Input: x = 121
+Output: true
+Explanation: 121 reads the same forward and backward.
+
+Input: x = -121
+Output: false
+Explanation: -121 is not a palindrome as it reads 121- backward.
+
+Input: x = 10
+Output: false
+Explanation: 10 reads as 01 backward, which is not the same.
+
+Hint: Beware of overflow when you reverse the integer.
+```
+
+### Constraints
+- `-2^31 <= x <= 2^31 - 1`
+
+## Solution Approach
+The problem can be solved by reversing the integer and comparing it with the original number, while handling edge cases like negative numbers and potential overflow.
+
+### Reverse Integer Approach
+1. If the number is negative, return `false` (negative numbers cannot be palindromes due to the sign).
+2. Initialize a variable to store the reversed number.
+3. While the input number is not zero:
+   - Extract the last digit using modulo (`x % 10`).
+   - Append the digit to the reversed number by multiplying the current reversed number by 10 and adding the digit.
+   - Remove the last digit from the input number by integer division (`x / 10`).
+4. Compare the reversed number with the original number to determine if it’s a palindrome.
+
+### Example Implementation (C++)
+```cpp
+class Solution {
+public:
+    bool isPalindrome(int x) {
+        if (x < 0 || (x % 10 == 0 && x != 0)) return false;
+        int rev = 0;
+        while (rev < x) {
+            rev = rev * 10 + x % 10;
+            x /= 10;
+            cout << rev<<endl;
+        }
+        
+        return x == rev || x == rev / 10;
+    }
+};
+``
+
+```cpp
+class Solution {
+public:
+    bool isPalindrome(int x) {
+        if (x < 0) {
+            return false;
+        }
+        
+        long long reversed = 0; // Use long long to handle potential overflow
+        int original = x;
+        
+        while (x > 0) {
+            int digit = x % 10;
+            reversed = reversed * 10 + digit;
+            x /= 10;
+        }
+        
+        return reversed == original;
+    }
+};
+```
+
+### How It Works
+- **Negative Check**: Negative numbers are not palindromes due to the leading minus sign.
+- **Reversal**:
+  - Extract digits from the end using modulo.
+  - Build the reversed number by shifting digits left (multiplying by 10) and adding the new digit.
+- **Comparison**: Check if the reversed number equals the original.
+- **Edge Cases**:
+  - Zero: Is a palindrome (handled correctly).
+  - Large numbers: Use `long long` for `reversed` to prevent overflow.
+  - Single digit: Always a palindrome (e.g., 5).
+- **Result**: Returns `true` if the number is a palindrome, `false` otherwise.
+
+### Time and Space Complexity
+- **Time Complexity**: O(log x), where `x` is the input number, as we process each digit (number of digits is proportional to log x base 10).
+- **Space Complexity**: O(1), as we only use a constant amount of extra space (excluding the input).
+
+### Alternative Approach
+1. **Convert to String**:
+   - Convert the integer to a string and check if it reads the same forward and backward.
+   - Time Complexity: O(log x) for conversion, O(log x) for comparison
+   - Space Complexity: O(log x) for the string
+The reverse integer approach is preferred as it avoids string conversion and uses constant space.
+
+https://leetcode.com/submissions/#/3
