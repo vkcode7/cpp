@@ -1,3 +1,66 @@
+## 509. Fibonacci Number
+The Fibonacci numbers, commonly denoted F(n) form a sequence, called the Fibonacci sequence, such that each number is the sum of the two preceding ones, starting from 0 and 1. That is,
+
+F(0) = 0, F(1) = 1
+F(n) = F(n - 1) + F(n - 2), for n > 1.
+Given n, calculate F(n).
+```cpp
+class Solution {
+public:
+    int fib(int n) {
+        return n < 2 ? n : fib(n-1) + fib(n-2);
+    }
+};
+```
+
+## 70. Climbing Stairs
+https://leetcode.com/problems/climbing-stairs/
+
+You are climbing a staircase. It takes n steps to reach the top.
+
+Each time you can either climb 1 or 2 steps. In how many distinct ways can you climb to the top?
+
+```
+Example 1:
+
+Input: n = 2
+Output: 2
+Explanation: There are two ways to climb to the top.
+1. 1 step + 1 step
+2. 2 steps
+Example 2:
+
+Input: n = 3
+Output: 3
+Explanation: There are three ways to climb to the top.
+1. 1 step + 1 step + 1 step
+2. 1 step + 2 steps
+3. 2 steps + 1 step
+```
+
+```cpp
+class Solution {
+public:
+    int climbStairs(int n) {
+        if(n <= 2)
+            return n;
+        
+        auto pp = 1; //prevpre
+        auto p = 2; //prev
+        int current = 0;
+        
+        for(auto s=3; s<=n; s++)
+        {
+            current = p + pp;
+            pp = p;
+            p = current;
+        }
+        
+        return current;
+    }
+};
+```
+
 ## 121. Best Time to Buy and Sell Stock - Array, Dynamic Programming
 #### https://leetcode.com/problems/best-time-to-buy-and-sell-stock/description/
 You are given an array prices where prices[i] is the price of a given stock on the ith day.
