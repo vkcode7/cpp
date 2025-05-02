@@ -1820,3 +1820,97 @@ public:
 - All bulls: `secret = "1234"`, `guess = "1234"` returns `"4A0B"`.
 - All cows: `secret = "1234"`, `guess = "4321"` returns `"0A4B"`.
 - Repeated digits: `secret = "1122"`, `guess = "2211"` returns `"0A4B"`.
+
+
+# 11. Container With Most Water Solution
+
+## Problem Description
+Given an integer array `height` of length `n`, where each element represents the height of a vertical line at index `i`, find two lines that together with the x-axis form a container that holds the most water. The container's width is the distance between the indices, and its height is the minimum of the two line heights. Return the maximum area of water the container can store.
+
+### Example
+```
+Input: height = [1,8,6,2,5,4,8,3,7]
+Output: 49
+Explanation: The maximum area is formed by lines at indices 1 and 8 (heights 8 and 7), with area = min(8,7) * (8-1) = 49.
+```
+
+<img src="../assets/question_11.jpg” width="20%">
+
+
+## Solution
+Below is the C++ solution to find the maximum area of water using a two-pointer approach.
+
+```cpp
+class Solution {
+public:
+    int maxArea(vector<int>& height) {  
+        int area = 0;
+        for(int i = 0, j = height.size()-1; i<j;)
+        {
+            auto w = j-i;
+            auto h = min(height[i], height[j]);
+            
+            if(height[i] < height[j])
+                i++;
+            else
+                j--;
+            
+            area = max(area, w * h );
+        }
+        
+        return area;
+    }
+};
+
+class Solution {
+public:
+    int maxArea(vector<int>& height) {
+        int maxWater = 0;
+        int left = 0, right = height.size() - 1;
+        
+        while (left < right) {
+            // Calculate area: width * min(height[left], height[right])
+            int width = right - left;
+            int h = min(height[left], height[right]);
+            maxWater = max(maxWater, width * h);
+            
+            // Move the pointer with the smaller height
+            if (height[left] <= height[right]) {
+                left++;
+            } else {
+                right--;
+            }
+        }
+        
+        return maxWater;
+    }
+};
+```
+
+## Explanation
+1. **Two-Pointer Approach**:
+   - Use two pointers: `left` starting at the beginning (index 0) and `right` starting at the end (index `n-1`).
+   - The area of water is calculated as `width * height`, where:
+     - Width is `right - left`.
+     - Height is the minimum of `height[left]` and `height[right]`.
+   - Update `maxWater` with the maximum area seen so far.
+2. **Pointer Movement**:
+   - To maximize the area, move the pointer pointing to the shorter line inward:
+     - If `height[left] <= height[right]`, increment `left`.
+     - Otherwise, decrement `right`.
+   - This ensures we explore combinations that could potentially yield a larger area (moving the shorter line might find a taller one, while moving the taller line would only reduce the area due to a smaller width).
+3. **Termination**:
+   - Continue until `left` meets `right`.
+4. **Result**:
+   - Return `maxWater`, the maximum area found.
+
+## Time and Space Complexity
+- **Time Complexity**: O(n), where `n` is the length of the array. The two pointers traverse the array once, with `left` and `right` collectively moving at most `n` steps.
+- **Space Complexity**: O(1), as we only use a constant amount of extra space for variables.
+
+## Edge Cases
+- Array with two elements: Return `min(height[0], height[1]) * 1`.
+- All heights equal: Maximum area is `height[0] * (n-1)` (using the first and last lines).
+- Smallest height at ends: Correctly handles cases like `[1,1000,1]` by moving pointers inward.
+- Large array: Efficiently processes up to `n = 10^5` within constraints.
+- Monotonic array: Handles increasing or decreasing arrays by checking all valid pairs.
