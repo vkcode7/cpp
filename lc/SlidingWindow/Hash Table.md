@@ -342,7 +342,83 @@ The hash set approach is preferred due to its optimal time complexity.
 
 
 
+# 1. Two Sum - HashTable
 
+This document describes the solution to the "Two Sum" problem (LeetCode #1).
+
+## Problem Description
+Given an array of integers `nums` and an integer `target`, return the indices of the two numbers such that they add up to `target`. You may assume that each input has exactly one solution, and you may not use the same element twice. The answer can be returned in any order.
+
+### Example
+```
+Input: nums = [2,7,11,15], target = 9
+Output: [0,1]
+Explanation: nums[0] + nums[1] = 2 + 7 = 9.
+
+Input: nums = [3,2,4], target = 6
+Output: [1,2]
+Explanation: nums[1] + nums[2] = 2 + 4 = 6.
+
+Input: nums = [3,3], target = 6
+Output: [0,1]
+Explanation: nums[0] + nums[1] = 3 + 3 = 6.
+```
+
+### Constraints
+- `2 <= nums.length <= 10^4`
+- `-10^9 <= nums[i] <= 10^9`
+- `-10^9 <= target <= 10^9`
+- Only one valid answer exists.
+
+## Solution Approach
+The problem can be solved efficiently using a hash map to store numbers and their indices, allowing for O(1) lookups.
+
+### Hash Map Approach
+1. Create an empty hash map to store numbers as keys and their indices as values.
+2. Iterate through the array:
+   - For each number `nums[i]`, compute the complement (`target - nums[i]`).
+   - If the complement exists in the hash map, return the current index `i` and the complement's index.
+   - Otherwise, add `nums[i]` and its index `i` to the hash map.
+3. Since exactly one solution exists, the loop will find it.
+
+### Example Implementation (C++)
+```cpp
+class Solution {
+public:
+    vector<int> twoSum(vector<int>& nums, int target) {
+        unordered_map<int, int> numMap; // {number, index}
+        for (int i = 0; i < nums.size(); i++) {
+            int complement = target - nums[i];
+            if (numMap.find(complement) != numMap.end()) {
+                return {numMap[complement], i};
+            }
+            numMap[nums[i]] = i;
+        }
+        return {}; // Unreachable given problem constraints
+    }
+};
+```
+
+### How It Works
+- **Hash Map**: Stores each number and its index as we iterate.
+- **Lookup**: For each `nums[i]`, check if `target - nums[i]` is in the map.
+  - If found, return the stored index and current index.
+  - If not, add `nums[i]` and `i` to the map.
+- **Edge Cases**:
+  - The problem guarantees exactly one solution, so no need to handle cases with no solution or multiple solutions.
+  - Duplicate numbers (e.g., `[3,3]`) are handled since we check the complement before adding the current number.
+- **Result**: Returns the indices of the two numbers that sum to `target`.
+
+### Time and Space Complexity
+- **Time Complexity**: O(n), where `n` is the length of the array, as we traverse the array once with O(1) hash map operations (average case).
+- **Space Complexity**: O(n), for storing up to `n` elements in the hash map.
+
+### Alternative Approach
+1. **Brute Force**:
+   - Check every pair of numbers using nested loops.
+   - Time Complexity: O(n²)
+   - Space Complexity: O(1)
+The hash map approach is preferred due to its linear time complexity.
 
 
 
