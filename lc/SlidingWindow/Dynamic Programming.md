@@ -259,7 +259,90 @@ public:
 ```
 
 
+# 198. House Robber Solution
 
+## Problem Description
+You are a professional robber planning to rob houses along a street. Each house has a certain amount of money stashed, represented by a non-negative integer array `nums`. The only constraint is that you cannot rob two adjacent houses. Return the maximum amount of money you can rob without alerting the police.
+
+### Example
+```
+Input: nums = [1,2,3,1]
+Output: 4
+Explanation: Rob house 1 (money = 1) and then rob house 3 (money = 3). Total amount = 1 + 3 = 4.
+```
+
+## Solution
+Below is the C++ solution to find the maximum amount of money that can be robbed using dynamic programming.
+
+```cpp
+class Solution {
+public:
+    int rob(vector<int>& nums) {
+        int n = nums.size();
+        if(n == 1)
+            return nums[0];
+        
+        vector<int> dp(n, 0);
+        dp[0] = nums[0];
+        dp[1] = max(dp[0], nums[1]);
+        for(int k = 2; k < n; k++) {
+            dp[k] = max(dp[k-2] + nums[k], dp[k-1]);
+        }
+        
+        return dp[n-1];
+    }
+};
+
+class Solution {
+public:
+    int rob(vector<int>& nums) {
+        if (nums.empty()) {
+            return 0;
+        }
+        if (nums.size() == 1) {
+            return nums[0];
+        }
+        
+        // Use two variables to store the max money up to the previous houses
+        int prev2 = 0; // Max money up to i-2
+        int prev1 = nums[0]; // Max money up to i-1
+        
+        for (int i = 1; i < nums.size(); ++i) {
+            // At house i, either rob it (add nums[i] to prev2) or skip it (keep prev1)
+            int current = max(prev1, prev2 + nums[i]);
+            prev2 = prev1;
+            prev1 = current;
+        }
+        
+        return prev1;
+    }
+};
+```
+
+## Explanation
+1. **Edge Cases**:
+   - If the array is empty, return 0.
+   - If the array has one house, return its value (`nums[0]`).
+2. **Dynamic Programming (Space-Optimized)**:
+   - Instead of using an array to store the maximum money for each house, use two variables:
+     - `prev1`: Maximum money up to the previous house (i-1).
+     - `prev2`: Maximum money up to the house before that (i-2).
+   - For each house `i`:
+     - Decide whether to rob it (add `nums[i]` to `prev2`) or skip it (keep `prev1`).
+     - Update `current` as the maximum of these two choices.
+     - Shift variables: `prev2` becomes `prev1`, and `prev1` becomes `current`.
+3. **Return**: The value of `prev1` after the loop, which represents the maximum money that can be robbed.
+
+## Time and Space Complexity
+- **Time Complexity**: O(n), where `n` is the length of the array, as we process each house once.
+- **Space Complexity**: O(1), as we only use two variables regardless of input size.
+
+## Edge Cases
+- Empty array: Return 0.
+- Single house: Return its value.
+- Two houses: Return the maximum of the two values.
+- All houses with zero value: Return 0.
+- Large array with varying values: Efficiently computes the maximum using the iterative approach.
 
 
 
