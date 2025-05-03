@@ -1,3 +1,19 @@
+# vector:
+```css
+Initialization: vector<int> v = {1, 2, 3}; or vector<int> v(n, 0);.
+Sorting: std::sort(v.begin(), v.end()), Time Complexity: O(n log n).
+Reverse: std::reverse(v.begin(), v.end()) to reverse a vector, Time Complexity: O(n).
+Two pointer: int left = 0, right = v.size() - 1; while (left < right) {...}.
+dp: vector<int> dp(n + 1, 0);.
+swap: v1.swap(v2);
+erase(iterator pos): Removes the element at the specified position, 
+
+insert(iterator pos, const T& value): Inserts an element at the specified position.
+Example: v.insert(v.begin() + 2, 10); to insert 10 at index 2., Time Complexity: O(n)
+
+basic ops: push_back(), pop_back(), size(), clear(), front(), back()
+```
+
 
 # 1431. Kids With the Greatest Number of Candies
 https://leetcode.com/problems/kids-with-the-greatest-number-of-candies/description/
@@ -69,43 +85,9 @@ public:
 };
 ```
 
-```cpp
-class Solution {
-public:
-    vector<bool> kidsWithCandies(vector<int>& candies, int extraCandies) {
-        int maxCandies = *max_element(candies.begin(), candies.end());
-        vector<bool> result(candies.size());
-        
-        for (int i = 0; i < candies.size(); i++) {
-            result[i] = (candies[i] + extraCandies >= maxCandies);
-        }
-        
-        return result;
-    }
-};
-```
-
-### How It Works
-- **Find Maximum**: Use `max_element` to find the highest number of candies any kid has.
-- **Check Each Kid**: For each kid, compute `candies[i] + extraCandies` and compare it to `maxCandies`.
-  - If greater than or equal, set `result[i]` to `true` (they can have the greatest number of candies).
-  - Otherwise, set `result[i]` to `false`.
-- **Edge Cases**:
-  - All kids have the same candies: All may become `true` if `extraCandies` is sufficient.
-  - Small arrays (e.g., length 2): Handled naturally by the loop.
-- **Result**: The boolean array indicates which kids can have the greatest number of candies.
-
 ### Time and Space Complexity
 - **Time Complexity**: O(n), where `n` is the length of the `candies` array, as we scan the array twice (once for max, once for comparison).
 - **Space Complexity**: O(n), for the output `result` array. (Excluding the output, it’s O(1).)
-
-### Alternative Approach
-1. **Manual Max Calculation**:
-   - Iterate through the array once to find the maximum instead of using `max_element`.
-   - Time Complexity: O(n)
-   - Space Complexity: O(n) for output
-The `max_element` approach is concise and equally efficient, making it preferable for clarity.
-
 
 
 # 9. Palindrome Number
