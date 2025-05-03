@@ -1,5 +1,6 @@
 
 # 1431. Kids With the Greatest Number of Candies
+https://leetcode.com/problems/kids-with-the-greatest-number-of-candies/description/
 
 This document describes the solution to the "Kids With the Greatest Number of Candies" problem (LeetCode #1431).
 
