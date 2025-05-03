@@ -1,4 +1,4 @@
-# 1431. Kids With the Greatest Number of Candies [Super Easy]
+# 1431. Kids With the Greatest Number of Candies [Super Easy] via Kadane
 https://leetcode.com/problems/kids-with-the-greatest-number-of-candies/description/
 
 This document describes the solution to the "Kids With the Greatest Number of Candies" problem (LeetCode #1431).
@@ -56,7 +56,8 @@ public:
 - **Space Complexity**: O(n), for the output `result` array. (Excluding the output, it’s O(1).)
 
 
-# 9. Palindrome Number
+# 9. Palindrome Number [Super Easy] via reverse the number
+https://leetcode.com/problems/palindrome-number/description/
 
 This document describes the solution to the "Palindrome Number" problem (LeetCode #9).
 
@@ -80,38 +81,11 @@ Explanation: 10 reads as 01 backward, which is not the same.
 Hint: Beware of overflow when you reverse the integer.
 ```
 
-### Constraints
-- `-2^31 <= x <= 2^31 - 1`
-
-## Solution Approach
-The problem can be solved by reversing the integer and comparing it with the original number, while handling edge cases like negative numbers and potential overflow.
-
-### Reverse Integer Approach
+### Reverse Integer Approach / Alternative Approach is via string conversion
 1. If the number is negative, return `false` (negative numbers cannot be palindromes due to the sign).
-2. Initialize a variable to store the reversed number.
-3. While the input number is not zero:
-   - Extract the last digit using modulo (`x % 10`).
-   - Append the digit to the reversed number by multiplying the current reversed number by 10 and adding the digit.
-   - Remove the last digit from the input number by integer division (`x / 10`).
-4. Compare the reversed number with the original number to determine if it’s a palindrome.
+2. Reverse the number and compare
 
 ### Example Implementation (C++)
-```cpp
-class Solution {
-public:
-    bool isPalindrome(int x) {
-        if (x < 0 || (x % 10 == 0 && x != 0)) return false;
-        int rev = 0;
-        while (rev < x) {
-            rev = rev * 10 + x % 10;
-            x /= 10;
-            cout << rev<<endl;
-        }
-        
-        return x == rev || x == rev / 10;
-    }
-};
-``
 
 ```cpp
 class Solution {
@@ -135,30 +109,13 @@ public:
 };
 ```
 
-### How It Works
-- **Negative Check**: Negative numbers are not palindromes due to the leading minus sign.
-- **Reversal**:
-  - Extract digits from the end using modulo.
-  - Build the reversed number by shifting digits left (multiplying by 10) and adding the new digit.
-- **Comparison**: Check if the reversed number equals the original.
-- **Edge Cases**:
-  - Zero: Is a palindrome (handled correctly).
-  - Large numbers: Use `long long` for `reversed` to prevent overflow.
-  - Single digit: Always a palindrome (e.g., 5).
-- **Result**: Returns `true` if the number is a palindrome, `false` otherwise.
-
 ### Time and Space Complexity
-- **Time Complexity**: O(log x), where `x` is the input number, as we process each digit (number of digits is proportional to log x base 10).
+- **Time Complexity**: O(n), where n is numnber of digits
 - **Space Complexity**: O(1), as we only use a constant amount of extra space (excluding the input).
 
-### Alternative Approach
-1. **Convert to String**:
-   - Convert the integer to a string and check if it reads the same forward and backward.
-   - Time Complexity: O(log x) for conversion, O(log x) for comparison
-   - Space Complexity: O(log x) for the string
-The reverse integer approach is preferred as it avoids string conversion and uses constant space.
 
-# 268. Missing Number Solution
+# 268. Missing Number Solution [Super Easy] via XORing [0^0 = 0; 0^1=1^0=1; 1^1=0]
+https://leetcode.com/problems/missing-number/description/
 
 ## Problem Description
 Given an array `nums` containing `n` distinct numbers in the range `[0, n]`, return the only number in the range that is missing from the array.
@@ -182,55 +139,22 @@ public:
         
         //[0,1,3] => 0^1^3^0^1^2^3 => (0^0)^(1^1)^(2^2)^3 => 0^0^0^3 => 0^3 => 3
         for(int i=0; i<nums.size(); i++){
-            res ^= i;
-            res ^= nums[i];
+            res = res ^ i ^ nums[i]; //XOR with index and value
         }
         return res;
-    }
-};
-
-class Solution {
-public:
-    int missingNumber(vector<int>& nums) {
-        int result = nums.size(); // Initialize with n
-        
-        // XOR all indices and values
-        for (int i = 0; i < nums.size(); ++i) {
-            result ^= i;        // XOR with index
-            result ^= nums[i];  // XOR with value
-        }
-        
-        return result;
     }
 };
 ```
 
 ## Explanation
 1. **XOR Approach**:
-   - The array contains `n` numbers from the range `[0, n]`, so one number is missing.
-   - Initialize `result` with `n` (the upper bound of the range).
-   - Iterate through the array:
-     - XOR `result` with each index `i` (representing expected numbers `0` to `n-1`).
-     - XOR `result` with each value `nums[i]` (the numbers present in the array).
-   - The final `result` is the missing number because:
      - XORing a number with itself cancels it out (e.g., `x ^ x = 0`).
      - The missing number will remain as it is only present in the indices (or `n`) and not in the array.
-2. **Why XOR?**:
-   - XOR is efficient and avoids issues with sum-based approaches (e.g., potential integer overflow for large `n`).
-3. **Result**:
-   - Return `result`, which is the missing number.
-
+       
 ## Time and Space Complexity
 - **Time Complexity**: O(n), where `n` is the length of the array, as we iterate through the array once.
 - **Space Complexity**: O(1), as we only use a single variable for the result.
-
-## Edge Cases
-- Single element: `nums = [0]` (n=1, missing 1) or `nums = [1]` (missing 0).
-- Missing 0: `nums = [1,2,3]` returns 0.
-- Missing `n`: `nums = [0,1,2]` returns 3.
-- Large array: Handles up to `n = 10^4` efficiently.
-- All numbers present except one: Correctly identifies the missing number in `[0,n]`.
-- 
+  
 
 # 41. First Missing Positive Solution
 
