@@ -1,45 +1,4 @@
-# std::vector summary:
-```css
-Initialization: vector<int> v = {1, 2, 3}; or vector<int> v(n, 0);.
-Sorting: std::sort(v.begin(), v.end()), Time Complexity: O(n log n).
-Reverse: std::reverse(v.begin(), v.end()) to reverse a vector, Time Complexity: O(n).
-Two pointer: int left = 0, right = v.size() - 1; while (left < right) {...}.
-dp: vector<int> dp(n + 1, 0);.
-swap: v1.swap(v2);
-erase(iterator pos): Removes the element at the specified position, 
-
-insert(iterator pos, const T& value): Inserts an element at the specified position.
-Example: v.insert(v.begin() + 2, 10); to insert 10 at index 2., Time Complexity: O(n)
-
-basic ops: push_back(), pop_back(), size(), clear(), front(), back()
-```
-
-# std::set Summary
-```css
-Initialization: set<int> s = {1, 2, 3}; or set<int> s;.
-Insert: s.insert(5);, Time Complexity: O(log n).
-Erase: s.erase(5);, Time Complexity: O(log n).
-Find: if (s.find(5) != s.end()), Time Complexity: O(log n).
-Check Existence: if (s.count(5)), Time Complexity: O(log n).
-Iteration: for (auto x : s), uses begin()/end().
-Range Queries: s.lower_bound(5);, s.upper_bound(5);, Time Complexity: O(log n).
-Basic Ops: size(), empty(), clear().
-LeetCode Use: Deduplication, sorted unique elements (e.g., Contains Duplicate, Intersection).
-```
-# std::map Summary
-```
-Initialization: map<int, int> m = {{1, 10}, {2, 20}}; or map<int, int> m;.
-Insert/Update: m[1] = 10; or m.insert({1, 10});, Time Complexity: O(log n).
-Erase: m.erase(1);, Time Complexity: O(log n).
-Find: if (m.find(1) != m.end()), Time Complexity: O(log n).
-Check Existence: if (m.count(1)), Time Complexity: O(log n).
-Iteration: for (auto [key, value] : m), uses begin()/end().
-Range Queries: m.lower_bound(1);, m.upper_bound(1);, Time Complexity: O(log n).
-Basic Ops: size(), empty(), clear().
-LeetCode Use: Key-value storage, frequency counting (e.g., Two Sum, Group Anagrams).
-```
-
-# 1431. Kids With the Greatest Number of Candies
+# 1431. Kids With the Greatest Number of Candies [Super Easy]
 https://leetcode.com/problems/kids-with-the-greatest-number-of-candies/description/
 
 This document describes the solution to the "Kids With the Greatest Number of Candies" problem (LeetCode #1431).
@@ -57,24 +16,7 @@ Explanation:
 - Kid 2: 5 + 3 = 8 (greater than max, true)
 - Kid 3: 1 + 3 = 4 (less than max, false)
 - Kid 4: 3 + 3 = 6 (greater than max, true)
-
-Input: candies = [4,2,1,1,2], extraCandies = 1
-Output: [true,false,false,false,false]
-Explanation: Max candies is 4. Only kid 0 (4 + 1 = 5) can reach or exceed it.
-
-Input: candies = [12,1,12], extraCandies = 10
-Output: [true,false,true]
-Explanation: Kids 0 and 2 can reach 22 candies, but kid 1 can only reach 11.
 ```
-
-### Constraints
-- `n == candies.length`
-- `2 <= n <= 100`
-- `1 <= candies[i] <= 100`
-- `1 <= extraCandies <= 50`
-
-## Solution Approach
-The problem can be solved by finding the maximum number of candies any kid has and checking if each kid can reach or exceed this maximum by adding `extraCandies`.
 
 ### Linear Scan Approach
 1. Find the maximum number of candies in the `candies` array.
