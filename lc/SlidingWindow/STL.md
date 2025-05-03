@@ -1,35 +1,38 @@
 # STL Containers and Classes for LeetCode
 
 ## 1. std::vector
+- **Initialization:** `vector<int> v = {1, 2, 3}; or vector<int> v(n, 0);`
 - **Description**: Dynamic array with random access.
 - **Key Methods**:
   - `push_back(value)`, `pop_back()`: O(1) amortized.
-  - `insert(pos, value)`, `erase(pos)`: O(n).
+  - `insert(pos, value)`, `erase(iterator pos)`: O(n).
   - `size()`, `empty()`, `front()`, `back()`: O(1).
-  - clear()
-  - `std::sort(v.begin(), v.end())`: O(n log n).
+  - `clear()`
   - `std::reverse(v.begin(), v.end())`: O(n).
-- **Example**:
-- Initialization: `vector<int> v = {1, 2, 3}; or vector<int> v(n, 0);
-- v.push_back(4);
-- sorting: std::sort(v.begin(), v.end());`.
-- **LeetCode Use**: Array manipulation, DP tables, two-pointer techniques (e.g., Two Sum, Merge Intervals).
+- **sorting:** `std::sort(v.begin(), v.end());`. O(n log n)
+- **LeetCode Use**:
+-   Array manipulation, DP tables: `vector<int> dp(n + 1, 0);`
+-   two-pointer techniques (`int left = 0, right = v.size() - 1; while (left < right) {...}.`).
 
 ## 2. std::set
+- **Initialization:** `set<int> s = {1, 2, 3}; or set<int> s;.`
 - **Description**: Sorted container of unique elements (balanced BST).
 - **Key Methods**:
   - `insert(value)`, `erase(value)`, `find(value)`, `count(value)`: O(log n).
   - `lower_bound(value)`, `upper_bound(value)`: O(log n).
-  - `size()`, `empty()`: O(1).
+  - `size()`, `empty()`, `clear()`: O(1).
 - **Example**: `set<int> s = {1, 2, 3}; s.insert(4); if (s.count(2)) {...}`.
 - **LeetCode Use**: Deduplication, sorted unique elements (e.g., Contains Duplicate, Intersection).
 
 ## 3. std::map
+- **Initialization:** `map<int, int> m = {{1, 10}, {2, 20}}; or map<int, int> m;`
 - **Description**: Sorted key-value pairs (balanced BST).
 - **Key Methods**:
   - `m[key] = value`, `insert({key, value})`, `erase(key)`, `find(key)`, `count(key)`: O(log n).
   - `lower_bound(key)`, `upper_bound(key)`: O(log n).
-  - `size()`, `empty()`: O(1).
+  - `size()`, `empty()`, `clear()`: O(1).
+- **Check Existence:** `if (m.count(1)), Time Complexity: O(log n).`
+- **Iteration:** `for (auto [key, value] : m), uses begin()/end().`
 - **Example**: `map<int, int> m; m[1] = 10; if (m.find(1) != m.end()) {...}`.
 - **LeetCode Use**: Key-value storage, frequency counting (e.g., Two Sum, Group Anagrams).
 
