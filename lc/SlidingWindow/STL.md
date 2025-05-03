@@ -6,9 +6,13 @@
   - `push_back(value)`, `pop_back()`: O(1) amortized.
   - `insert(pos, value)`, `erase(pos)`: O(n).
   - `size()`, `empty()`, `front()`, `back()`: O(1).
+  - clear()
   - `std::sort(v.begin(), v.end())`: O(n log n).
   - `std::reverse(v.begin(), v.end())`: O(n).
-- **Example**: `vector<int> v = {1, 2, 3}; v.push_back(4); std::sort(v.begin(), v.end());`.
+- **Example**:
+- Initialization: `vector<int> v = {1, 2, 3}; or vector<int> v(n, 0);
+- v.push_back(4);
+- sorting: std::sort(v.begin(), v.end());`.
 - **LeetCode Use**: Array manipulation, DP tables, two-pointer techniques (e.g., Two Sum, Merge Intervals).
 
 ## 2. std::set
