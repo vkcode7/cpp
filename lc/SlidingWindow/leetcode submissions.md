@@ -205,7 +205,7 @@ public:
 - **Space Complexity**: O(1), as we only use a constant amount of extra space (a boolean variable) and modify the array in-place.
 
 
-# 287. Find the Duplicate Number
+# 287. Find the Duplicate Number - sort and use xor between consecutive numbers in the vector [Easy]
 https://leetcode.com/problems/find-the-duplicate-number/description/
 
 Given an array of integers nums containing n + 1 integers where each integer is in the range [1, n] inclusive.
@@ -227,7 +227,6 @@ Example 3:
 Input: nums = [3,3,3,3,3]
 Output: 3
 ```
-
 
 ```cpp
 class Solution {
