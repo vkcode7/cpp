@@ -1,3 +1,25 @@
+```bash
+# 125. Valid Palindrome
+# 392. Is Subsequence
+# 844. Backspace String Compare Solution
+# 26. Remove Duplicates from Sorted Array Solution
+# 567. Permutation in String - Hash Table, Two Pointers, String, Sliding Window
+# 3. Longest Substring Without Repeating Characters - Hash Table, String, Sliding Window
+# 205. Isomorphic Strings - Hash Table, String
+# 5. Longest Palindromic Substring - Two Pointers, String, Dynamic Programming
+# 451. Sort Characters By Frequency - Hash Table, Sorting, Heap (Priority Queue), Bucket Sort, Counting
+# 2262. Substring with Largest Variance - Dynamic Programming
+# 394. Decode String - Stack, Recursion
+# 443. String Compression - Two Pointers
+# 387. First Unique Character in a String - Hash Table, Queue
+# 273. Integer to English Words
+# 283. Move Zeroes Solution - Two Pointers
+# 88. Merge Sorted Array Solution - Two Pointers
+# 239. Sliding Window Maximum - Queue, Sliding Window, Heap (Priority Queue), Monotonic Queue
+# 299. Bulls and Cows Solution
+# 11. Container With Most Water Solution
+```
+
 # 125. Valid Palindrome
 A phrase is a palindrome if, after converting all uppercase letters into lowercase letters and removing all non-alphanumeric characters, it reads the same forward and backward. Alphanumeric characters include letters and numbers.
 
@@ -284,8 +306,9 @@ public:
 - Large sorted array with duplicates: Efficiently handles all cases.
 
 
-## 567. Permutation in String - Hash Table, Two Pointers, String, Sliding Window
-#### https://leetcode.com/problems/permutation-in-string/description/
+# 567. Permutation in String - Hash Table, Two Pointers, String, Sliding Window
+https://leetcode.com/problems/permutation-in-string/description/
+
 Given two strings s1 and s2, return true if s2 contains a permutation of s1, or false otherwise.
 
 In other words, return true if one of s1's permutations is the substring of s2.
@@ -339,8 +362,9 @@ public:
 };
 ```
 
-## 3. Longest Substring Without Repeating Characters - Hash Table, String, Sliding Window
-#### https://leetcode.com/problems/longest-substring-without-repeating-characters/description/
+# 3. Longest Substring Without Repeating Characters - Hash Table, String, Sliding Window
+https://leetcode.com/problems/longest-substring-without-repeating-characters/description/
+
 Given a string s, find the length of the longest substring without duplicate characters.
 ```py
 Example 1:
@@ -399,7 +423,7 @@ public:
 };
 ```
 
-## 205. Isomorphic Strings - Hash Table, String
+# 205. Isomorphic Strings - Hash Table, String
 
 ## Problem Description
 Given two strings `s` and `t`, determine if they are isomorphic. Two strings are isomorphic if the characters in `s` can be replaced to get `t`. All occurrences of a character must be replaced with another character while preserving the order of characters. No two characters may map to the same character, but a character may map to itself.
@@ -518,7 +542,7 @@ public:
 Instead of two hash maps, you can use one hash map and a set to track used characters in `t`. This reduces space complexity slightly but maintains the same time complexity.
 
 
-## 5. Longest Palindromic Substring - Two Pointers, String, Dynamic Programming
+# 5. Longest Palindromic Substring - Two Pointers, String, Dynamic Programming
 
 This document describes the solution to the "Longest Palindromic Substring" problem (LeetCode #5).
 
@@ -682,8 +706,6 @@ The Expand Around Center approach is simpler to implement and sufficient for the
 
 
 # 451. Sort Characters By Frequency - Hash Table, Sorting, Heap (Priority Queue), Bucket Sort, Counting
-
-This document describes the solution to the "Sort Characters By Frequency" problem (LeetCode #451).
 
 ## Problem Description
 Given a string `s`, sort it in decreasing order based on the frequency of the characters. The frequency of a character is the number of times it appears in the string. If two characters have the same frequency, their relative order in the output is not specified.
@@ -1401,6 +1423,7 @@ The problem can be solved by processing the number in groups of three digits (th
 4. Combine the words for each group, ensuring proper spacing and trimming.
 
 ### Example Implementation (C++)
+
 ```cpp
 class Solution {
 public:
