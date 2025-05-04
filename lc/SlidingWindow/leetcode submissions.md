@@ -1,3 +1,20 @@
+```bash
+# 1431. Kids With the Greatest Number of Candies [Super Easy] via Kadane
+# 9. Palindrome Number [Super Easy] via reverse the number
+# 268. Missing Number Solution [Super Easy] via XORing [0^0 = 0; 0^1=1^0=1; 1^1=0]
+# 41. First Missing Positive Solution [Easy]
+# 287. Find the Duplicate Number - sort and use xor between consecutive numbers in the vector [Easy]
+# 20. Valid Parentheses Solution [Easy]
+# 242. Valid Anagram
+# 70. Climbing Stairs - DP
+# 1004. Max Consecutive Ones III
+# 424. Longest Repeating Character Replacement
+# 904. Fruit Into Baskets Solution
+# 724. Find Pivot Index
+# 1480. Running Sum of 1d Array
+# 238. Product of Array Except Self
+```
+
 # 1431. Kids With the Greatest Number of Candies [Super Easy] via Kadane
 https://leetcode.com/problems/kids-with-the-greatest-number-of-candies/description/
 
