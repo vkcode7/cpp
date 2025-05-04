@@ -1,3 +1,18 @@
+```bash
+# 102. Binary Tree Level Order Traversal Solution
+# 107. Binary Tree Level Order Traversal II Solution
+# 114. Flatten Binary Tree to Linked List - Linked List, Stack, Tree, Depth-First Search, Binary Tree
+# 230. Kth Smallest Element in a BST - Tree, Depth-First Search, Binary Search Tree, Binary Tree
+# 199. Binary Tree Right Side View - Depth-First Search, Breadth-First Search, Binary Tree
+# 116. Populating Next Right Pointers in Each Node
+# 117. Populating Next Right Pointers in Each Node II - Linked List, Tree, Depth-First Search, Breadth-First Search, Binary Tree
+# 105. Construct Binary Tree from Preorder and Inorder Traversal - Hash Table, Divide and Conquer, Tree, Binary Tree
+# 112. Path Sum - Tree, Depth-First Search, Breadth-First Search, Binary Tree
+# 107. Binary Tree Level Order Traversal II - Tree, Breadth-First Search, Binary Tree
+# 589. N-ary Tree Preorder Traversal - Stack, Tree, Depth-First Search
+# 98. Validate Binary Search Tree Solution
+```
+
 # 102. Binary Tree Level Order Traversal Solution
 
 ## Problem Description
@@ -763,9 +778,6 @@ The BFS approach is preferred for its intuitive level-by-level processing, which
 
 
 
-
-
-
 # 116. Populating Next Right Pointers in Each Node
 
 This document describes the solution to the "Populating Next Right Pointers in Each Node" problem (LeetCode #116).
@@ -1264,9 +1276,9 @@ private:
 The recursive approach with a hash map is preferred for its clarity and straightforward mapping of preorder and inorder properties, with efficient lookup for splitting subtrees.
 
 
+# 112. Path Sum - Tree, Depth-First Search, Breadth-First Search, Binary Tree
+https://leetcode.com/problems/path-sum/description/
 
-## 112. Path Sum - Tree, Depth-First Search, Breadth-First Search, Binary Tree
-#### https://leetcode.com/problems/path-sum/description/
 Given the root of a binary tree and an integer targetSum, return true if the tree has a root-to-leaf path such that adding up all the values along the path equals targetSum.
 
 A leaf is a node with no children.
@@ -1332,8 +1344,9 @@ public:
 };
 ```
 
-## 107. Binary Tree Level Order Traversal II - Tree, Breadth-First Search, Binary Tree
-#### https://leetcode.com/problems/binary-tree-level-order-traversal-ii/description/
+# 107. Binary Tree Level Order Traversal II - Tree, Breadth-First Search, Binary Tree
+https://leetcode.com/problems/binary-tree-level-order-traversal-ii/description/
+
 Given the root of a binary tree, return the bottom-up level order traversal of its nodes' values. (i.e., from left to right, level by level from leaf to root).
 
 ```py
@@ -1430,8 +1443,9 @@ public:
 };
 ```
 
-## 589. N-ary Tree Preorder Traversal - Stack, Tree, Depth-First Search
-#### https://leetcode.com/problems/n-ary-tree-preorder-traversal/description/
+# 589. N-ary Tree Preorder Traversal - Stack, Tree, Depth-First Search
+https://leetcode.com/problems/n-ary-tree-preorder-traversal/description/
+
 Given the root of an n-ary tree, return the preorder traversal of its nodes' values.
 
 Nary-Tree input serialization is represented in their level order traversal. Each group of children is separated by the null value (See examples)
