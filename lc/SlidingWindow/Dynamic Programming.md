@@ -1,4 +1,18 @@
-## 509. Fibonacci Number
+```bash
+# 509. Fibonacci Number
+# 70. Climbing Stairs
+# 152. Maximum Product Subarray Solution
+# 121. Best Time to Buy and Sell Stock - Array, Dynamic Programming
+# 322. Coin Change - Array, Dynamic Programming, Breadth-First Search
+# 53. Maximum Subarray - Array, Divide and Conquer, Dynamic Programming
+# 42. Trapping Rain Water - Two Pointers, Dynamic Programming, Stack, Monotonic Stack
+# 198. House Robber Solution
+# 139. Word Break Solution
+# 300. Longest Increasing Subsequence Solution
+# 2272. Substring with Largest Variance Solution
+```
+
+# 509. Fibonacci Number
 The Fibonacci numbers, commonly denoted F(n) form a sequence, called the Fibonacci sequence, such that each number is the sum of the two preceding ones, starting from 0 and 1. That is,
 
 F(0) = 0, F(1) = 1
@@ -13,9 +27,7 @@ public:
 };
 ```
 
-
-
-## 70. Climbing Stairs
+# 70. Climbing Stairs
 https://leetcode.com/problems/climbing-stairs/
 
 You are climbing a staircase. It takes n steps to reach the top.
@@ -144,8 +156,9 @@ public:
 ```
 
 
-## 121. Best Time to Buy and Sell Stock - Array, Dynamic Programming
-#### https://leetcode.com/problems/best-time-to-buy-and-sell-stock/description/
+# 121. Best Time to Buy and Sell Stock - Array, Dynamic Programming
+https://leetcode.com/problems/best-time-to-buy-and-sell-stock/description/
+
 You are given an array prices where prices[i] is the price of a given stock on the ith day.
 
 You want to maximize your profit by choosing a single day to buy one stock and choosing a different day in the future to sell that stock.
@@ -187,8 +200,9 @@ public:
 ```
 
 
-## 322. Coin Change - Array, Dynamic Programming, Breadth-First Search
-#### https://leetcode.com/problems/coin-change/description/
+# 322. Coin Change - Array, Dynamic Programming, Breadth-First Search
+https://leetcode.com/problems/coin-change/description/
+
 You are given an integer array coins representing coins of different denominations and an integer amount representing a total amount of money.
 
 Return the fewest number of coins that you need to make up that amount. If that amount of money cannot be made up by any combination of the coins, return -1.
@@ -247,7 +261,7 @@ public:
 ```
 
 
-## 53. Maximum Subarray - Array, Divide and Conquer, Dynamic Programming
+# 53. Maximum Subarray - Array, Divide and Conquer, Dynamic Programming
 
 ## Problem Description
 Given an integer array `nums`, find the subarray (containing at least one number) which has the largest sum and return its sum.
@@ -333,8 +347,6 @@ A divide-and-conquer approach can also solve this problem by splitting the array
 
 
 # 42. Trapping Rain Water - Two Pointers, Dynamic Programming, Stack, Monotonic Stack
-
-This document describes the solution to the "Trapping Rain Water" problem (LeetCode #42).
 
 ## Problem Description
 Given `n` non-negative integers representing an elevation map where the width of each bar is 1, compute how much water it can trap after raining. The elevation map is represented by an array `height` where `height[i]` is the height of the bar at index `i`.
