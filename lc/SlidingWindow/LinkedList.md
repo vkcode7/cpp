@@ -1,3 +1,15 @@
+```bash
+# 21. Merge Two Sorted Lists
+# 142. Linked List Cycle II - Hash Table, Linked List, Two Pointers
+# 2. Add Two Numbers - Linked List, Recursion
+# 876. Middle of the Linked List - Linked List, Two Pointers
+# 206. Reverse Linked List - Linked List, Recursion
+# 92. Reverse Linked List II Solution
+# 234. Palindrome Linked List Solution
+# 138. Copy List with Random Pointer - Hash Table, Linked List
+# 430. Flatten a Multilevel Doubly Linked List - Linked List, Depth-First Search, Doubly-Linked List
+```
+
 # 21. Merge Two Sorted Lists
 You are given the heads of two sorted linked lists list1 and list2.
 
@@ -72,7 +84,7 @@ public:
 };
 ```
 
-## 142. Linked List Cycle II - Hash Table, Linked List, Two Pointers
+# 142. Linked List Cycle II - Hash Table, Linked List, Two Pointers
 Given the head of a linked list, return the node where the cycle begins. If there is no cycle, return null.
 
 There is a cycle in a linked list if there is some node in the list that can be reached again by continuously following the next pointer. Internally, pos is used to denote the index of the node that tail's next pointer is connected to (0-indexed). It is -1 if there is no cycle. Note that pos is not passed as a parameter.
@@ -154,7 +166,7 @@ public:
 };
 ```
 
-## 2. Add Two Numbers - Linked List, Recursion
+# 2. Add Two Numbers - Linked List, Recursion
 
 This document describes the solution to the "Add Two Numbers" problem (LeetCode #2).
 
