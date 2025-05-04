@@ -156,7 +156,7 @@ public:
 - **Space Complexity**: O(1), as we only use a single variable for the result.
   
 
-# 41. First Missing Positive Solution
+# 41. First Missing Positive Solution [Easy]
 
 ## Problem Description
 Given an unsorted integer array `nums`, return the smallest missing positive integer. You must implement an algorithm that runs in O(n) time and uses O(1) auxiliary space (i.e., modify the array in-place).
@@ -244,7 +244,8 @@ public:
 };
 ```
 
-# 20. Valid Parentheses Solution
+# 20. Valid Parentheses Solution [Easy]
+https://leetcode.com/problems/valid-parentheses/description/
 
 ## Problem Description
 Given a string `s` containing only the characters `'('`, `')'`, `'{'`, `'}'`, `'['`, and `']'`, determine if the input string is valid. A string is valid if:
@@ -273,60 +274,35 @@ public:
         smap[']'] = '[';
         smap['}'] = '{';    
         
-        for(auto& x: s){
-            switch(x)
-            {
-                case '(':
-                case '{':
-                case '[':
-                    st.push(x);
-                    break;
-                case ')':
-                case '}':
-                case ']':
-                    if(!st.empty() && st.top() == smap[x]){
+        for(auto x: s)
+        {
+            if(x == '(' or x == '{' or x == '[')
+                st.push(x);
+            else if(x == '}' or x == ']' or x == ')')
+                if(!st.empty())
+                {
+                    auto t = st.top();
+                    auto xc = smap[x];
+                    if(xc == t)
+                    {
                         st.pop();
                     }
                     else
                         return false;
-            }            
+                }
+                else
+                    return false;
         }
         
-        return st.empty();
+        return st.empty(); //unclosed opening brackets still there
     }
 };
 ```
-
-## Explanation
-1. **Stack-Based Approach**:
-   - Use a stack to keep track of opening brackets.
-   - Iterate through each character in the string:
-     - If the character is an opening bracket (`'('`, `'{'`, `'['`), push it onto the stack.
-     - If the character is a closing bracket (`')'`, `'}'`, `']'`):
-       - Check if the stack is empty (no matching opening bracket). If so, return `false`.
-       - Pop the top bracket from the stack and verify it matches the current closing bracket:
-         - `')'` must match `'('`.
-         - `'}'` must match `'{'`.
-         - `']'` must match `'['`.
-       - If they don't match, return `false`.
-2. **Final Check**:
-   - After processing all characters, check if the stack is empty. If not, there are unclosed opening brackets, so return `false`.
-   - If the stack is empty, all brackets were properly matched, so return `true`.
-3. **Result**:
-   - Return whether the string is valid based on the stack operations.
 
 ## Time and Space Complexity
 - **Time Complexity**: O(n), where `n` is the length of the string. We process each character exactly once.
 - **Space Complexity**: O(n), in the worst case, where the stack stores up to `n/2` opening brackets (e.g., `"((("`).
 
-## Edge Cases
-- Empty string: Return `true` (valid).
-- Single character: `s = "("` or `s = ")"` returns `false`.
-- Unmatched brackets: `s = "([)"` returns `false` (incorrect order).
-- All matching brackets: `s = "()[]{}"` returns `true`.
-- Only closing brackets: `s = "))"` returns `false`.
-- Large string: Handles up to `n = 10^4` efficiently.
-- Nested brackets: `s = "{[()]}"` returns `true`.
 
 # 242. Valid Anagram
 Given two strings s and t, return true if t is an anagram of s, and false otherwise.
