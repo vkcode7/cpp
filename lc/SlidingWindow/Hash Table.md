@@ -1,3 +1,12 @@
+```bash
+# 409. Longest Palindrome Solution
+# 560. Subarray Sum Equals K - Hash table
+# 692. Top K Frequent Words - Hash Table, Trie, Sorting, Heap (Priority Queue), Bucket Sort
+# 217. Contains Duplicate - Array, Hash Table, Sorting
+# 1. Two Sum - HashTable
+# 15. 3Sum Solution
+```
+
 # 409. Longest Palindrome Solution
 
 ## Problem Description
@@ -348,9 +357,7 @@ The priority queue approach is preferred for its clarity and efficiency, as it a
 
 
 
-## 217. Contains Duplicate - Array, Hash Table, Sorting
-
-This document describes the solution to the "Contains Duplicate" problem from LeetCode.
+# 217. Contains Duplicate - Array, Hash Table, Sorting
 
 ## Problem Description
 Given an integer array `nums`, return `true` if any value appears at least twice in the array, and return `false` if every element is distinct.
