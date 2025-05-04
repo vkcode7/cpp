@@ -5,8 +5,8 @@
 # 41. First Missing Positive Solution [Easy]
 # 287. Find the Duplicate Number - sort and use xor between consecutive numbers in the vector [Easy]
 # 20. Valid Parentheses Solution [Easy]
-# 242. Valid Anagram
-# 70. Climbing Stairs - DP
+# 242. Valid Anagram [Super Easy]
+# 70. Climbing Stairs - DP [Easy] Step(N) = Step(N-1) + Step(N-2)
 # 1004. Max Consecutive Ones III
 # 424. Longest Repeating Character Replacement
 # 904. Fruit Into Baskets Solution
@@ -321,8 +321,12 @@ public:
 - **Space Complexity**: O(n), in the worst case, where the stack stores up to `n/2` opening brackets (e.g., `"((("`).
 
 
-# 242. Valid Anagram
+# 242. Valid Anagram [Super Easy] - store both string chars in a map and compare it. T=O(n), S=O(1)
+https://leetcode.com/problems/valid-anagram/description/
+
 Given two strings s and t, return true if t is an anagram of s, and false otherwise.
+
+An anagram is a word or phrase formed by rearranging the letters of another, using all the original letters exactly once.
 
 ```
 Example 1:
@@ -356,7 +360,9 @@ public:
 };
 ```
 
-# 70. Climbing Stairs - DP
+# 70. Climbing Stairs - DP [Easy] TC=O(n), SC=O(1)
+https://leetcode.com/problems/climbing-stairs/description/
+
 You are climbing a staircase. It takes n steps to reach the top.
 
 Each time you can either climb 1 or 2 steps. In how many distinct ways can you climb to the top?
@@ -407,17 +413,9 @@ Given a binary array nums and an integer k, return the maximum number of consecu
 
 ```
 Example 1:
-
 Input: nums = [1,1,1,0,0,0,1,1,1,1,0], k = 2
 Output: 6
 Explanation: [1,1,1,0,0,1,1,1,1,1,1]
-Bolded numbers were flipped from 0 to 1. The longest subarray is underlined.
-Example 2:
-
-Input: nums = [0,0,1,1,0,0,1,1,1,0,1,1,0,0,0,1,1,1,1], k = 3
-Output: 10
-Explanation: [0,0,1,1,1,1,1,1,1,1,1,1,0,0,0,1,1,1,1]
-Bolded numbers were flipped from 0 to 1. The longest subarray is underlined.
 ```
 ```cpp
 class Solution {
@@ -425,7 +423,6 @@ public:
     int longestOnes(vector<int>& nums, int k) {
         
         int start =0, end =0, zc =0;
-        
         int ans = 0;
         
         while(end < nums.size())
