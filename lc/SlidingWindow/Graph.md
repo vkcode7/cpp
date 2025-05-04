@@ -1,6 +1,13 @@
+```bash
 # 56. Merge Intervals
+# 253. Meeting Rooms II
+# 210. Course Schedule II - Depth-First Search - Breadth-First Search, Graph, Topological Sort
+# 1971. Find if Path Exists in Graph - Depth-First Search, Breadth-First Search, Union Find, Graph
+# 797. All Paths From Source to Target - Backtracking, Depth-First Search, Breadth-First Search, Graph
+# 133. Clone Graph Solution
+```
 
-This document describes the solution to the "Merge Intervals" problem (LeetCode #56).
+# 56. Merge Intervals
 
 ## Problem Description
 Given an array of intervals where `intervals[i] = [start_i, end_i]`, merge all overlapping intervals and return an array of the non-overlapping intervals that cover all the intervals in the input.
@@ -250,8 +257,6 @@ The chronological ordering approach is preferred for its simplicity and clarity,
 
 # 210. Course Schedule II - Depth-First Search - Breadth-First Search, Graph, Topological Sort
 
-This document describes the solution to the "Course Schedule II" problem (LeetCode #210).
-
 ## Problem Description
 There are a total of `numCourses` courses labeled from `0` to `numCourses - 1`. You are given an array `prerequisites` where `prerequisites[i] = [a_i, b_i]` indicates that you must take course `b_i` first before taking course `a_i`. Return the ordering of courses you should take to finish all courses. If there are multiple valid orderings, return any one. If it is impossible to finish all courses, return an empty array.
 
@@ -430,8 +435,6 @@ The DFS approach is chosen for its clarity in cycle detection and straightforwar
 
 
 # 1971. Find if Path Exists in Graph - Depth-First Search, Breadth-First Search, Union Find, Graph
-
-This document describes the solution to the "Find if Path Exists in Graph" problem (LeetCode #1971).
 
 ## Problem Description
 You are given an undirected graph with `n` nodes labeled from `0` to `n-1` and a list of undirected edges (each edge is a pair of nodes). Write a function to check whether there is a valid path from node `source` to node `destination` in the graph. A valid path is a sequence of nodes where each consecutive pair is connected by an edge.
