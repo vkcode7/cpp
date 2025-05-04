@@ -1,5 +1,11 @@
-
-
+```bash
+# 118. Pascal's Triangle Solution
+# 54. Spiral Matrix Solution
+# 200. Number of Islands - Array, Depth-First Search, Breadth-First Search, Union Find, Matrix
+# 73. Set Matrix Zeroes - Hash Table, Matrix
+# 79. Word Search - Backtracking, Depth-First Search, Matrix
+# 733. Flood Fill Solution
+```
 
 # 118. Pascal's Triangle Solution
 
@@ -241,8 +247,9 @@ public:
 - Rectangular matrix: Handles cases where `m != n`.
 
 
-## 200. Number of Islands - Array, Depth-First Search, Breadth-First Search, Union Find, Matrix
-#### https://leetcode.com/problems/number-of-islands/description/
+# 200. Number of Islands - Array, Depth-First Search, Breadth-First Search, Union Find, Matrix
+https://leetcode.com/problems/number-of-islands/description/
+
 Given an m x n 2D binary grid grid which represents a map of '1's (land) and '0's (water), return the number of islands.
 
 An island is surrounded by water and is formed by connecting adjacent lands horizontally or vertically. You may assume all four edges of the grid are all surrounded by water.
@@ -493,8 +500,6 @@ The in-place approach is preferred as it meets the problem's requirement to mini
 
 
 # 79. Word Search - Backtracking, Depth-First Search, Matrix
-
-This document describes the solution to the "Word Search" problem (LeetCode #79).
 
 ## Problem Description
 Given an `m x n` grid of characters `board` and a string `word`, return `true` if `word` exists in the grid, and `false` otherwise. The word must be constructed from letters of sequentially adjacent cells, where adjacent cells are horizontally or vertically neighboring. The same letter cell may not be used more than once.
@@ -802,165 +807,4 @@ private:
 - Empty image: Not applicable due to constraints (`m, n >= 1`).
 - Entire image same color: All pixels changed to `newColor`.
 - No connected pixels: Only the starting pixel changes if its neighbors have different colors.
-- 
-
-# 73. Set Matrix Zeroes Solution
-
-## Problem Description
-Given an `m x n` integer matrix `matrix`, if an element is 0, set its entire row and column to 0's. You must do it in-place.
-
-### Example
-```
-Input: matrix = [[1,1,1],[1,0,1],[1,1,1]]
-Output: [[1,0,1],[0,0,0],[1,0,1]]
-Explanation: The element at [1,1] is 0, so the entire row 1 and column 1 are set to 0.
-```
-<img src="../assets/mat1.jpg” width="20%">
-
-```
-Input: matrix = [[0,1,2,0],[3,4,5,2],[1,3,1,5]]
-Output: [[0,0,0,0],[0,4,5,0],[0,3,1,0]]
-```
-<img src="../assets/mat1.jpg” width="20%">
-
-## Solution
-Below is the C++ solution to set matrix zeroes in-place using the first row and column as markers.
-
-```cpp
-class Solution {
-public:
-    void setZeroes(vector<vector<int>>& matrix) {
-        int rows = matrix.size();
-        int cols = matrix[0].size();
-                
-        vector<int> zrows;
-        vector<int> zcols;
-        
-        for(int row=0; row < rows; row++)
-        {
-            vector<int>& vrow = matrix[row];
-            bool bZeroFound = false;
-            for(int c=0; c < vrow.size(); c++)
-            {
-                if(vrow[c] == 0)
-                {
-                    zcols.push_back(c);
-                    bZeroFound = true;
-                }
-            }
-            
-            if(bZeroFound)
-            {
-                for(int c=0; c < vrow.size(); c++) {
-                    matrix[row][c] = 0;
-                }
-            }  
-        }
-        
-        for(auto& col: zcols) {
-            for(int row = 0; row < rows; row++)
-                matrix[row][col] = 0;
-        }
-    }
-};
-
-
-class Solution {
-public:
-    void setZeroes(vector<vector<int>>& matrix) {
-        int m = matrix.size();
-        int n = matrix[0].size();
-        bool firstRowZero = false;
-        bool firstColZero = false;
-        
-        // Step 1: Check if first row or first column needs to be zeroed
-        for (int j = 0; j < n; ++j) {
-            if (matrix[0][j] == 0) {
-                firstRowZero = true;
-                break;
-            }
-        }
-        for (int i = 0; i < m; ++i) {
-            if (matrix[i][0] == 0) {
-                firstColZero = true;
-                break;
-            }
-        }
-        
-        // Step 2: Use first row and column as markers
-        // Mark rows and columns to be zeroed by setting first element to 0
-        for (int i = 1; i < m; ++i) {
-            for (int j = 1; j < n; ++j) {
-                if (matrix[i][j] == 0) {
-                    matrix[i][0] = 0; // Mark first column
-                    matrix[0][j] = 0; // Mark first row
-                }
-            }
-        }
-        
-        // Step 3: Set rows to zero based on markers in first column
-        for (int i = 1; i < m; ++i) {
-            if (matrix[i][0] == 0) {
-                for (int j = 1; j < n; ++j) {
-                    matrix[i][j] = 0;
-                }
-            }
-        }
-        
-        // Step 4: Set columns to zero based on markers in first row
-        for (int j = 1; j < n; ++j) {
-            if (matrix[0][j] == 0) {
-                for (int i = 1; i < m; ++i) {
-                    matrix[i][j] = 0;
-                }
-            }
-        }
-        
-        // Step 5: Set first row to zero if needed
-        if (firstRowZero) {
-            for (int j = 0; j < n; ++j) {
-                matrix[0][j] = 0;
-            }
-        }
-        
-        // Step 6: Set first column to zero if needed
-        if (firstColZero) {
-            for (int i = 0; i < m; ++i) {
-                matrix[i][0] = 0;
-            }
-        }
-    }
-};
-```
-
-## Explanation
-1. **In-Place Requirement**:
-   - To avoid using extra space, use the first row and first column of the matrix as markers to indicate which rows and columns need to be set to zero.
-2. **Step 1: Check First Row and Column**:
-   - Check if the first row or first column contains any zeros (store in `firstRowZero` and `firstColZero`).
-   - This ensures we handle the first row and column correctly at the end.
-3. **Step 2: Mark Rows and Columns**:
-   - Iterate through the matrix (excluding the first row and column).
-   - If `matrix[i][j] == 0`, mark the corresponding first row element (`matrix[0][j] = 0`) and first column element (`matrix[i][0] = 0`).
-4. **Step 3: Zero Rows**:
-   - For each row `i` (starting from 1), if `matrix[i][0] == 0`, set all elements in that row (except the first column) to 0.
-5. **Step 4: Zero Columns**:
-   - For each column `j` (starting from 1), if `matrix[0][j] == 0`, set all elements in that column (except the first row) to 0.
-6. **Step 5: Handle First Row**:
-   - If `firstRowZero` is true, set the entire first row to 0.
-7. **Step 6: Handle First Column**:
-   - If `firstColZero` is true, set the entire first column to 0.
-8. **Result**:
-   - The matrix is modified in-place with all required rows and columns set to 0.
-
-## Time and Space Complexity
-- **Time Complexity**: O(m * n), where `m` is the number of rows and `n` is the number of columns. We traverse the matrix multiple times, but each pass is O(m * n).
-- **Space Complexity**: O(1), as we only use a constant amount of extra space (two boolean variables) and modify the matrix in-place.
-
-## Edge Cases
-- Empty matrix: Not applicable due to constraints (`m, n >= 1`).
-- Single element: `matrix = [[0]]` sets the entire matrix to 0; `matrix = [[1]]` remains unchanged.
-- All zeros: `matrix = [[0,0],[0,0]]` sets the entire matrix to 0.
-- No zeros: `matrix = [[1,2],[3,4]]` remains unchanged.
-- Zeros in first row/column: Correctly handles cases like `[[0,1],[2,3]]`.
-- Large matrix: Efficiently processes up to `m, n = 200`.
+  
