@@ -120,10 +120,11 @@ def window_fixed_size(nums, k):
     return result
 ```
 ### LeetCode Questions
-- 3. Longest Substring Without Repeating Characters
-- 424. Longest Repeating Character Replacement
-- 1876. Substrings of Size Three with Distinct Characters
-- 76. Minimum Window Substring
+- .3. Longest Substring Without Repeating Characters
+- .424. Longest Repeating Character Replacement
+- .1876. Substrings of Size Three with Distinct Characters
+- .76. Minimum Window Substring
+
 
 ## Two Pointers
 **Use Case**: Solve problems involving sorted arrays or linked lists, such as finding pairs that sum to a target or removing duplicates.  
@@ -154,19 +155,14 @@ def two_pointer_template(input):
     return result
 ```
 ### LeetCode Questions
-- 125. Valid Palindrome
-- 15. 3Sum
-- 11. Container With Most Water
+- .125. Valid Palindrome
+- .15. 3Sum
+- .11. Container With Most Water
+
 
 ## Fast & Slow Pointers
 **Use Case**: Detect cycles, find midpoints, or identify specific positions in linked lists or arrays (e.g., cycle detection in a linked list).  
 **Benefit**: Provides an efficient O(n) solution for cycle detection and related problems using two pointers moving at different speeds.  
-**Example Problems**:  
-- Find the Duplicate Number (LeetCode #287)  
-- Middle of the Linked List (LeetCode #876)
-- 141. Linked List Cycle
-- 142. Linked List Cycle II
-- 19. Remove Nth Node From End of List
 
 **Technique**:
 Use two pointers, a slow and fast pointer. Slow moves once and fast moves twice at every iteration. Instead of using a data structure to store previous nodes to detect a cycle which requires O(N) space, using the two pointer technique will find a cycle with O(1) space if fast loops around the cycle and will eventually meet slow. You can also use this technique to find the middle of a linked list in O(1) space and 1 pass.
@@ -188,6 +184,13 @@ def slow_fast_pointers(head):
         # Example: if fast == slow then cycle is detected
     return result
 ```
+**Example Problems**:  
+- Find the Duplicate Number (LeetCode #287)  
+- Middle of the Linked List (LeetCode #876)
+- .141. Linked List Cycle
+- .142. Linked List Cycle II
+- .19. Remove Nth Node From End of List
+
 
 ## In Place Linked List Reversal
 <img src="../assets/Snip_31.png" width="50%">
@@ -217,9 +220,10 @@ def reverse_linked_list(head):
     return prev
 ```
 ### LeetCode Questions
-- 206. Reverse Linked List
-- 143. Reorder List
-- 25. Reverse Nodes in k-Group
+- .206. Reverse Linked List
+- .143. Reorder List
+- .25. Reverse Nodes in k-Group
+
 
 ## Binary Search
 **Use Case**: Search for a target in a sorted array or find boundaries, such as the first or last occurrence of an element.  
@@ -296,9 +300,10 @@ def binary_search_rotated_array(array, target):
     return -1
 ```
 ### LeetCode Questions
-- 34. Find First and Last Position of Element in Sorted Array
-- 153. Find Minimum in Rotated Sorted Array
-- 33. Search in Rotated Sorted Arra
+- .34. Find First and Last Position of Element in Sorted Array
+- .153. Find Minimum in Rotated Sorted Array
+- .33. Search in Rotated Sorted Arra
+
 
 ## Top K Elements
 
@@ -346,9 +351,10 @@ def top_k_largest_elements(arr, k):
 ```
 
 ### LeetCode Questions
-215. Kth Largest Element in an Array
-347. Top K Frequent Elements
-23. Merge k Sorted Lists
+- .215. Kth Largest Element in an Array
+- .347. Top K Frequent Elements
+- .23. Merge k Sorted Lists
+
 
 ## Binary Tree Traversal
 
@@ -407,10 +413,11 @@ def bfs_traversal(root):
 ```
 
 ### LeetCode Questions
-104. Maximum Depth of Binary Tree
-102. Binary Tree Level Order Traversal
-105. Construct Binary Tree from Preorder and Inorder Traversal
-124. Binary Tree Maximum Path Sum
+- .104. Maximum Depth of Binary Tree
+- .102. Binary Tree Level Order Traversal
+- .105. Construct Binary Tree from Preorder and Inorder Traversal
+- .124. Binary Tree Maximum Path Sum
+
 
 ## Graph and Matrices
 
@@ -461,10 +468,6 @@ def explore(node):
 
 **Use Case**: Find the shortest path in unweighted graphs or perform level-order traversal in trees.  
 **Benefit**: Guarantees the shortest path in unweighted graphs and handles level-by-level processing efficiently.  
-**Example Problems**:  
-- Binary Tree Level Order Traversal (LeetCode #102)  
-- Word Ladder (LeetCode #127)  
-- Rotten Oranges (LeetCode #994)
 
 ```py
 """
@@ -485,16 +488,18 @@ def bfs(graph, start):
                 queue.append(neighbor)
     return result
 ```
+**Example Problems**:  
+- Binary Tree Level Order Traversal (LeetCode #102)  
+- Word Ladder (LeetCode #127)  
+- Rotten Oranges (LeetCode #994)
 
+  
 ## Topological Sort
 <img src="../assets/Snip_35.png" width="50%">
 
 **Use Case**: Schedule tasks with dependencies or resolve prerequisites, such as course scheduling in a directed acyclic graph (DAG).  
 **Benefit**: Provides a linear ordering of nodes in a DAG, useful for dependency resolution.  
-**Example Problems**:  
-- Course Schedule (LeetCode #207)  
-- Alien Dictionary (LeetCode #269)  
-- Sequence Reconstruction (LeetCode #444)
+
 ```py
 """
 Topological Sort only works on DAG graphs with no cycles
@@ -524,6 +529,11 @@ def topological_sort(graph):
     # reverse to get the correct topological order
     return topo_order[::-1]
 ```
+**Example Problems**:  
+- Course Schedule (LeetCode #207)  
+- Alien Dictionary (LeetCode #269)  
+- Sequence Reconstruction (LeetCode #444)
+  
 
 ## DFS and BFS for Matrix Traversal
 <img src="../assets/Snip_36.png" width="50%">
@@ -580,11 +590,12 @@ def bfs_matrix(matrix, startI, startJ):
 ```
 
 ### LeetCode Questions
-79. Word Search
-207. Course Schedule
-994. Rotting Oranges
-417. Pacific Atlantic Water Flow
-127. Word Ladder
+- .79. Word Search
+- .207. Course Schedule
+- .994. Rotting Oranges
+- .417. Pacific Atlantic Water Flow
+- .127. Word Ladder
+
 
 ## Backtracking
 <img src="../assets/Snip_37.png" width="50%">
@@ -615,11 +626,12 @@ for candidate in candidates:
             curPath.pop()
 ```
 **Example Problems**:  
-- 78. Subsets
-- 46. Permutations
-- 39. Combination Sum
-- 37. Sudoku Solver
-- 51. N-Queens
+- .78. Subsets
+- .46. Permutations
+- .39. Combination Sum
+- .37. Sudoku Solver
+- .51. N-Queens
+
       
 ## Dynamic Programming
 
@@ -644,14 +656,6 @@ Dynamic Programming is used when you need to solve a problem that depends on pre
 - Reduce time complexity from exponential to polynomial
 
 **Benefit**: Reduces time complexity by memoizing results of subproblems, avoiding redundant computations.  
-**Example Problems**:  
-- 5. Longest Palindromic Substring 
-- 0/1 Knapsack (Not on LeetCode, but common in interviews)
-- 70. Climbing Stairs
-- 322. Coin Change
-- 1143. Longest Common Subsequence
-- 300. Longest Increasing Subsequence
-- 72. Edit Distance
   
 ```py
 """
@@ -701,7 +705,16 @@ def fib_bottom_up(n):
         prev1 = fib
     return prev1
 ```
+**Example Problems**:  
+- .5. Longest Palindromic Substring 
+- .0/1 Knapsack (Not on LeetCode, but common in interviews)
+- .70. Climbing Stairs
+- .322. Coin Change
+- .1143. Longest Common Subsequence
+- .300. Longest Increasing Subsequence
+- .72. Edit Distance
 
+  
 ## Bit Manipulation
 <img src="../assets/Snip_42.png" width="50%">
 
@@ -727,6 +740,7 @@ def binary_operators():
         "Mask": a & 1 # gives you the least significant bit of a
     }
 ```
+
 
 ## Overlapping Intervals
 <img src="../assets/Snip_43.png" width="50%">
@@ -762,12 +776,12 @@ def process_intervals(intervals):
     
     return result
 ```
-
 ### LeetCode Questions
-- 57. Insert Interval
-- 56. Merge Intervals
-- 435. Non-overlapping Intervals
-- 1834. Single-Threaded CPU
+- .57. Insert Interval
+- .56. Merge Intervals
+- .435. Non-overlapping Intervals
+- .1834. Single-Threaded CPU
+
 
 ## Monotonic Stack
 <img src="../assets/Snip_44.png" width="50%">
@@ -810,10 +824,11 @@ def monotonic_decreasing_stack(arr):
         stack.append((num,i))
 ```
 ### LeetCode Questions
-- 496. Next Greater Element I
-- 503. Next Greater Element II
-- 739. Daily Temperatures
-- 84. Largest Rectangle in Histogram
+- .496. Next Greater Element I
+- .503. Next Greater Element II
+- .739. Daily Temperatures
+- .84. Largest Rectangle in Histogram
+
  
 ## Prefix Sum
 
@@ -858,9 +873,9 @@ def query_subarray_sum(prefix, i, j):
 ```
 
 ### LeetCode Questions
-- 303. Range Sum Query — Immutable
-- 523. Continuous Subarray Sum
-- 560. Subarray Sum Equals K
+- .303. Range Sum Query — Immutable
+- .523. Continuous Subarray Sum
+- .560. Subarray Sum Equals K
 
 ## Union Find
 **Use Case**: Manage disjoint sets to detect connected components or cycles in graphs (e.g., finding provinces in a graph).  
@@ -870,6 +885,7 @@ def query_subarray_sum(prefix, i, j):
 - Redundant Connection (LeetCode #684)  
 - Graph Valid Tree (LeetCode #261)
 
+
 ## Trie
 **Use Case**: Handle string prefix-based problems, such as implementing autocomplete or searching a dictionary.  
 **Benefit**: Efficiently stores and retrieves strings with common prefixes, reducing time complexity for prefix searches.  
@@ -877,6 +893,7 @@ def query_subarray_sum(prefix, i, j):
 - Implement Trie (Prefix Tree) (LeetCode #208)  
 - Word Search II (LeetCode #212)  
 - Add and Search Word (LeetCode #211)
+
 
 ## Greedy
 **Use Case**: Make locally optimal choices to achieve a global optimum, such as selecting activities or solving jump games.  
@@ -886,17 +903,6 @@ def query_subarray_sum(prefix, i, j):
 - Best Time to Buy and Sell Stock II (LeetCode #122)  
 - Minimum Number of Arrows to Burst Balloons (LeetCode #452)
 
-## How to Use This Guide
-To master these patterns for coding interviews:
-1. **Understand the Pattern**: Study each pattern’s use case and benefits to recognize when it applies.
-2. **Practice Example Problems**: Solve the listed LeetCode problems to gain hands-on experience with each pattern.
-3. **Apply to New Problems**: During interviews, identify problem constraints that match a pattern (e.g., sorted array → Binary Search, dependencies → Topological Sort).
-4. **Review and Reflect**: After solving a problem, analyze how the pattern reduced complexity or simplified the solution.
-
-## Benefits of Learning Patterns
-- **Efficiency**: Focus on 14 patterns instead of memorizing thousands of problems.
-- **Flexibility**: Patterns are versatile and can be adapted to various problem types.
-- **Confidence**: Familiarity with patterns helps you approach unfamiliar problems systematically.
 
 ## References
 - Original Article: ["14 LeetCode Patterns to Solve Any Question"](https://medium.com/@shubhamkumarcode/14-leetcode-patterns-to-solve-any-question-1dcdcc650bfa)
