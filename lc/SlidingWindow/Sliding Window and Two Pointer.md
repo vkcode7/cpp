@@ -20,6 +20,32 @@
 # 11. Container With Most Water Solution
 ```
 
+# How to use Sliding Window Technique?
+There are basically two types of sliding window:
+
+## 1. Fixed Size Sliding Window:
+The general steps to solve these questions by following below steps:
+
+- Find the size of the window required, say K.
+- Compute the result for 1st window, i.e. include the first K elements of the data structure.
+- Then use a loop to slide the window by 1 and keep computing the result window by window.
+
+## 2. Variable Size Sliding Window:
+The general steps to solve these questions by following below steps:
+
+- In this type of sliding window problem, we increase our right pointer one by one till our condition is true.
+- At any step if our condition does not match, we shrink the size of our window by increasing left pointer.
+- Again, when our condition satisfies, we start increasing the right pointer and follow step 1.
+- We follow these steps until we reach to the end of the array.
+
+## Monotonic Stack
+A monotonic stack is a stack where elements are maintained in either a strictly increasing or decreasing order. This order allows for efficient solutions to problems involving comparisons between elements, such as finding the next greater or smaller element in a sequence. 
+
+## Monotonic deque
+Here we introduce an interesting data structure. It's a deque with an interesting property - the elements in the deque from head to tail are in decreasing order (hence the name monotonic).
+
+To achieve this property, we modify the push operation so that when we push an element into the deque, we first pop everything smaller than it out of the deque.
+
 # 125. Valid Palindrome
 A phrase is a palindrome if, after converting all uppercase letters into lowercase letters and removing all non-alphanumeric characters, it reads the same forward and backward. Alphanumeric characters include letters and numbers.
 
@@ -94,6 +120,113 @@ public:
 ## Time and Space Complexity
 - **Time Complexity**: O(n), where `n` is the length of the string. We traverse the string once with two pointers, and each character is checked at most once.
 - **Space Complexity**: O(1), as we only use a constant amount of extra space for the pointers and temporary variables.
+
+
+# 76. Minimum Window Substring Solution 
+https://leetcode.com/problems/minimum-window-substring/description/
+
+Given two strings `s` and `t`, return the minimum window substring of `s` such that every character in `t` (including duplicates) is included in the window. If there is no such substring, return the empty string `""`. The test cases guarantee that the answer is unique.
+
+### Example
+```
+Input: s = "ADOBECODEBANC", t = "ABC"
+Output: "BANC"
+Explanation: The minimum window substring "BANC" contains 'A', 'B', and 'C' from string t.
+```
+
+## Solution
+Below is the C++ solution to find the minimum window substring using a sliding window approach.
+
+```cpp
+// TC=O(n), SC=O(k), k is chars in t
+class Solution {
+public:
+    string minWindow(string s, string t) {
+        // If t is empty or s is shorter than t, return empty string
+        if (t.empty() || s.length() < t.length()) {
+            return "";
+        }
+        
+        // Frequency map for characters in t
+        unordered_map<char, int> tFreq;
+        for (char c : t) {
+            tFreq[c]++;
+        }
+        
+        // Required number of characters to match
+        int required = tFreq.size();
+        int formed = 0;
+        
+        // Frequency map for current window
+        unordered_map<char, int> windowFreq;
+        
+        // Initialize result: {length, left, right}
+        int minLen = INT_MAX, minLeft = 0;
+        
+        // Sliding window pointers
+        int left = 0, right = 0;
+        
+        while (right < s.length()) {
+            // Add character at right to window
+            char c = s[right];
+            windowFreq[c]++;
+            
+            // If current character is in t and frequency matches
+            if (tFreq.count(c) && windowFreq[c] == tFreq[c]) {
+                formed++;
+            }
+            
+            // Try to shrink window from left
+            while (left <= right && formed == required) {
+                // Update minimum window if current is smaller
+                if (right - left + 1 < minLen) {
+                    minLen = right - left + 1;
+                    minLeft = left;
+                }
+                
+                // Remove character at left from window
+                char leftChar = s[left];
+                windowFreq[leftChar]--;
+                
+                // If leftChar is in t and frequency drops below required
+                if (tFreq.count(leftChar) && windowFreq[leftChar] < tFreq[leftChar]) {
+                    formed--;
+                }
+                
+                left++;
+            }
+            
+            right++;
+        }
+        
+        // Return minimum window or empty string if none found
+        return minLen == INT_MAX ? "" : s.substr(minLeft, minLen);
+    }
+};
+```
+
+## Explanation
+1. **Edge Cases**:
+   - If `t` is empty or `s` is shorter than `t`, return `""`.
+2. **Frequency Map for `t`**:
+   - Create a hash map `tFreq` to store the frequency of each character in `t`.
+   - Track `required` as the number of unique characters in `t` that need to be matched.
+3. **Sliding Window**:
+   - Use two pointers: `left` and `right` to define the window.
+   - Use a hash map `windowFreq` to track character frequencies in the current window.
+   - Use `formed` to count how many characters in the window match the required frequency from `t`.
+   - Expand the window by moving `right`:
+     - Add the character at `s[right]` to `windowFreq`.
+     - If the character is in `t` and its frequency in the window matches `tFreq`, increment `formed`.
+   - Shrink the window when `formed == required` (all characters in `t` are covered):
+     - Update the minimum window (length and starting position) if the current window is smaller.
+     - Remove the character at `s[left]` from `windowFreq`.
+     - If the character is in `t` and its frequency drops below the required count, decrement `formed`.
+     - Move `left` forward.
+4. **Result**:
+   - If no valid window is found (`minLen == INT_MAX`), return `""`.
+   - Otherwise, return the substring of `s` from `minLeft` with length `minLen`.
+
 
 
 # 392. Is Subsequence
