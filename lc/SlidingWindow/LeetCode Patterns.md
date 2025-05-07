@@ -29,11 +29,15 @@ This README summarizes the 14 essential LeetCode patterns for solving coding int
 
 **Technique: **
 ### Fixed Window:
-<img src="../assets/snip_29.jpg” width="20%">
+
+<img src="../assets/Snip_29.png” width="40%">
+
 In the sliding window, you have 2 pointers, i and j. Move j as far as you can until your condition is no longer valid, then move the i pointer closer to j until the condition is valid again to shrink the window. At every iteration, keep track of the min/max length of the subarray for the result. Without the sliding window technique, we would need to use a double for loop resulting in O(N²) time. The sliding window is O(N) time complexity.
 
 ### Dynamic Sliding Window:
-<img src="../assets/snip_30.jpg” width="20%">
+
+<img src="../assets/Snip_30.png” width="40%">
+
 In the dynamic sliding window, the size of the window (subarray between i and j) changes throughout the algorithm. In this example, we scan the subarray “bacb” and find that we have a duplicate “b”, so we will move the i pointer to shrink the window and move on to letter “a”, resulting in “acb”, then we start moving j again.
 
 ```py
@@ -170,7 +174,7 @@ def slow_fast_pointers(head):
 ```
 
 ## In Place Linked List Reversal
-<img src="../assets/snip_31.jpg” width="20%">
+<img src="../assets/snip_31.png” width="20%">
 
 ### When to use it?
 - Reverse a linked list in 1 pass and O(1) space
@@ -333,7 +337,7 @@ def top_k_largest_elements(arr, k):
 ### Technique
 For the preorder, inorder, and postorder traversals use recursion (DFS). For the level by level scan use BFS iteratively with a queue.
 
-<img src="../assets/snip_32.jpg” width="20%">
+<img src="../assets/snip_32.png” width="20%">
 
 ```py
 """
