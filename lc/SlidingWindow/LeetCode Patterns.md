@@ -8,16 +8,23 @@ This README summarizes the 14 essential LeetCode patterns for solving coding int
 3. [Fast & Slow Pointers](#fast--slow-pointers)
 4. In Place Linked List Reversal
 5. [Binary Search](#binary-search)
-6. [Depth First Search (DFS)](#depth-first-search-dfs)
-7. [Breadth First Search (BFS)](#breadth-first-search-bfs)
-8. [Backtracking](#backtracking)
-9. [Dynamic Programming](#dynamic-programming)
-10. [Topological Sort](#topological-sort)
-11. [Union Find](#union-find)
-12. [Trie](#trie)
-13. [Bit Manipulation](#bit-manipulation)
-14. [Greedy](#greedy)
-15. [Intervals](#intervals)
+6. Top K Elements
+7. Binary Tree Traversal
+8. Graph and Matrices
+       [Depth First Search (DFS)](#depth-first-search-dfs)
+       [Breadth First Search (BFS)](#breadth-first-search-bfs)
+       [Topological Sort](#topological-sort)
+       DFS and BFS for Matrix Traversal
+12. [Backtracking](#backtracking)
+13. [Dynamic Programming](#dynamic-programming)
+14. [Bit Manipulation](#bit-manipulation)
+15. Overlapping Intervals
+16. Monotonic Stack
+17. Prefix Sum
+18. [Union Find](#union-find)
+19. [Trie](#trie)
+21. [Greedy](#greedy)
+
 
 ## Sliding Window
 **Use Case**: Find subarrays or substrings that satisfy a specific condition, such as the maximum sum of a subarray of size k or the longest substring without repeating characters.  
@@ -112,6 +119,11 @@ def window_fixed_size(nums, k):
 
     return result
 ```
+### LeetCode Questions
+- 3. Longest Substring Without Repeating Characters
+- 424. Longest Repeating Character Replacement
+- 1876. Substrings of Size Three with Distinct Characters
+- 76. Minimum Window Substring
 
 ## Two Pointers
 **Use Case**: Solve problems involving sorted arrays or linked lists, such as finding pairs that sum to a target or removing duplicates.  
@@ -141,15 +153,20 @@ def two_pointer_template(input):
     # Return the final result or process output
     return result
 ```
-
+### LeetCode Questions
+- 125. Valid Palindrome
+- 15. 3Sum
+- 11. Container With Most Water
 
 ## Fast & Slow Pointers
 **Use Case**: Detect cycles, find midpoints, or identify specific positions in linked lists or arrays (e.g., cycle detection in a linked list).  
 **Benefit**: Provides an efficient O(n) solution for cycle detection and related problems using two pointers moving at different speeds.  
 **Example Problems**:  
-- Linked List Cycle (LeetCode #141)  
 - Find the Duplicate Number (LeetCode #287)  
 - Middle of the Linked List (LeetCode #876)
+- 141. Linked List Cycle
+- 142. Linked List Cycle II
+- 19. Remove Nth Node From End of List
 
 **Technique**:
 Use two pointers, a slow and fast pointer. Slow moves once and fast moves twice at every iteration. Instead of using a data structure to store previous nodes to detect a cycle which requires O(N) space, using the two pointer technique will find a cycle with O(1) space if fast loops around the cycle and will eventually meet slow. You can also use this technique to find the middle of a linked list in O(1) space and 1 pass.
@@ -199,6 +216,10 @@ def reverse_linked_list(head):
     # prev is the new head after the loop ends
     return prev
 ```
+### LeetCode Questions
+- 206. Reverse Linked List
+- 143. Reorder List
+- 25. Reverse Nodes in k-Group
 
 ## Binary Search
 **Use Case**: Search for a target in a sorted array or find boundaries, such as the first or last occurrence of an element.  
@@ -274,6 +295,10 @@ def binary_search_rotated_array(array, target):
                 right = mid - 1
     return -1
 ```
+### LeetCode Questions
+- 34. Find First and Last Position of Element in Sorted Array
+- 153. Find Minimum in Rotated Sorted Array
+- 33. Search in Rotated Sorted Arra
 
 ## Top K Elements
 
@@ -387,16 +412,53 @@ def bfs_traversal(root):
 105. Construct Binary Tree from Preorder and Inorder Traversal
 124. Binary Tree Maximum Path Sum
 
+## Graph and Matrices
+
+When to use it?
+
+- Search graphs or matrices
+- DFS: Explore all possible paths (e.g., maze)
+- BFS: Find the shortest path
+- Topological Sort: Order tasks based on dependencies
 
 ## Depth First Search (DFS)
+<img src="../assets/Snip_33.png" width="50%">
+
+### Technique:
+DFS (Depth-First Search) traverses as deep as possible along each branch before backtracking, prioritizing visiting nodes or cells in a recursive or stack-based manner. BFS (Breadth-First Search) explores all neighbors of a node or cell before moving deeper, traversing level by level using a queue. For DFS use recursion with a visited set to keep track of visited nodes. For BFS use iteration with a queue and a visited set to keep track of visited nodes. In a graph, neighbors are found in the adjacency list.
+
 **Use Case**: Traverse trees or graphs to explore all possible paths, such as finding connected components or validating properties of a tree.  
 **Benefit**: Ideal for problems requiring exhaustive exploration of paths or recursive solutions.  
+```py
+"""
+DFS for a graph represented as an adjacency list
+"""
+def dfs(graph):
+    visited = set()
+    result = []
+
+def explore(node):
+        visited.add(node)
+        result.append(node)  # process node
+        for neighbor in graph[node]:
+            if node not in visited:
+                explore(neighbor)
+    def dfs_driver(graph):
+        for node in graph:
+            if node not in visited:
+                explore(node)
+    dfs_driver()
+    return result
+```
+
 **Example Problems**:  
 - Number of Islands (LeetCode #200)  
 - Validate Binary Search Tree (LeetCode #98)  
 - Path Sum (LeetCode #112)
 
 ## Breadth First Search (BFS)
+<img src="../assets/Snip_34.png" width="50%">
+
 **Use Case**: Find the shortest path in unweighted graphs or perform level-order traversal in trees.  
 **Benefit**: Guarantees the shortest path in unweighted graphs and handles level-by-level processing efficiently.  
 **Example Problems**:  
@@ -404,29 +466,401 @@ def bfs_traversal(root):
 - Word Ladder (LeetCode #127)  
 - Rotten Oranges (LeetCode #994)
 
-## Backtracking
-**Use Case**: Solve combinatorial problems like generating permutations, combinations, or solving puzzles (e.g., N-Queens).  
-**Benefit**: Systematically explores all possibilities while pruning invalid paths to optimize performance.  
-**Example Problems**:  
-- Permutations (LeetCode #46)  
-- Combination Sum (LeetCode #39)  
-- N-Queens (LeetCode #51)
-
-## Dynamic Programming
-**Use Case**: Solve optimization problems with overlapping subproblems, such as finding the longest common subsequence or solving knapsack problems.  
-**Benefit**: Reduces time complexity by memoizing results of subproblems, avoiding redundant computations.  
-**Example Problems**:  
-- Climbing Stairs (LeetCode #70)  
-- Longest Palindromic Substring (LeetCode #5)  
-- 0/1 Knapsack (Not on LeetCode, but common in interviews)
+```py
+"""
+BFS for a graph represented as an adjacency list
+"""
+from collections import deque
+def bfs(graph, start):
+    visited = set()
+    result = []
+    
+    queue = deque([start])
+    while queue:
+        node = queue.popleft()
+        if node not in visited:
+            visited.add(node)
+            result.append(node)  # process node
+            for neighbor in graph[node]:
+                queue.append(neighbor)
+    return result
+```
 
 ## Topological Sort
+<img src="../assets/Snip_35.png" width="50%">
+
 **Use Case**: Schedule tasks with dependencies or resolve prerequisites, such as course scheduling in a directed acyclic graph (DAG).  
 **Benefit**: Provides a linear ordering of nodes in a DAG, useful for dependency resolution.  
 **Example Problems**:  
 - Course Schedule (LeetCode #207)  
 - Alien Dictionary (LeetCode #269)  
 - Sequence Reconstruction (LeetCode #444)
+```py
+"""
+Topological Sort only works on DAG graphs with no cycles
+"""
+def topological_sort(graph):
+    visited = set()
+    topo_order = []
+    def hasCycle(node, curpath):
+        visited.add(node)
+        curpath.add(node)
+        
+        for neighbor in graph[node]:
+            if neighbor in curpath: # cycle detected, no topo sort
+                return True
+            if neighbor in visited:
+                continue
+            if hasCycle(neighbor, curpath):
+                return True
+        
+        curpath.remove(node)
+        topo_order.append(node) # process node
+        return False
+    for node in graph:
+        if node not in visited:
+            if hasCycle(node, set()):
+                return None # cycle detected, no topo sort
+    # reverse to get the correct topological order
+    return topo_order[::-1]
+```
+
+## DFS and BFS for Matrix Traversal
+<img src="../assets/Snip_36.png" width="50%">
+
+In a matrix, neighbors are up/down/left/right cells, with some examples including diagonals too.
+```py
+"""
+DFS for a matrix, visiting all connected cells.
+"""
+def dfs_matrix(matrix):
+    m, n = len(matrix), len(matrix[0])
+    visited = set()
+    result = []
+    def explore(i, j):
+        if not (0 <= i < m and 0 <= j < n):
+            return
+        if ((i,j)) in visited:
+            return
+        visited.add((i,j))
+        result.append(matrix[i][j])  # process the cell
+        # Explore neighbors (up, down, left, right)
+        for deltaI, deltaJ in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
+            explore(i + deltaI, j + deltaJ)
+    def dfs_driver():
+        for i in range(m):
+            for j in range(n):
+                if (i, j) not in visited:
+                    explore(i, j)
+    dfs_driver()
+    return result
+
+"""
+BFS for a matrix, visiting all connected cells.
+"""
+from collections import deque
+def bfs_matrix(matrix, startI, startJ):
+    m, n = len(matrix), len(matrix[0])
+    visited = set()
+    result = []
+    queue = deque([(startI,startJ)])
+    while queue:
+        i, j = queue.popleft()
+        if not (0 <= i < m and 0 <= j < n):
+            continue
+        if ((i,j)) in visited:
+            continue
+        visited.add((i,j))
+        result.append(matrix[i][j])  # process the cell
+        # Enqueue neighbors (up, down, left, right)
+        for deltaI, deltaJ in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
+            queue.append((i + deltaI, j + deltaJ))
+    
+    return result
+```
+
+### LeetCode Questions
+79. Word Search
+207. Course Schedule
+994. Rotting Oranges
+417. Pacific Atlantic Water Flow
+127. Word Ladder
+
+## Backtracking
+<img src="../assets/Snip_37.png" width="50%">
+
+### Technique
+Backtracking is closely related to DFS, but with a focus on finding solutions while validating their correctness. If a solution doesn’t work, you backtrack by returning to the previous recursive state and trying a different option. Additionally, backtracking uses constraints to eliminate branches that cannot lead to a valid solution, making the search more efficient.
+
+**Use Case**: Solve combinatorial problems like generating permutations, combinations, or solving puzzles (e.g., N-Queens).  
+**Benefit**: Systematically explores all possibilities while pruning invalid paths to optimize performance.  
+
+```py
+"""
+Generic backtracking template.
+"""
+def backtrack(candidates, curPath):
+    # Base case: Check if the solution meets the problem's criteria
+    if is_solution(curPath):
+        process_solution(curPath)
+        return
+
+for candidate in candidates:
+        if is_valid(candidate, curPath):
+            # Take the current candidate
+            curPath.append(candidate)
+            # Recurse to explore further solutions
+            backtrack(candidates, curPath)
+            # Undo the choice (backtrack)
+            curPath.pop()
+```
+**Example Problems**:  
+- 78. Subsets
+- 46. Permutations
+- 39. Combination Sum
+- 37. Sudoku Solver
+- 51. N-Queens
+      
+## Dynamic Programming
+
+<img src="../assets/Snip_38.png" width="50%">
+
+<img src="../assets/Snip_40.png" width="50%">
+
+<img src="../assets/Snip_41.png" width="50%">
+
+### Technique
+Dynamic Programming is used when you need to solve a problem that depends on previous results from subproblems. You can effectively “cache” these previous result values when you calculate them for the first time to be re-used later. Dynamic Programming has 2 main techniques:
+
+- **Top Down** — Recursion (DFS) with Memoization. Memoization is a fancy word for a hashmap that can cache the values previously calculated. In the top down approach you start with the global problem and the recursively split it into subproblems to then solve the global problem.
+- **Bottom Up** — Iteratively performed by using an array/matrix to store previous values. In the bottom up approach we start with base cases and then build up to the global solution iteratively.
+- Many times bottom up is preferred since you can reduce the space complexity if you don’t need access to all subproblems and can store the last couple of subproblem results using variables.
+
+**Use Case**:   
+- Overlapping subproblems and optimal substructure
+- Optimization problems (min/max distance, profit, etc.)
+- Sequence problems (longest increasing subsequence)
+- Combinatorial problems (number of ways to do something)
+- Reduce time complexity from exponential to polynomial
+
+**Benefit**: Reduces time complexity by memoizing results of subproblems, avoiding redundant computations.  
+**Example Problems**:  
+- 5. Longest Palindromic Substring 
+- 0/1 Knapsack (Not on LeetCode, but common in interviews)
+- 70. Climbing Stairs
+- 322. Coin Change
+- 1143. Longest Common Subsequence
+- 300. Longest Increasing Subsequence
+- 72. Edit Distance
+  
+```py
+"""
+Top-down recursive Fibonacci without memoization.
+Time: O(2^N) | Space: O(N)
+"""
+def fib_top_down(n):
+    if n == 0:
+        return 0
+    if n == 1:
+        return 1
+    return fib_top_down(n-1) + fib_top_down(n-2)
+
+"""
+Top-down recursive Fibonacci with memoization.
+Time: O(N) | Space: O(N)
+"""
+def fib_top_down_memo(n, memo={}):
+    if n in memo:
+        return memo[n]
+    if n == 0:
+        return 0
+    if n == 1:
+        return 1
+    memo[n] = fib_top_down_memo(n-1, memo) + fib_top_down_memo(n-2, memo)
+    return memo[n]
+"""
+Bottom-up Fibonacci using an array.
+Time: O(N) | Space: O(N)
+"""
+def fib_bottom_up_array(n):
+    dp = [0] * (n + 1)
+    dp[1] = 1
+    for i in range(2, n + 1):
+        dp[i] = dp[i - 1] + dp[i - 2]
+    return dp[n]
+"""
+Bottom-up Fibonacci using 2 variables.
+Time: O(N) | Space: O(1)
+"""
+def fib_bottom_up(n):
+    prev2, prev1 = 0, 1
+    
+    for i in range(2, n + 1):
+        fib = prev2 + prev1
+        prev2 = prev1
+        prev1 = fib
+    return prev1
+```
+
+## Bit Manipulation
+<img src="../assets/Snip_42.png" width="50%">
+
+**Use Case**: Solve problems using binary operations, such as finding a single number in an array or counting bits.  
+**Benefit**: Reduces space complexity by operating at the bit level, ideal for low-level optimizations.  
+**Example Problems**:  
+- Single Number (LeetCode #136)  
+- Number of 1 Bits (LeetCode #191)  
+- Reverse Bits (LeetCode #190)
+
+```py
+"""
+Useful bitwise operators for LeetCode
+"""
+def binary_operators():
+    return {
+        "AND": a & b,
+        "OR": a | b,
+        "XOR": a ^ b,
+        "NOT": ~a, # ~a = -a-1 in python
+        "Left Shift (a << b)": a << b,  # left shift 'a' by 'b' bits
+        "Right Shift (a >> b)": a >> b,  # right shift 'a' by 'b' bits
+        "Mask": a & 1 # gives you the least significant bit of a
+    }
+```
+
+## Overlapping Intervals
+<img src="../assets/Snip_43.png" width="50%">
+
+### When to use it?
+- Merge or consolidate ranges
+- Schedule or find conflicts (e.g. meeting rooms)
+- Find gaps or missing intervals
+
+Knowing how to merge overlapping intervals is crucial for these problems.
+
+If a_end≥b_start:mergedInterval=[min(astart,bstart),max(aend,bend))
+
+Usually, you will want to sort the input by the start times so you can guarantee order and always have “a” appear before “b”, making it easier to compare time ranges in chronological order. In the example above, we insert [4,8] into the array, but that eventually gets merged with [3,5], [6,7], and [8,10], into [3,10].
+
+```py
+"""
+Generic template for interval problems
+"""
+def process_intervals(intervals):
+    # Sort intervals by start time (common preprocessing step)
+    intervals.sort(key=lambda x: x[0])
+    
+    # Example: Merged intervals (modify as needed for your problem)
+    result = []
+    for interval in intervals:
+        # If result is empty or no overlap with the last interval in result
+        if not result or result[-1][1] < interval[0]:
+            result.append(interval)  # Add the interval as is
+        else:
+            # Merge overlapping intervals
+            result[-1][1] = max(result[-1][1], interval[1])
+    
+    return result
+```
+
+### LeetCode Questions
+- 57. Insert Interval
+- 56. Merge Intervals
+- 435. Non-overlapping Intervals
+- 1834. Single-Threaded CPU
+
+## Monotonic Stack
+<img src="../assets/Snip_44.png" width="50%">
+
+### When to use it?
+- Find Next Greater or Smaller Element
+- Find left/right boundary points in histograms or rectangles
+- Maintain elements in order to optimize operations
+
+### Technique
+If you want to find the next greater/smaller element for all elements in an array the brute force approach will take O(N²). However, with the use of a monotonic stack (either increasing or decreasing order, depending on the problem), we can achieve O(N) time by storing and keeping track of the greatest/smallest elements up until the current iteration. In the example above, notice that we popped 57 from the stack because 69 is greater than 57. However, 76 is greater than 69 so it is a valid solution and we update the output.
+
+```py
+"""
+Monotonic increasing stack template.
+"""
+def monotonic_increasing_stack(arr):
+    stack = [] 
+    for i, num in enumerate(arr):
+        # Modify condition based on the problem
+        while stack and stack[-1][0] > num:
+            stack.pop()
+
+if stack:
+            pass # process result from top of stack
+        # Append current value and index
+        stack.append((num,i))
+"""
+Monotonic decreasing stack template.
+"""
+def monotonic_decreasing_stack(arr):
+    stack = []
+    for i, num in enumerate(arr):
+        # Modify condition based on the problem
+        while stack and stack[-1][0] < num:
+            stack.pop()
+        if stack:
+            pass # process result from top of stack
+        # Append current value and index
+        stack.append((num,i))
+```
+### LeetCode Questions
+- 496. Next Greater Element I
+- 503. Next Greater Element II
+- 739. Daily Temperatures
+- 84. Largest Rectangle in Histogram
+ 
+## Prefix Sum
+
+### When to use it?
+- Cumulative sums are needed from index 0 to any element
+- Querying subarray sums frequently across multiple ranges
+- Partial sums can be reused efficiently
+
+To sum a subarray would take O(N). To sum Q subarrays would take O(N*Q). Can we perform a more efficient algorithm to answer queries? Yes, we can calculate a prefix sum array where
+```bash
+prefix[i]=prefix[i−1]+input[i]
+
+And then we can find the sum of any subarray in O(1) time using the formula
+
+sum[i:j]=prefix[j]−prefix[i−1]
+
+Therefore, we can answer Q queries in O(N) time complexity with a prefix sum.
+```
+
+```py
+"""
+Builds the prefix sum array
+"""
+def build_prefix_sum(arr):
+    # Initialize prefix sum array
+    n = len(arr)
+    prefix = [0] * n 
+
+# First element is the same as the original array
+    prefix[0] = arr[0]
+    # Build the prefix sum array
+    for i in range(1, n):
+        prefix[i] = prefix[i - 1] + arr[i]
+    return prefix
+"""
+Queries the sum of elements in a subarray [left, right] using prefix sum.
+"""
+def query_subarray_sum(prefix, i, j):
+    if i == 0:
+        return prefix[j]
+    return prefix[j] - prefix[i - 1]
+```
+
+### LeetCode Questions
+- 303. Range Sum Query — Immutable
+- 523. Continuous Subarray Sum
+- 560. Subarray Sum Equals K
 
 ## Union Find
 **Use Case**: Manage disjoint sets to detect connected components or cycles in graphs (e.g., finding provinces in a graph).  
@@ -444,14 +878,6 @@ def bfs_traversal(root):
 - Word Search II (LeetCode #212)  
 - Add and Search Word (LeetCode #211)
 
-## Bit Manipulation
-**Use Case**: Solve problems using binary operations, such as finding a single number in an array or counting bits.  
-**Benefit**: Reduces space complexity by operating at the bit level, ideal for low-level optimizations.  
-**Example Problems**:  
-- Single Number (LeetCode #136)  
-- Number of 1 Bits (LeetCode #191)  
-- Reverse Bits (LeetCode #190)
-
 ## Greedy
 **Use Case**: Make locally optimal choices to achieve a global optimum, such as selecting activities or solving jump games.  
 **Benefit**: Simplifies problems by avoiding exhaustive searches, often leading to efficient solutions.  
@@ -459,14 +885,6 @@ def bfs_traversal(root):
 - Jump Game (LeetCode #55)  
 - Best Time to Buy and Sell Stock II (LeetCode #122)  
 - Minimum Number of Arrows to Burst Balloons (LeetCode #452)
-
-## Intervals
-**Use Case**: Handle scheduling or overlapping interval problems, such as merging intervals or scheduling meetings.  
-**Benefit**: Efficiently processes time-based or range-based data by sorting and scanning intervals.  
-**Example Problems**:  
-- Merge Intervals (LeetCode #56)  
-- Meeting Rooms II (LeetCode #253)  
-- Non-overlapping Intervals (LeetCode #435)
 
 ## How to Use This Guide
 To master these patterns for coding interviews:
