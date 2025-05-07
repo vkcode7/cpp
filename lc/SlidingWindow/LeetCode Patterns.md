@@ -30,7 +30,7 @@ This README summarizes the 14 essential LeetCode patterns for solving coding int
 **Technique: **
 ### Fixed Window:
 
-<img src="../assets/Snip_29.png” width="40%">
+<img src="../assets/Snip_29.png” width="100%">
 
 In the sliding window, you have 2 pointers, i and j. Move j as far as you can until your condition is no longer valid, then move the i pointer closer to j until the condition is valid again to shrink the window. At every iteration, keep track of the min/max length of the subarray for the result. Without the sliding window technique, we would need to use a double for loop resulting in O(N²) time. The sliding window is O(N) time complexity.
 
