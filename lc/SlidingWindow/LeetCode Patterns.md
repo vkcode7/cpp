@@ -28,7 +28,9 @@ This README summarizes the essential LeetCode patterns for solving coding interv
 
 ## Sliding Window
 **Use Case**: Find subarrays or substrings that satisfy a specific condition, such as the maximum sum of a subarray of size k or the longest substring without repeating characters.  
+
 **Benefit**: Reduces time complexity from O(n²) to O(n) by maintaining a dynamic window that expands or shrinks based on conditions.  
+
 **Example Problems**:  
 - Maximum Average Subarray I (LeetCode #643)  
 - Longest Substring Without Repeating Characters (LeetCode #3)  
