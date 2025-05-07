@@ -408,6 +408,7 @@ public:
 ```
 
 # 1004. Max Consecutive Ones III
+https://leetcode.com/problems/max-consecutive-ones-iii/
 
 Given a binary array nums and an integer k, return the maximum number of consecutive 1's in the array if you can flip at most k 0's.
 
@@ -695,8 +696,8 @@ public:
 };
 ```
 
-# 1480. Running Sum of 1d Array
-Given an array nums. We define a running sum of an array as runningSum[i] = sum(nums[0]…nums[i]).
+# 1480. Running Sum of 1d Array [Super Easy]
+Given an array nums. We define a running sum of an array as running Sum[i] = sum(nums[0]…nums[i]).
 
 Return the running sum of nums.
 ```
@@ -731,7 +732,7 @@ public:
 };
 ```
 
-# 238. Product of Array Except Self
+# 238. Product of Array Except Self [Easy]
 Given an integer array nums, return an array answer such that answer[i] is equal to the product of all the elements of nums except nums[i].
 
 The product of any prefix or suffix of nums is guaranteed to fit in a 32-bit integer.
