@@ -6,17 +6,18 @@ This README summarizes the 14 essential LeetCode patterns for solving coding int
 1. [Sliding Window](#sliding-window)
 2. [Two Pointers](#two-pointers)
 3. [Fast & Slow Pointers](#fast--slow-pointers)
-4. [Binary Search](#binary-search)
-5. [Depth First Search (DFS)](#depth-first-search-dfs)
-6. [Breadth First Search (BFS)](#breadth-first-search-bfs)
-7. [Backtracking](#backtracking)
-8. [Dynamic Programming](#dynamic-programming)
-9. [Topological Sort](#topological-sort)
-10. [Union Find](#union-find)
-11. [Trie](#trie)
-12. [Bit Manipulation](#bit-manipulation)
-13. [Greedy](#greedy)
-14. [Intervals](#intervals)
+4. In Place Linked List Reversal
+5. [Binary Search](#binary-search)
+6. [Depth First Search (DFS)](#depth-first-search-dfs)
+7. [Breadth First Search (BFS)](#breadth-first-search-bfs)
+8. [Backtracking](#backtracking)
+9. [Dynamic Programming](#dynamic-programming)
+10. [Topological Sort](#topological-sort)
+11. [Union Find](#union-find)
+12. [Trie](#trie)
+13. [Bit Manipulation](#bit-manipulation)
+14. [Greedy](#greedy)
+15. [Intervals](#intervals)
 
 ## Sliding Window
 **Use Case**: Find subarrays or substrings that satisfy a specific condition, such as the maximum sum of a subarray of size k or the longest substring without repeating characters.  
@@ -26,10 +27,88 @@ This README summarizes the 14 essential LeetCode patterns for solving coding int
 - Longest Substring Without Repeating Characters (LeetCode #3)  
 - Minimum Window Substring (LeetCode #76)
 
-**Technique: **In the sliding window, you have 2 pointers, i and j. Move j as far as you can until your condition is no longer valid, then move the i pointer closer to j until the condition is valid again to shrink the window. At every iteration, keep track of the min/max length of the subarray for the result. Without the sliding window technique, we would need to use a double for loop resulting in O(N²) time. The sliding window is O(N) time complexity.
+**Technique: **
+### Fixed Window:
+<img src="../assets/snip_29.jpg” width="20%">
+In the sliding window, you have 2 pointers, i and j. Move j as far as you can until your condition is no longer valid, then move the i pointer closer to j until the condition is valid again to shrink the window. At every iteration, keep track of the min/max length of the subarray for the result. Without the sliding window technique, we would need to use a double for loop resulting in O(N²) time. The sliding window is O(N) time complexity.
 
-### Dynamic Sliding Window
+### Dynamic Sliding Window:
+<img src="../assets/snip_30.jpg” width="20%">
 In the dynamic sliding window, the size of the window (subarray between i and j) changes throughout the algorithm. In this example, we scan the subarray “bacb” and find that we have a duplicate “b”, so we will move the i pointer to shrink the window and move on to letter “a”, resulting in “acb”, then we start moving j again.
+
+```py
+"""
+A generic template for dynamic sliding window finding min window length
+"""
+def shortest_window(nums, condition):
+    i = 0
+    min_length = float('inf')
+    result = None
+
+    for j in range(len(nums)):
+        # Expand the window
+        # Add nums[j] to the current window logic
+
+        # Shrink window as long as the condition is met
+        while condition():  
+            # Update the result if the current window is smaller
+            if j - i + 1 < min_length:
+                min_length = j - i + 1
+                # Add business logic to update result
+
+            # Shrink the window from the left
+            # Remove nums[i] from the current window logic
+            i += 1
+
+    return result
+
+"""
+A generic template for dynamic sliding window finding max window length
+"""
+def longest_window(nums, condition):
+    i = 0
+    max_length = 0
+    result = None
+
+    for j in range(len(nums)):
+        # Expand the window
+        # Add nums[j] to the current window logic
+
+        # Shrink the window if the condition is violated
+        while not condition():  
+            # Shrink the window from the left
+            # Remove nums[i] from the current window logic
+            i += 1
+
+        # Update the result if the current window is larger
+        if j - i + 1 > max_length:
+            max_length = j - i + 1
+            # Add business logic to update result
+
+    return result
+
+"""
+A generic template for sliding window of fixed size
+"""
+def window_fixed_size(nums, k):
+    i = 0
+    result = None
+
+    for j in range(len(nums)):
+        # Expand the window
+        # Add nums[j] to the current window logic
+
+        # Ensure window has size of K
+        if (j - i + 1) < k:
+            continue
+
+        # Update Result
+        # Remove nums[i] from window
+        # increment i to maintain fixed window size of length k
+        i += 1
+
+    return result
+```
 
 ## Two Pointers
 **Use Case**: Solve problems involving sorted arrays or linked lists, such as finding pairs that sum to a target or removing duplicates.  
@@ -39,6 +118,28 @@ In the dynamic sliding window, the size of the window (subarray between i and j)
 - Remove Duplicates from Sorted Array (LeetCode #26)  
 - Container With Most Water (LeetCode #11)
 
+**Technique**:
+Instead of scanning all possible subarrays or substrings, use two pointers i and j at the ends of a string or sorted array to be clever how you increment i or decrement j as you scan the input. This will lower your time complexity from O(N²) to O(N). In the example above, to detect if a string is a palindrome we scan the ends of the string one character at a time. If the characters are equal, move i and j closer together. If they are not equal, the string is not a palindrome.
+
+###Is string a Palindrome? "RACECAR"
+```py
+def two_pointer_template(input):
+    # Initialize pointers
+    i = 0
+    j = len(input) - 1
+    result = None
+     
+    # Iterate while pointers do not cross
+    while i < j:
+        # Process the elements at both pointers
+        # Adjust the pointers based on specific conditions
+        # i += 1 or j -= 1
+        # Break or continue based on a condition if required
+    # Return the final result or process output
+    return result
+```
+
+
 ## Fast & Slow Pointers
 **Use Case**: Detect cycles, find midpoints, or identify specific positions in linked lists or arrays (e.g., cycle detection in a linked list).  
 **Benefit**: Provides an efficient O(n) solution for cycle detection and related problems using two pointers moving at different speeds.  
@@ -47,6 +148,55 @@ In the dynamic sliding window, the size of the window (subarray between i and j)
 - Find the Duplicate Number (LeetCode #287)  
 - Middle of the Linked List (LeetCode #876)
 
+**Technique**:
+Use two pointers, a slow and fast pointer. Slow moves once and fast moves twice at every iteration. Instead of using a data structure to store previous nodes to detect a cycle which requires O(N) space, using the two pointer technique will find a cycle with O(1) space if fast loops around the cycle and will eventually meet slow. You can also use this technique to find the middle of a linked list in O(1) space and 1 pass.
+
+3 -> 2 -> [0] -> 4 -> [[1]]
+
+```py
+def slow_fast_pointers(head):
+    # Initialize pointers
+    slow = head
+    fast = head
+    result = None
+
+    # move slow once, move fast twice
+    while fast and fast.next:
+        slow = slow.next
+        fast = fast.next.next
+        # update result based on custom logic
+        # Example: if fast == slow then cycle is detected
+    return result
+```
+
+## In Place Linked List Reversal
+<img src="../assets/snip_31.jpg” width="20%">
+
+### When to use it?
+- Reverse a linked list in 1 pass and O(1) space
+- Reverse a specific portion of a linked list
+- Reverse nodes in groups of K
+
+### Technique
+Use two pointers, prev and ptr which point to the previous and current nodes. To reverse a linked list, ptr.next = prev. Then, move prev to ptr and move ptr to the next node. At the end of the algorithm, prev will point to the head of the reversed list.
+
+```py
+def reverse_linked_list(head):
+    prev = None
+    ptr = head 
+    
+    while ptr:
+        # Save the next node
+        next_node = ptr.next
+        # Reverse the current node's pointer
+        ptr.next = prev
+        # Move the pointers one step forward
+        prev = ptr
+        ptr = next_node
+    # prev is the new head after the loop ends
+    return prev
+```
+
 ## Binary Search
 **Use Case**: Search for a target in a sorted array or find boundaries, such as the first or last occurrence of an element.  
 **Benefit**: Reduces time complexity to O(log n) by halving the search space in each iteration.  
@@ -54,6 +204,186 @@ In the dynamic sliding window, the size of the window (subarray between i and j)
 - Binary Search (LeetCode #704)  
 - Find First and Last Position of Element in Sorted Array (LeetCode #34)  
 - Search in Rotated Sorted Array (LeetCode #33)
+
+### Technique
+Start left and right pointers at indices 0 and n-1, then find the mid point and see if that is equal to, less than, or greater than your target. If nums[mid] > target, go left by moving the right pointer to mid-1. If nums[mid] < target, go right by moving left to mid+1. Binary Search reduces search time complexity from O(N) to O(NLogN)
+
+```py
+"""
+Classic binary search algorithm that finds a target value
+"""
+def classic_binary_search(array, target):
+    left, right = 0, len(array)-1
+    while left <= right:
+        mid = left + (right - left) // 2
+        if array[mid] == target:
+            return mid
+        elif array[mid] < target:
+            left = mid + 1
+        else:
+            right = mid - 1
+    return -1
+
+"""
+A generic template for binary search such that the returned value
+is the minimum index where condition(k) is true
+Example 1:
+array = [1,2,2,2,3]
+target = 2
+binary_search(array, lambda mid: array[mid] >= target) --> 1
+Example 2:
+array = [1,2,2,2,3]
+target = 2
+binary_search(array, lambda mid: array[mid] > target) --> 4
+"""
+def binary_search(array, condition):
+    left, right = 0, len(array)
+    while left < right:
+        mid = left + (right - left) // 2
+        if condition(mid):
+            right = mid
+        else:
+            left = mid + 1
+    return left
+"""
+Binary search algorithm that can search a rotated array
+by selected the appropriate half to scan at each iteration
+"""
+def binary_search_rotated_array(array, target):
+    left, right = 0, len(array)-1
+    while left <= right:
+        mid = (left + right) // 2
+        if array[mid] == target:
+            return mid
+        # left side sorted
+        if array[left] <= array[mid]:
+            # if target is contained in left sorted side, go left
+            if array[left] <= target <= array[mid]:
+                right = mid - 1
+            else:
+                left = mid + 1
+        # right side sorted
+        else:
+            # if target is contained in right sorted side, go right
+            if array[mid] <= target <= array[right]:
+                left = mid + 1
+            else:
+                right = mid - 1
+    return -1
+```
+
+## Top K Elements
+
+### When to use it?
+- Find the top k smallest or largest elements
+- Find the kth smallest or largest element
+- Find the k most frequent elements
+
+### Technique
+You can always sort an array and then take the first or last k elements, however the time complexity would be O(NLogN). A heap can pop and push elements in O(Log(K)) where K is the size of the heap. Therefore, instead of sorting, we can use a heap to hold the smallest or largest K values, and for every element in the array check whether to pop/push to the heap, resulting in a time complexity of O(NLogK).
+
+```py
+"""
+A generic template for the Top K Smallest elements.  7 2 5 3 9 1 8
+"""
+import heapq
+def top_k_smallest_elements(arr, k):
+    if k <= 0 or not arr:
+        return []
+
+# Use a max heap to maintain the k smallest elements
+    max_heap = []
+    for num in arr:
+        # Python does not have a maxHeap, only min Heap
+        # Therefore, negate the num to simulate a max heap
+        heapq.heappush(max_heap, -num)
+        if len(max_heap) > k:
+            heapq.heappop(max_heap)
+    # Convert back to positive values and return
+    return [-x for x in max_heap]
+"""
+A generic template for the Top K Largest elements.
+"""
+import heapq
+def top_k_largest_elements(arr, k):
+    if k <= 0 or not arr:
+        return []
+    # Use a min heap to maintain the k largest elements
+    min_heap = []
+    for num in arr:
+        heapq.heappush(min_heap, num)
+        if len(min_heap) > k:
+            heapq.heappop(min_heap)
+    return min_heap
+```
+
+### LeetCode Questions
+215. Kth Largest Element in an Array
+347. Top K Frequent Elements
+23. Merge k Sorted Lists
+
+## Binary Tree Traversal
+
+### When to use it?
+- Preorder: Serialize or deserialize a tree
+- Inorder: Retrieve elements in sorted order (BSTs)
+- Postorder: Process children before parent (bottom-up)
+- BFS: Level by level scanning
+
+### Technique
+For the preorder, inorder, and postorder traversals use recursion (DFS). For the level by level scan use BFS iteratively with a queue.
+
+<img src="../assets/snip_32.jpg” width="20%">
+
+```py
+"""
+Preorder traversal: visit node, then left subtree, then right subtree.
+"""
+def preorder_traversal(node):
+    if not node:
+        return
+    # visit node
+    preorder_traversal(node.left)
+    preorder_traversal(node.right)
+
+"""
+Inorder traversal: visit left subtree, then node, then right subtree.
+"""
+def inorder_traversal(node):
+    if not node:
+        return
+    inorder_traversal(node.left)
+    # visit node
+    inorder_traversal(node.right)
+"""
+Postorder traversal: visit left subtree, then right subtree, then node
+"""
+def postorder_traversal(node):
+    if not node:
+        return
+    postorder_traversal(node.left)
+    postorder_traversal(node.right)
+    # visit node
+"""
+BFS traversal: Visit all nodes level by level using a queue
+"""
+from collections import deque
+def bfs_traversal(root):
+    queue = deque([root])
+    while queue:
+        node = queue.popleft()
+        if node:
+            # visit node
+            queue.append(node.left)
+            queue.append(node.right)
+```
+
+### LeetCode Questions
+104. Maximum Depth of Binary Tree
+102. Binary Tree Level Order Traversal
+105. Construct Binary Tree from Preorder and Inorder Traversal
+124. Binary Tree Maximum Path Sum
+
 
 ## Depth First Search (DFS)
 **Use Case**: Traverse trees or graphs to explore all possible paths, such as finding connected components or validating properties of a tree.  
