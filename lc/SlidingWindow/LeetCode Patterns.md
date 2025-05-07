@@ -6,21 +6,21 @@ This README summarizes the 14 essential LeetCode patterns for solving coding int
 1. [Sliding Window](#sliding-window)
 2. [Two Pointers](#two-pointers)
 3. [Fast & Slow Pointers](#fast--slow-pointers)
-4. In Place Linked List Reversal
+4. [In Place Linked List Reversal](#In-Place-Linked-List-Reversal)
 5. [Binary Search](#binary-search)
-6. Top K Elements
-7. Binary Tree Traversal
-8. Graph and Matrices
+6. [Top K Elements](#Top-K-Elements)
+7. [Binary Tree Traversal](#Binary-Tree-Traversal)
+8. [Graph and Matrices](#Graph-and-Matrices)
        [Depth First Search (DFS)](#depth-first-search-dfs)
        [Breadth First Search (BFS)](#breadth-first-search-bfs)
        [Topological Sort](#topological-sort)
-       DFS and BFS for Matrix Traversal
+       [DFS and BFS for Matrix Traversal](#DFS-and-BFS-for-Matrix-Traversal)
 12. [Backtracking](#backtracking)
 13. [Dynamic Programming](#dynamic-programming)
 14. [Bit Manipulation](#bit-manipulation)
-15. Overlapping Intervals
-16. Monotonic Stack
-17. Prefix Sum
+15. [Overlapping Intervals](#Overlapping-Intervals)
+16. [Monotonic Stack](#Monotonic-Stack)
+17. [Prefix Sum](#Prefix-Sum)
 18. [Union Find](#union-find)
 19. [Trie](#trie)
 21. [Greedy](#greedy)
