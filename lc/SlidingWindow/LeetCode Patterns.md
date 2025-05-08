@@ -336,39 +336,88 @@ def binary_search_rotated_array(array, target):
 ### Technique
 You can always sort an array and then take the first or last k elements, however the time complexity would be O(NLogN). A heap can pop and push elements in O(Log(K)) where K is the size of the heap. Therefore, instead of sorting, we can use a heap to hold the smallest or largest K values, and for every element in the array check whether to pop/push to the heap, resulting in a time complexity of O(NLogK).
 
-```py
-"""
-A generic template for the Top K Smallest elements.  7 2 5 3 9 1 8
-"""
-import heapq
-def top_k_smallest_elements(arr, k):
-    if k <= 0 or not arr:
-        return []
+```c++
+#include <vector>
+#include <queue>
 
-# Use a max heap to maintain the k smallest elements
-    max_heap = []
-    for num in arr:
-        # Python does not have a maxHeap, only min Heap
-        # Therefore, negate the num to simulate a max heap
-        heapq.heappush(max_heap, -num)
-        if len(max_heap) > k:
-            heapq.heappop(max_heap)
-    # Convert back to positive values and return
-    return [-x for x in max_heap]
-"""
-A generic template for the Top K Largest elements.
-"""
-import heapq
-def top_k_largest_elements(arr, k):
-    if k <= 0 or not arr:
-        return []
-    # Use a min heap to maintain the k largest elements
-    min_heap = []
-    for num in arr:
-        heapq.heappush(min_heap, num)
-        if len(min_heap) > k:
-            heapq.heappop(min_heap)
-    return min_heap
+std::vector<int> top_k_smallest_elements(const std::vector<int>& arr, int k) {
+    // Handle edge cases
+    if (k <= 0 || arr.empty()) {
+        return {};
+    }
+
+    // Use a max-heap to maintain the k smallest elements
+    std::priority_queue<int> max_heap;
+    for (int num : arr) {
+        max_heap.push(num);
+        if (max_heap.size() > static_cast<size_t>(k)) {
+            max_heap.pop(); // Remove the largest element
+        }
+    }
+
+    // Extract elements from the heap
+    std::vector<int> result;
+    while (!max_heap.empty()) {
+        result.push_back(max_heap.top());
+        max_heap.pop();
+    }
+
+    // Reverse to get smallest to largest order (optional, depending on requirements)
+    std::reverse(result.begin(), result.end());
+    return result;
+}
+
+std::vector<int> top_k_largest_elements(const std::vector<int>& arr, int k) {
+    // Handle edge cases
+    if (k <= 0 || arr.empty()) {
+        return {};
+    }
+
+    // Use a min-heap to maintain the k largest elements
+    std::priority_queue<int, std::vector<int>, std::greater<int>> min_heap;
+    for (int num : arr) {
+        min_heap.push(num);
+        if (min_heap.size() > static_cast<size_t>(k)) {
+            min_heap.pop(); // Remove the smallest element
+        }
+    }
+
+    // Extract elements from the heap
+    std::vector<int> result;
+    while (!min_heap.empty()) {
+        result.push_back(min_heap.top());
+        min_heap.pop();
+    }
+
+    // Reverse to get largest to smallest order (optional, depending on requirements)
+    std::reverse(result.begin(), result.end());
+    return result;
+}
+
+#include <iostream>
+
+int main() {
+    std::vector<int> arr = {7, 2, 5, 3, 9, 1, 8};
+    int k = 3;
+
+    // Top K smallest
+    std::vector<int> smallest = top_k_smallest_elements(arr, k);
+    std::cout << "Top " << k << " smallest: ";
+    for (int num : smallest) {
+        std::cout << num << " ";
+    }
+    std::cout << std::endl; // Output: 1 2 3
+
+    // Top K largest
+    std::vector<int> largest = top_k_largest_elements(arr, k);
+    std::cout << "Top " << k << " largest: ";
+    for (int num : largest) {
+        std::cout << num << " ";
+    }
+    std::cout << std::endl; // Output: 9 8 7
+
+    return 0;
+}
 ```
 
 ### LeetCode Questions
