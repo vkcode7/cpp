@@ -482,6 +482,36 @@ def bfs_traversal(root):
             queue.append(node.right)
 ```
 
+```cpp
+void bfs_traversal(Node* root) {
+    if (!root) {
+        return;
+    }
+
+    // Use a queue to store nodes
+    std::queue<Node*> queue;
+    queue.push(root);
+
+    while (!queue.empty()) {
+        // Get the front node
+        Node* node = queue.front();
+        queue.pop();
+
+        // Visit node (print value in this case)
+        std::cout << node->val << " ";
+
+        // Enqueue left child if it exists
+        if (node->left) {
+            queue.push(node->left);
+        }
+
+        // Enqueue right child if it exists
+        if (node->right) {
+            queue.push(node->right);
+        }
+    }
+}
+```
 ### LeetCode Questions
 - .104. Maximum Depth of Binary Tree
 - .102. Binary Tree Level Order Traversal
