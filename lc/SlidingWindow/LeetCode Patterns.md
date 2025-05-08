@@ -47,17 +47,17 @@ The general steps to solve these questions by following below steps:
 
 In the sliding window, you have 2 pointers, i and j. Move j as far as you can until your condition is no longer valid, then move the i pointer closer to j until the condition is valid again to shrink the window. At every iteration, keep track of the min/max length of the subarray for the result. Without the sliding window technique, we would need to use a double for loop resulting in O(N²) time. The sliding window is O(N) time complexity.
 
-<img src="../assets/Snip_29.png" width="50%">
+<img src="../assets/Snip_30.png" width="50%">
 
 ### Dynamic Sliding Window:
 
-<img src="../assets/Snip_30.png" width="50%">
+<img src="../assets/Snip_29.png" width="50%">
 
 The general steps to solve these questions by following below steps:
 
 - In this type of sliding window problem, we increase our right pointer one by one till our condition is true.
-- At any step if our condition does not match, we shrink the size of our window by increasing left pointer.
-- Again, when our condition satisfies, we start increasing the right pointer and follow step 1.
+- we shrink the size of our window by increasing left pointer till it becomes invalid
+- Again, move right pointer till it becomes valid
 - We follow these steps until we reach to the end of the array.
 
 In the dynamic sliding window, the size of the window (subarray between i and j) changes throughout the algorithm. In this example, we scan the subarray “bacb” and find that we have a duplicate “b”, so we will move the i pointer to shrink the window and move on to letter “a”, resulting in “acb”, then we start moving j again.
