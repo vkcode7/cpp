@@ -20,10 +20,11 @@ This README summarizes the essential LeetCode patterns for solving coding interv
 11. [Bit Manipulation](#bit-manipulation)
 12. [Overlapping Intervals](#Overlapping-Intervals)
 13. [Monotonic Stack](#Monotonic-Stack)
-14. [Prefix Sum](#Prefix-Sum)
-15. [Union Find](#union-find)
-16. [Trie](#trie)
-17. [Greedy](#greedy)
+14. [Monotonic deque](#Monotonic-deque)
+15. [Prefix Sum](#Prefix-Sum)
+16. [Union Find](#union-find)
+17. [Trie](#trie)
+18. [Greedy](#greedy)
 
 
 ## Sliding Window
@@ -38,6 +39,12 @@ This README summarizes the essential LeetCode patterns for solving coding interv
 
 ### Fixed Window:
 
+The general steps to solve these questions by following below steps:
+
+- Find the size of the window required, say K.
+- Compute the result for 1st window, i.e. include the first K elements of the data structure.
+- Then use a loop to slide the window by 1 and keep computing the result window by window.
+
 In the sliding window, you have 2 pointers, i and j. Move j as far as you can until your condition is no longer valid, then move the i pointer closer to j until the condition is valid again to shrink the window. At every iteration, keep track of the min/max length of the subarray for the result. Without the sliding window technique, we would need to use a double for loop resulting in O(N²) time. The sliding window is O(N) time complexity.
 
 <img src="../assets/Snip_29.png" width="50%">
@@ -45,6 +52,13 @@ In the sliding window, you have 2 pointers, i and j. Move j as far as you can un
 ### Dynamic Sliding Window:
 
 <img src="../assets/Snip_30.png" width="50%">
+
+The general steps to solve these questions by following below steps:
+
+- In this type of sliding window problem, we increase our right pointer one by one till our condition is true.
+- At any step if our condition does not match, we shrink the size of our window by increasing left pointer.
+- Again, when our condition satisfies, we start increasing the right pointer and follow step 1.
+- We follow these steps until we reach to the end of the array.
 
 In the dynamic sliding window, the size of the window (subarray between i and j) changes throughout the algorithm. In this example, we scan the subarray “bacb” and find that we have a duplicate “b”, so we will move the i pointer to shrink the window and move on to letter “a”, resulting in “acb”, then we start moving j again.
 
@@ -800,6 +814,7 @@ def process_intervals(intervals):
 
 ## Monotonic Stack
 <img src="../assets/Snip_44.png" width="50%">
+A monotonic stack is a stack where elements are maintained in either a strictly increasing or decreasing order. This order allows for efficient solutions to problems involving comparisons between elements, such as finding the next greater or smaller element in a sequence. 
 
 ### When to use it?
 - Find Next Greater or Smaller Element
@@ -844,7 +859,13 @@ def monotonic_decreasing_stack(arr):
 - .739. Daily Temperatures
 - .84. Largest Rectangle in Histogram
 
- 
+
+## Monotonic deque
+Here we introduce an interesting data structure. It's a deque with an interesting property - the elements in the deque from head to tail are in decreasing order (hence the name monotonic).
+
+To achieve this property, we modify the push operation so that when we push an element into the deque, we first pop everything smaller than it out of the deque.
+
+
 ## Prefix Sum
 
 ### When to use it?
