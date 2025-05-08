@@ -11,19 +11,19 @@ This README summarizes the essential LeetCode patterns for solving coding interv
 6. [Top K Elements](#Top-K-Elements)
 7. [Binary Tree Traversal](#Binary-Tree-Traversal)
 8. [Graph and Matrices](#Graph-and-Matrices)
-       [Depth First Search (DFS)](#depth-first-search-dfs)
-       [Breadth First Search (BFS)](#breadth-first-search-bfs)
-       [Topological Sort](#topological-sort)
-       [DFS and BFS for Matrix Traversal](#DFS-and-BFS-for-Matrix-Traversal)
-12. [Backtracking](#backtracking)
-13. [Dynamic Programming](#dynamic-programming)
-14. [Bit Manipulation](#bit-manipulation)
-15. [Overlapping Intervals](#Overlapping-Intervals)
-16. [Monotonic Stack](#Monotonic-Stack)
-17. [Prefix Sum](#Prefix-Sum)
-18. [Union Find](#union-find)
-19. [Trie](#trie)
-21. [Greedy](#greedy)
+   - [Depth First Search (DFS)](#depth-first-search-dfs)
+   - [Breadth First Search (BFS)](#breadth-first-search-bfs)
+   - [Topological Sort](#topological-sort)
+   - [DFS and BFS for Matrix Traversal](#DFS-and-BFS-for-Matrix-Traversal)
+9. [Backtracking](#backtracking)
+10. [Dynamic Programming](#dynamic-programming)
+11. [Bit Manipulation](#bit-manipulation)
+12. [Overlapping Intervals](#Overlapping-Intervals)
+13. [Monotonic Stack](#Monotonic-Stack)
+14. [Prefix Sum](#Prefix-Sum)
+15. [Union Find](#union-find)
+16. [Trie](#trie)
+17. [Greedy](#greedy)
 
 
 ## Sliding Window
@@ -130,7 +130,9 @@ def window_fixed_size(nums, k):
 
 ## Two Pointers
 **Use Case**: Solve problems involving sorted arrays or linked lists, such as finding pairs that sum to a target or removing duplicates.  
+
 **Benefit**: Achieves O(n) time complexity by moving two pointers toward each other or in the same direction based on problem constraints.  
+
 **Example Problems**:  
 - Two Sum II - Input Array is Sorted (LeetCode #167)  
 - Remove Duplicates from Sorted Array (LeetCode #26)  
@@ -139,7 +141,7 @@ def window_fixed_size(nums, k):
 **Technique**:
 Instead of scanning all possible subarrays or substrings, use two pointers i and j at the ends of a string or sorted array to be clever how you increment i or decrement j as you scan the input. This will lower your time complexity from O(N²) to O(N). In the example above, to detect if a string is a palindrome we scan the ends of the string one character at a time. If the characters are equal, move i and j closer together. If they are not equal, the string is not a palindrome.
 
-###Is string a Palindrome? "RACECAR"
+### Is string a Palindrome? "RACECAR"
 ```py
 def two_pointer_template(input):
     # Initialize pointers
@@ -164,6 +166,7 @@ def two_pointer_template(input):
 
 ## Fast & Slow Pointers
 **Use Case**: Detect cycles, find midpoints, or identify specific positions in linked lists or arrays (e.g., cycle detection in a linked list).  
+
 **Benefit**: Provides an efficient O(n) solution for cycle detection and related problems using two pointers moving at different speeds.  
 
 **Technique**:
@@ -229,7 +232,9 @@ def reverse_linked_list(head):
 
 ## Binary Search
 **Use Case**: Search for a target in a sorted array or find boundaries, such as the first or last occurrence of an element.  
+
 **Benefit**: Reduces time complexity to O(log n) by halving the search space in each iteration.  
+
 **Example Problems**:  
 - Binary Search (LeetCode #704)  
 - Find First and Last Position of Element in Sorted Array (LeetCode #34)  
@@ -437,6 +442,7 @@ When to use it?
 DFS (Depth-First Search) traverses as deep as possible along each branch before backtracking, prioritizing visiting nodes or cells in a recursive or stack-based manner. BFS (Breadth-First Search) explores all neighbors of a node or cell before moving deeper, traversing level by level using a queue. For DFS use recursion with a visited set to keep track of visited nodes. For BFS use iteration with a queue and a visited set to keep track of visited nodes. In a graph, neighbors are found in the adjacency list.
 
 **Use Case**: Traverse trees or graphs to explore all possible paths, such as finding connected components or validating properties of a tree.  
+
 **Benefit**: Ideal for problems requiring exhaustive exploration of paths or recursive solutions.  
 ```py
 """
@@ -469,6 +475,7 @@ def explore(node):
 <img src="../assets/Snip_34.png" width="50%">
 
 **Use Case**: Find the shortest path in unweighted graphs or perform level-order traversal in trees.  
+
 **Benefit**: Guarantees the shortest path in unweighted graphs and handles level-by-level processing efficiently.  
 
 ```py
@@ -500,6 +507,7 @@ def bfs(graph, start):
 <img src="../assets/Snip_35.png" width="50%">
 
 **Use Case**: Schedule tasks with dependencies or resolve prerequisites, such as course scheduling in a directed acyclic graph (DAG).  
+
 **Benefit**: Provides a linear ordering of nodes in a DAG, useful for dependency resolution.  
 
 ```py
@@ -606,6 +614,7 @@ def bfs_matrix(matrix, startI, startJ):
 Backtracking is closely related to DFS, but with a focus on finding solutions while validating their correctness. If a solution doesn’t work, you backtrack by returning to the previous recursive state and trying a different option. Additionally, backtracking uses constraints to eliminate branches that cannot lead to a valid solution, making the search more efficient.
 
 **Use Case**: Solve combinatorial problems like generating permutations, combinations, or solving puzzles (e.g., N-Queens).  
+
 **Benefit**: Systematically explores all possibilities while pruning invalid paths to optimize performance.  
 
 ```py
@@ -647,8 +656,10 @@ for candidate in candidates:
 Dynamic Programming is used when you need to solve a problem that depends on previous results from subproblems. You can effectively “cache” these previous result values when you calculate them for the first time to be re-used later. Dynamic Programming has 2 main techniques:
 
 - **Top Down** — Recursion (DFS) with Memoization. Memoization is a fancy word for a hashmap that can cache the values previously calculated. In the top down approach you start with the global problem and the recursively split it into subproblems to then solve the global problem.
+  
 - **Bottom Up** — Iteratively performed by using an array/matrix to store previous values. In the bottom up approach we start with base cases and then build up to the global solution iteratively.
-- Many times bottom up is preferred since you can reduce the space complexity if you don’t need access to all subproblems and can store the last couple of subproblem results using variables.
+  
+Many times bottom up is preferred since you can reduce the space complexity if you don’t need access to all subproblems and can store the last couple of subproblem results using variables.
 
 **Use Case**:   
 - Overlapping subproblems and optimal substructure
@@ -721,7 +732,9 @@ def fib_bottom_up(n):
 <img src="../assets/Snip_42.png" width="50%">
 
 **Use Case**: Solve problems using binary operations, such as finding a single number in an array or counting bits.  
+
 **Benefit**: Reduces space complexity by operating at the bit level, ideal for low-level optimizations.  
+
 **Example Problems**:  
 - Single Number (LeetCode #136)  
 - Number of 1 Bits (LeetCode #191)  
@@ -879,18 +892,243 @@ def query_subarray_sum(prefix, i, j):
 - .523. Continuous Subarray Sum
 - .560. Subarray Sum Equals K
 
-## Union Find
-**Use Case**: Manage disjoint sets to detect connected components or cycles in graphs (e.g., finding provinces in a graph).  
-**Benefit**: Offers near-constant time operations for dynamic connectivity with path compression and union by rank.  
+## Union Find 
+**aka Disjoint-Set data structure**
+
+A Union-Find algorithm, also known as a Disjoint-Set data structure, is used to manage a collection of elements partitioned into disjoint (non-overlapping) subsets. It efficiently supports two primary operations:
+
+- **Union**: Merge two subsets into a single subset.
+- **Find**: Determine which subset a particular element belongs to, often by returning a representative (or "root") of that subset.
+
+### Key Features
+**Purpose**: Commonly used in problems involving grouping, such as detecting cycles in graphs (e.g., Kruskal's algorithm for minimum spanning trees), connected components in graphs, or network connectivity.
+Efficiency: With optimizations like path compression and union by rank/size, the amortized time complexity for each operation is nearly constant, specifically O(α(n)), where α(n) is the inverse Ackermann function, which grows extremely slowly and is effectively constant for all practical values of n.
+
+**How It Works**:
+The algorithm maintains a forest of trees, where each tree represents a subset, and the root of the tree is the representative of that subset. The data structure tracks:
+
+- A parent array (or similar structure) to represent the tree hierarchy.
+- Optionally, a rank or size array for optimization.
+
+**Core Operations**
+
+**Find(x):**
+- Returns the root (representative) of the subset containing element x.
+- Traverses the parent pointers from x to the root.
+- With path compression, all nodes in the path are updated to point directly to the root, flattening the tree for future operations.
+
+**Union(x, y):**
+- Merges the subsets containing elements x and y.
+- Finds the roots of x and y using Find.
+- Makes one root the parent of the other, often using union by rank (attach the shorter tree to the taller one) or union by size (attach the smaller subset to the larger one) to keep trees balanced.
+
+**Connected(x, y) (optional):**
+- Checks if x and y are in the same subset by comparing their roots (i.e., Find(x) == Find(y)).
+
+
+**Applications**
+
+**Graph Algorithms:**
+- Finding connected components in an undirected graph.
+- Detecting cycles in Kruskal's algorithm for minimum spanning trees.
+  
+**Network Connectivity:** Determining if nodes in a network are connected.
+
+**Image Processing:** Grouping pixels into regions (e.g., connected component labeling).
+
+**Dynamic Equivalence:** Managing equivalence relations in a dynamic setting.- 
+
 **Example Problems**:  
 - Number of Provinces (LeetCode #547)  
 - Redundant Connection (LeetCode #684)  
 - Graph Valid Tree (LeetCode #261)
 
+```c++
+#include <vector>
+
+class UnionFind {
+private:
+    std::vector<int> parent;
+    std::vector<int> rank;
+
+public:
+    UnionFind(int n) {
+        parent.resize(n);
+        rank.resize(n, 0);
+        for (int i = 0; i < n; ++i) {
+            parent[i] = i; // Each element starts as its own parent
+        }
+    }
+
+    int find(int x) {
+        // Path compression: Make all nodes in path point to root
+        if (parent[x] != x) {
+            parent[x] = find(parent[x]);
+        }
+        return parent[x];
+    }
+
+    void unionSets(int x, int y) {
+        // Union by rank: Attach shorter tree to root of taller tree
+        int px = find(x);
+        int py = find(y);
+        if (px == py) return;
+        if (rank[px] < rank[py]) {
+            parent[px] = py;
+        } else if (rank[px] > rank[py]) {
+            parent[py] = px;
+        } else {
+            parent[py] = px;
+            rank[px]++;
+        }
+    }
+
+    bool connected(int x, int y) {
+        return find(x) == find(y);
+    }
+};
+```
+
+### Graph valid Tree:
+You have a graph of n nodes labeled from 0 to n - 1. You are given an integer n and a list of edges where edges[i] = [ai, bi] indicates that there is an undirected edge between nodes ai and bi in the graph.
+
+Return true if the edges of the given graph make up a valid tree, and false otherwise.
+```text
+    0
+ /  |  \
+1   2   3
+|
+4
+Input: n = 5, edges = [[0,1],[0,2],[0,3],[1,4]]
+Output: true
+
+    0
+    |
+    1 - 4
+    | \
+    2 - 3
+
+Input: n = 5, edges = [[0,1],[1,2],[2,3],[1,3],[1,4]]
+Output: false
+```
+
+```cpp
+class Solution {
+public:
+    vector<int> p;
+
+    bool validTree(int n, vector<vector<int>>& edges) {
+        p.resize(n);
+        for (int i = 0; i < n; ++i) p[i] = i;
+        for (auto& e : edges) {
+            int a = e[0], b = e[1];
+            if (find(a) == find(b)) return 0;
+            p[find(a)] = find(b);
+            --n;
+        }
+        return n == 1;
+    }
+
+    int find(int x) {
+        if (p[x] != x) p[x] = find(p[x]);
+        return p[x];
+    }
+};
+```
 
 ## Trie
+A Trie (pronounced "try"), also known as a prefix tree, is a tree-like data structure used to efficiently store and retrieve a dynamic set of strings, typically over a fixed alphabet (e.g., lowercase letters, digits). It is particularly useful for problems involving prefix-based searches, such as autocomplete, dictionary lookups, or IP routing tables. 
+
+Structure: A tree where each node represents a single character of a string, and paths from the root to leaf (or marked nodes) represent complete strings.
+
 **Use Case**: Handle string prefix-based problems, such as implementing autocomplete or searching a dictionary.  
+
 **Benefit**: Efficiently stores and retrieves strings with common prefixes, reducing time complexity for prefix searches.  
+
+**How It Works:**
+Nodes: Each node contains:
+
+- An array or map of pointers to child nodes, one for each possible character in the alphabet (e.g., 26 for lowercase letters).
+- A boolean flag (often called isEndOfWord) to mark whether the node represents the end of a valid string.
+- Root: The trie starts with an empty root node.
+- Edges: Represent characters, forming paths that correspond to strings or prefixes.
+```text
+For strings "cat", "car", "cap":
+
+       (root)
+      /   |   \
+     c    a    p
+    /     |     \
+   a      r      (end)
+  / \     |
+ t   p   (end)
+(end)(end)
+```
+
+**Applications**
+- Autocomplete: Suggest words based on a prefix (e.g., Google search).
+- Spell Checkers: Store a dictionary for quick lookups.
+- IP Routing: Store IP prefixes for longest prefix matching.
+- Word Games: Efficiently find valid words or prefixes (e.g., Boggle).
+- Pattern Matching: Used in algorithms like Aho-Corasick for multiple pattern searches.
+
+```c++
+#include <vector>
+
+struct TrieNode {
+    std::vector<TrieNode*> children;
+    bool isEndOfWord;
+    TrieNode() : children(26, nullptr), isEndOfWord(false) {} // For lowercase letters
+};
+
+class Trie {
+private:
+    TrieNode* root;
+
+public:
+    Trie() { root = new TrieNode(); }
+
+    void insert(const std::string& word) {
+        TrieNode* node = root;
+        for (char c : word) {
+            int index = c - 'a'; // Assuming lowercase letters
+            if (!node->children[index]) {
+                node->children[index] = new TrieNode();
+            }
+            node = node->children[index];
+        }
+        node->isEndOfWord = true;
+    }
+
+    bool search(const std::string& word) {
+        TrieNode* node = root;
+        for (char c : word) {
+            int index = c - 'a';
+            if (!node->children[index]) return false;
+            node = node->children[index];
+        }
+        return node->isEndOfWord;
+    }
+
+    bool startsWith(const std::string& prefix) {
+        TrieNode* node = root;
+        for (char c : prefix) {
+            int index = c - 'a';
+            if (!node->children[index]) return false;
+            node = node->children[index];
+        }
+        return true;
+    }
+};
+
+Trie trie;
+trie.insert("cat");
+trie.insert("car");
+trie.search("cat");      // Returns true
+trie.search("cab");      // Returns false
+trie.startsWith("ca");   // Returns true
+```
+
 **Example Problems**:  
 - Implement Trie (Prefix Tree) (LeetCode #208)  
 - Word Search II (LeetCode #212)  
@@ -899,7 +1137,9 @@ def query_subarray_sum(prefix, i, j):
 
 ## Greedy
 **Use Case**: Make locally optimal choices to achieve a global optimum, such as selecting activities or solving jump games.  
+
 **Benefit**: Simplifies problems by avoiding exhaustive searches, often leading to efficient solutions.  
+
 **Example Problems**:  
 - Jump Game (LeetCode #55)  
 - Best Time to Buy and Sell Stock II (LeetCode #122)  
