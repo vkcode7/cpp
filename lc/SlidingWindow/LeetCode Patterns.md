@@ -347,11 +347,11 @@ std::vector<int> top_k_smallest_elements(const std::vector<int>& arr, int k) {
     }
 
     // Use a max-heap to maintain the k smallest elements
-    std::priority_queue<int> max_heap;
+    std::priority_queue<int> max_heap; //LARGEST value is at TOP, hence max_heap; std::less<int> by default
     for (int num : arr) {
-        max_heap.push(num);
+        max_heap.push(num); //PUSH
         if (max_heap.size() > static_cast<size_t>(k)) {
-            max_heap.pop(); // Remove the largest element
+            max_heap.pop(); // Remove the largest element as LARGEST is on top
         }
     }
 
@@ -374,7 +374,7 @@ std::vector<int> top_k_largest_elements(const std::vector<int>& arr, int k) {
     }
 
     // Use a min-heap to maintain the k largest elements
-    std::priority_queue<int, std::vector<int>, std::greater<int>> min_heap;
+    std::priority_queue<int, std::vector<int>, std::greater<int>> min_heap; //MIN value on top; they are in incrasing order
     for (int num : arr) {
         min_heap.push(num);
         if (min_heap.size() > static_cast<size_t>(k)) {
