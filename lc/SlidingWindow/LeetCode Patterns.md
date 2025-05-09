@@ -1085,52 +1085,100 @@ def monotonic_decreasing_stack(arr):
 ```
 
 ```cpp
+#include <iostream>
+#include <stack>
 #include <vector>
-#include <utility>
 
-// Monotonic increasing stack template
-// Maintains a stack where values are in increasing order
-void monotonic_increasing_stack(const std::vector<int>& arr) {
-    std::vector<std::pair<int, int>> stack; // Stack of (value, index) pairs
+using namespace std;
 
-    for (size_t i = 0; i < arr.size(); ++i) {
-        int num = arr[i];
-        // Pop elements while stack is not empty and top value > current value
-        while (!stack.empty() && stack.back().first > num) {
-            stack.pop_back();
+// Function to implement monotonic increasing stack
+vector<int> monotonicIncreasing(vector<int>& nums)
+{
+    int n = nums.size();
+    stack<int> st;
+    vector<int> result;
+
+    // Traverse the array
+    for (int i = 0; i < n; ++i) {
+
+        // While stack is not empty AND top of stack is more
+        // than the current element
+        while (!st.empty() && st.top() > nums[i]) {
+
+            // Pop the top element from the
+            // stack
+            st.pop();
         }
 
-        // Process result from top of stack (modify based on problem)
-        if (!stack.empty()) {
-            // Placeholder for problem-specific processing
-        }
-
-        // Push current value and index
-        stack.emplace_back(num, i);
+        // Push the current element into the stack
+        st.push(nums[i]);
     }
+
+    // Construct the result array from the stack
+    while (!st.empty()) {
+        result.insert(result.begin(), st.top());
+        st.pop();
+    }
+
+    return result;
 }
 
-// Monotonic decreasing stack template
-// Maintains a stack where values are in decreasing order
-void monotonic_decreasing_stack(const std::vector<int>& arr) {
-    std::vector<std::pair<int, int>> stack; // Stack of (value, index) pairs
-
-    for (size_t i = 0; i < arr.size(); ++i) {
-        int num = arr[i];
-        // Pop elements while stack is not empty and top value < current value
-        while (!stack.empty() && stack.back().first < num) {
-            stack.pop_back();
-        }
-
-        // Process result from top of stack (modify based on problem)
-        if (!stack.empty()) {
-            // Placeholder for problem-specific processing
-        }
-
-        // Push current value and index
-        stack.emplace_back(num, i);
+int main() {
+    // Example usage:
+    vector<int> nums = {3, 1, 4, 1, 5, 9, 2, 6};
+    vector<int> result = monotonicIncreasing(nums);
+    cout << "Monotonic increasing stack: ";
+    for (int num : result) {
+        cout << num << " ";
     }
+    cout << endl;
+
+    return 0;
 }
+
+//Output: Monotonic increasing stack: 1 1 2 6 
+
+// Function to implement monotonic decreasing stack
+vector<int> monotonicDecreasing(vector<int>& nums) {
+    int n = nums.size();
+    stack<int> st;
+    vector<int> result(n);
+
+    // Traverse the array
+    for (int i = 0; i < n; ++i) {
+        // While stack is not empty AND top of stack is less than the current element
+        while (!st.empty() && st.top() < nums[i]) {
+            st.pop();
+        }
+
+        // Construct the result array
+        if (!st.empty()) {
+            result[i] = st.top();
+        } else {
+            result[i] = -1;
+        }
+
+        // Push the current element into the stack
+        st.push(nums[i]);
+    }
+
+    return result;
+}
+
+int main() {
+    vector<int> nums = {3, 1, 4, 1, 5, 9, 2, 6};
+    vector<int> result = monotonicDecreasing(nums);
+
+    cout << "Monotonic decreasing stack: ";
+    for (int val : result) {
+        cout << val << " ";
+    }
+    cout << endl;
+
+    return 0;
+}
+
+//Output: Monotonic decreasing stack: -1 3 -1 4 -1 -1 9 9 
 ```
 ### LeetCode Questions
 - .496. Next Greater Element I
