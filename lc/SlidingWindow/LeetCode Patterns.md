@@ -1083,6 +1083,55 @@ def monotonic_decreasing_stack(arr):
         # Append current value and index
         stack.append((num,i))
 ```
+
+```cpp
+#include <vector>
+#include <utility>
+
+// Monotonic increasing stack template
+// Maintains a stack where values are in increasing order
+void monotonic_increasing_stack(const std::vector<int>& arr) {
+    std::vector<std::pair<int, int>> stack; // Stack of (value, index) pairs
+
+    for (size_t i = 0; i < arr.size(); ++i) {
+        int num = arr[i];
+        // Pop elements while stack is not empty and top value > current value
+        while (!stack.empty() && stack.back().first > num) {
+            stack.pop_back();
+        }
+
+        // Process result from top of stack (modify based on problem)
+        if (!stack.empty()) {
+            // Placeholder for problem-specific processing
+        }
+
+        // Push current value and index
+        stack.emplace_back(num, i);
+    }
+}
+
+// Monotonic decreasing stack template
+// Maintains a stack where values are in decreasing order
+void monotonic_decreasing_stack(const std::vector<int>& arr) {
+    std::vector<std::pair<int, int>> stack; // Stack of (value, index) pairs
+
+    for (size_t i = 0; i < arr.size(); ++i) {
+        int num = arr[i];
+        // Pop elements while stack is not empty and top value < current value
+        while (!stack.empty() && stack.back().first < num) {
+            stack.pop_back();
+        }
+
+        // Process result from top of stack (modify based on problem)
+        if (!stack.empty()) {
+            // Placeholder for problem-specific processing
+        }
+
+        // Push current value and index
+        stack.emplace_back(num, i);
+    }
+}
+```
 ### LeetCode Questions
 - .496. Next Greater Element I
 - .503. Next Greater Element II
