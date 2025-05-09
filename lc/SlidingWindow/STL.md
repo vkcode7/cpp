@@ -35,6 +35,16 @@
         // Insert 100 at index 2
         auto it = myVector.begin() + 2; // Iterator pointing to the 3rd element (index 2)
         myVector.insert(it, 100);
+
+        std::vector<int> myVector = {10, 20, 30, 40, 50};
+
+        // Erase the element at index 2 (value 30)
+        myVector.erase(myVector.begin() + 2);
+        // myVector is now {10, 20, 40, 50}
+    
+        // Erase the range from index 1 up to (but not including) index 3
+        myVector.erase(myVector.begin() + 1, myVector.begin() + 3); //20, 30, 40 will be removed
+        // myVector is now {10, 50}
     ```
   - `size()`, `empty()`, `front()`, `back()`: O(1).
   - `clear()`
