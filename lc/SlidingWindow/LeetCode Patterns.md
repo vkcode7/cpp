@@ -582,7 +582,7 @@ def bfs(graph, start):
     
     queue = deque([start])
     while queue:
-        node = queue.popleft()
+        node = queue.pop()
         if node not in visited:
             visited.add(node)
             result.append(node)  # process node
