@@ -5,10 +5,11 @@
 # 844. Backspace String Compare Solution [Super Easy with Stack]
 # 26. Remove Duplicates from Sorted Array Solution [Super Easy]
 # 567. Permutation in String - Hash Table, Two Pointers, String, Sliding Window [Easy]
-# 3. Longest Substring Without Repeating Characters - Hash Table, String, Sliding Window
+# 3. Longest Substring Without Repeating Characters - Hash Table, String, Sliding Window [Easy using 2 maps]
 # 205. Isomorphic Strings - Hash Table, String
 # 5. Longest Palindromic Substring - Two Pointers, String, Dynamic Programming
-# 451. Sort Characters By Frequency - Hash Table, Sorting, Heap (Priority Queue), Bucket Sort, Counting
+# 451. Sort Characters By Frequency - Hash Table, Sorting, Heap (Priority Queue), Bucket Sort, Counting [Easy using a map and vector]
+
 # 2262. Substring with Largest Variance - Dynamic Programming
 # 394. Decode String - Stack, Recursion
 # 443. String Compression - Two Pointers
@@ -417,7 +418,7 @@ public:
 };
 ```
 
-# 3. Longest Substring Without Repeating Characters - Hash Table, String, Sliding Window
+# 3. Longest Substring Without Repeating Characters - Hash Table, String, Sliding Window [Easy]
 https://leetcode.com/problems/longest-substring-without-repeating-characters/description/
 
 Given a string s, find the length of the longest substring without duplicate characters.
@@ -478,9 +479,9 @@ public:
 };
 ```
 
-# 205. Isomorphic Strings - Hash Table, String
+# 205. Isomorphic Strings - Hash Table, String [Easy using 2 maps]
+https://leetcode.com/problems/isomorphic-strings/description/
 
-## Problem Description
 Given two strings `s` and `t`, determine if they are isomorphic. Two strings are isomorphic if the characters in `s` can be replaced to get `t`. All occurrences of a character must be replaced with another character while preserving the order of characters. No two characters may map to the same character, but a character may map to itself.
 
 ### Example
@@ -504,51 +505,8 @@ Explanation: The mapping is 'p' -> 't', 'a' -> 'i', 'e' -> 'l', 'r' -> 'e'.
 - `s` and `t` consist of any valid ASCII characters.
 
 ```c++
-class Solution {
-public:
-    bool isIsomorphic(string s, string t) {
-        
-        if(s.length() != t.length())
-            return false;
-        
-        map<char, char> mapEnc;
-        set<char> setUsed;
-        
-        for(int i =0; i < t.length(); i++)
-        {
-            if(mapEnc.find(s[i]) != mapEnc.end())
-            {
-                if(mapEnc[s[i]] != t[i])
-                    return false;
-                
-                continue;           
-            }
-         
-            if(setUsed.count(t[i]))
-            {
-                return false;
-            }
-            
-            mapEnc[s[i]] = t[i];
-            setUsed.insert(t[i]);
-        }
-        
-        return true;       
-    }
-};
-```
+//badc not same as baba\
 
-## Solution Approach
-To determine if two strings are isomorphic, we can use a mapping approach:
-1. Ensure both strings have the same length.
-2. Use two hash maps (or arrays for ASCII characters) to track mappings from `s` to `t` and `t` to `s`.
-3. Iterate through both strings simultaneously:
-   - For each character pair `(s[i], t[i])`, check if the current mapping is consistent.
-   - If a character in `s` is already mapped to a different character in `t`, or vice versa, return `false`.
-4. If all characters are processed without conflicts, return `true`.
-
-### Example Implementation (C++)
-```cpp
 class Solution {
 public:
     bool isIsomorphic(string s, string t) {
@@ -597,12 +555,11 @@ public:
 Instead of two hash maps, you can use one hash map and a set to track used characters in `t`. This reduces space complexity slightly but maintains the same time complexity.
 
 
-# 5. Longest Palindromic Substring - Two Pointers, String, Dynamic Programming
-
-This document describes the solution to the "Longest Palindromic Substring" problem (LeetCode #5).
+# 5. Longest Palindromic Substring - Two Pointers, String, Dynamic Programming [Easy]
+https://leetcode.com/problems/longest-palindromic-substring/description/
 
 ## Problem Description
-Given a string `s`, return the longest palindromic substring in `s`. A substring is palindromic if it reads the same forward and backward.
+Given a string `s`, return the longest palindromic substring in `s`.
 
 ### Example
 ```
@@ -759,10 +716,9 @@ private:
 The Expand Around Center approach is simpler to implement and sufficient for the given constraints.
 
 
+# 451. Sort Characters By Frequency - Hash Table, Sorting, Heap (Priority Queue), Bucket Sort, Counting - [Easy using a map and vector]
+https://leetcode.com/problems/sort-characters-by-frequency/description/
 
-# 451. Sort Characters By Frequency - Hash Table, Sorting, Heap (Priority Queue), Bucket Sort, Counting
-
-## Problem Description
 Given a string `s`, sort it in decreasing order based on the frequency of the characters. The frequency of a character is the number of times it appears in the string. If two characters have the same frequency, their relative order in the output is not specified.
 
 ### Example
@@ -797,40 +753,35 @@ The problem can be solved using a frequency map and sorting, or a bucket sort ap
 class Solution {
 public:
     string frequencySort(string s) {
-        string sorted = "";
-        map<char,int> freq;
-        for(auto c : s)
-            freq[c]++;
-        
-        vector<vector<char>> vbucket(s.size()+1);
-        
-        for(auto it : freq)
-            vbucket[it.second].push_back(it.first);    
-        
-        for(int i = vbucket.size()-1; i > 0; i--)
+        map<char, int> sF;
+        int max_ = 0;
+        for(auto x: s) {
+            sF[x]++;
+            max_ = max(max_, sF[x]);
+        }
+
+        vector<vector<char>> vB(max_+1);
+        for(auto [k, v]: sF)
         {
-            if(vbucket[i].size() == 0)
-                continue;
-            
-            for(auto ch : vbucket[i]) {
-                for(int j=0; j < i; j++)
-                    sorted += ch;
+            vB[v].push_back(k);
+        }
+
+        string ans = "";
+
+        for(int i = max_; i > 0; i--)
+        {
+            auto vC = vB[i];
+            if(vC.size() > 0)
+            {
+                for(auto x: vC)
+                {
+                    for(int k=0; k < i; k++)
+                        ans += x;
+                }
             }
         }
-        
-        /*
-        for(int i = 1; i < vbucket.size(); i++)
-        {
-            if(vbucket[i].size() == 0)
-                continue;
-            
-            for(auto ch : vbucket[i]) {
-                for(int j=0; j < i; j++)
-                    sorted = ch + sorted;
-            }
-        }
-        */
-        return sorted;
+
+        return ans;
     }
 };
 ```
