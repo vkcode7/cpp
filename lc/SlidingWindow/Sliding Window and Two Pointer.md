@@ -10,9 +10,9 @@
 # 5. Longest Palindromic Substring - Two Pointers, String, Dynamic Programming
 # 451. Sort Characters By Frequency - Hash Table, Sorting, Heap (Priority Queue), Bucket Sort, Counting [Easy using a map and vector]
 # 2262. Substring with Largest Variance - Dynamic Programming [Hard, Revisit]
+# 394. Decode String - Stack, Recursion [Easy]
+# 443. String Compression - Two Pointers [Easy]
 
-# 394. Decode String - Stack, Recursion
-# 443. String Compression - Two Pointers
 # 387. First Unique Character in a String - Hash Table, Queue
 # 273. Integer to English Words
 # 283. Move Zeroes Solution - Two Pointers
