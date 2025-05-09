@@ -998,7 +998,7 @@ std::vector<Interval> process_intervals(std::vector<Interval>& intervals) {
                   return a.start < b.start;
               });
 
-    // Process intervals (example: merge overlapping intervals)
+    // example: merge overlapping intervals (modify as needed for your problem)
     std::vector<Interval> result;
     for (const Interval& interval : intervals) {
         // If result is empty or no overlap with the last interval in result
@@ -1012,6 +1012,27 @@ std::vector<Interval> process_intervals(std::vector<Interval>& intervals) {
 
     return result;
 }
+
+int main() {
+    std::vector<Interval> intervals = {
+        Interval(1, 3),
+        Interval(2, 6),
+        Interval(8, 10),
+        Interval(15, 18)
+    };
+
+    std::vector<Interval> result = process_intervals(intervals);
+
+    std::cout << "Merged Intervals: ";
+    for (const Interval& interval : result) {
+        std::cout << "[" << interval.start << "," << interval.end << "] ";
+    }
+    std::cout << std::endl;
+
+    return 0;
+}
+
+//Merged Intervals: [1,6] [8,10] [15,18]
 ```
 
 ### LeetCode Questions
