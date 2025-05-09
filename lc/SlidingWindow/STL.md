@@ -5,7 +5,13 @@
 - **Description**: Dynamic array with random access.
 - **Key Methods**:
   - `push_back(value)`, `pop_back()`: O(1) amortized.
+    The pop_back() function in C++ is used to remove the last element from a vector. It effectively reduces the size of the vector by one. The capacity of the vector, however, remains unchanged.
   - `insert(pos, value)`, `erase(iterator pos)`: O(n).
+    ```cpp
+        // Insert 100 at index 2
+        auto it = myVector.begin() + 2; // Iterator pointing to the 3rd element (index 2)
+        myVector.insert(it, 100);
+    ```
   - `size()`, `empty()`, `front()`, `back()`: O(1).
   - `clear()`
   - `std::reverse(v.begin(), v.end())`: O(n).
