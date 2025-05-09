@@ -541,22 +541,100 @@ DFS (Depth-First Search) traverses as deep as possible along each branch before 
 """
 DFS for a graph represented as an adjacency list
 """
-def dfs(graph):
-    visited = set()
-    result = []
+def dfsRec(adj, visited, s, res):
+    visited[s] = True
+    res.append(s)
 
-def explore(node):
-        visited.add(node)
-        result.append(node)  # process node
-        for neighbor in graph[node]:
-            if node not in visited:
-                explore(neighbor)
-    def dfs_driver(graph):
-        for node in graph:
-            if node not in visited:
-                explore(node)
-    dfs_driver()
-    return result
+    # Recursively visit all adjacent vertices that are not visited yet
+    for i in range(len(adj)):
+        if adj[s][i] == 1 and not visited[i]:
+            dfsRec(adj, visited, i, res)
+
+def DFS(adj):
+    visited = [False] * len(adj)
+    res = []
+    dfsRec(adj, visited, 0, res)  # Start DFS from vertex 0
+    return res
+
+
+def add_edge(adj, s, t):
+    adj[s][t] = 1
+    adj[t][s] = 1  # Since it's an undirected graph
+
+
+# Driver code
+V = 5
+adj = [[0] * V for _ in range(V)]  # Adjacency matrix
+
+# Define the edges of the graph
+edges = [(1, 2), (1, 0), (2, 0), (2, 3), (2, 4)]
+
+# Populate the adjacency matrix with edges
+for s, t in edges:
+    add_edge(adj, s, t)
+
+res = DFS(adj)  # Perform DFS
+print(" ".join(map(str, res)))
+```
+
+```c++
+#include <bits/stdc++.h>
+using namespace std;
+
+// Recursive function for DFS traversal
+void dfsRec(vector<vector<int>> &adj, vector<bool> &visited, int s, vector<int> &res)
+{
+
+    visited[s] = true;
+
+    res.push_back(s);
+
+    // Recursively visit all adjacent vertices
+    // that are not visited yet
+    for (int i : adj[s])
+        if (visited[i] == false)
+            dfsRec(adj, visited, i, res);
+}
+
+// Main DFS function that initializes the visited array
+// and call DFSRec
+vector<int> DFS(vector<vector<int>> &adj)
+{
+    vector<bool> visited(adj.size(), false);
+    vector<int> res;
+    dfsRec(adj, visited, 0, res);
+    return res;
+}
+
+// To add an edge in an undirected graph
+void addEdge(vector<vector<int>> &adj, int s, int t)
+{
+    adj[s].push_back(t);
+    adj[t].push_back(s);
+}
+
+int main()
+{
+    int V = 5;
+    vector<vector<int>> adj(V);
+
+    // Add edges
+    /*
+    1-- 2 -- 4
+    | / |
+    0   3
+    */
+    vector<vector<int>> edges = {{1, 2}, {1, 0}, {2, 0}, {2, 3}, {2, 4}};
+    for (auto &e : edges)
+        addEdge(adj, e[0], e[1]);
+
+    // Starting vertex for DFS
+    vector<int> res = DFS(adj); // Perform DFS starting from the source verte 0;
+
+    for (int i = 0; i < V; i++)
+        cout << res[i] << " ";  //Output: 0 1 2 3 4
+}
+
 ```
 
 **Example Problems**:  
