@@ -60,6 +60,33 @@
   - `size()`, `empty()`: O(1).
 - **Example**: `priority_queue<int> pq; pq.push(5); int top = pq.top();` (Min-heap: `priority_queue<int, vector<int>, greater<int>>`).
 - **LeetCode Use**: Top-k elements, greedy algorithms (e.g., Kth Largest Element, Merge K Sorted Lists).
+```cpp
+    // Use a max-heap to maintain the k smallest elements
+    std::priority_queue<int> max_heap; //LARGEST value is at TOP, hence max_heap; std::less<int> by default
+    for (int num : arr) {
+        max_heap.push(num); //PUSH
+        if (max_heap.size() > static_cast<size_t>(k)) {
+            max_heap.pop(); // Remove the largest element as LARGEST is on top
+        }
+    }
+
+    // Use a min-heap to maintain the k largest elements
+    std::priority_queue<int, std::vector<int>, std::greater<int>> min_heap; //MIN value on top; they are in incrasing order
+    for (int num : arr) {
+        min_heap.push(num);
+        if (min_heap.size() > static_cast<size_t>(k)) {
+            min_heap.pop(); // Remove the smallest element
+        }
+    }
+
+    // Extract elements from the heap
+    std::vector<int> result;
+    while (!min_heap.empty()) {
+        result.push_back(min_heap.top());
+        min_heap.pop();
+    }
+```
+
 
 ## 7. std::queue
 - **Description**: FIFO container.
