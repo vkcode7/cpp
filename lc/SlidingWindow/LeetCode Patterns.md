@@ -974,6 +974,46 @@ def process_intervals(intervals):
     
     return result
 ```
+
+```cpp
+#include <vector>
+#include <algorithm>
+
+// Definition of an interval
+struct Interval {
+    int start;
+    int end;
+    Interval(int s, int e) : start(s), end(e) {}
+};
+
+std::vector<Interval> process_intervals(std::vector<Interval>& intervals) {
+    // Handle empty input
+    if (intervals.empty()) {
+        return {};
+    }
+
+    // Sort intervals by start time
+    std::sort(intervals.begin(), intervals.end(), 
+              [](const Interval& a, const Interval& b) {
+                  return a.start < b.start;
+              });
+
+    // Process intervals (example: merge overlapping intervals)
+    std::vector<Interval> result;
+    for (const Interval& interval : intervals) {
+        // If result is empty or no overlap with the last interval in result
+        if (result.empty() || result.back().end < interval.start) {
+            result.push_back(interval); // Add the interval as is
+        } else {
+            // Merge overlapping intervals
+            result.back().end = std::max(result.back().end, interval.end);
+        }
+    }
+
+    return result;
+}
+```
+
 ### LeetCode Questions
 - .57. Insert Interval
 - .56. Merge Intervals
