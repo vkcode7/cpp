@@ -1,5 +1,6 @@
 ```bash
-# 125. Valid Palindrome
+# 125. Valid Palindrome [Super Easy, use isalnum(), tolower()]
+# 76. Minimum Window Substring Solution [Easy]
 # 392. Is Subsequence
 # 844. Backspace String Compare Solution
 # 26. Remove Duplicates from Sorted Array Solution
@@ -46,7 +47,9 @@ Here we introduce an interesting data structure. It's a deque with an interestin
 
 To achieve this property, we modify the push operation so that when we push an element into the deque, we first pop everything smaller than it out of the deque.
 
-# 125. Valid Palindrome
+# 125. Valid Palindrome [Super Easy]
+https://leetcode.com/problems/valid-palindrome/
+
 A phrase is a palindrome if, after converting all uppercase letters into lowercase letters and removing all non-alphanumeric characters, it reads the same forward and backward. Alphanumeric characters include letters and numbers.
 
 Given a string s, return true if it is a palindrome, or false otherwise.
@@ -55,41 +58,7 @@ Example 1:
 Input: s = "A man, a plan, a canal: Panama"
 Output: true
 Explanation: "amanaplanacanalpanama" is a palindrome.
-
-Example 2:
-Input: s = "race a car"
-Output: false
-Explanation: "raceacar" is not a palindrome.
-
-Example 3:
-Input: s = " "
-Output: true
-Explanation: s is an empty string "" after removing non-alphanumeric characters.
-Since an empty string reads the same forward and backward, it is a palindrome.
-
 ```cpp
-class Solution {
-public:
-    bool isPalindrome(string s) {
-        string data = "";
-        for(auto& x: s)
-        {
-            if(isalnum(x))
-                data += x;
-        }
-        
-        std::for_each(data.begin(), data.end(), 
-            [](char& c) { // modify in-place
-                c = std::tolower(static_cast<unsigned char>(c));
-        });
-        
-        int i, j;
-        for(i =0, j = data.length()-1; i < j && data[i] == data[j]; i++, j--);
-        
-        return ( i == j || i > j);           
-    }
-};
-
 class Solution {
 public:
     bool isPalindrome(string s) {
@@ -116,13 +85,11 @@ public:
     }
 };
 ```
-
-## Time and Space Complexity
 - **Time Complexity**: O(n), where `n` is the length of the string. We traverse the string once with two pointers, and each character is checked at most once.
 - **Space Complexity**: O(1), as we only use a constant amount of extra space for the pointers and temporary variables.
 
 
-# 76. Minimum Window Substring Solution 
+# 76. Minimum Window Substring Solution [Easy]
 https://leetcode.com/problems/minimum-window-substring/description/
 
 Given two strings `s` and `t`, return the minimum window substring of `s` such that every character in `t` (including duplicates) is included in the window. If there is no such substring, return the empty string `""`. The test cases guarantee that the answer is unique.
@@ -169,11 +136,12 @@ public:
         while (right < s.length()) {
             // Add character at right to window
             char c = s[right];
-            windowFreq[c]++;
             
             // If current character is in t and frequency matches
-            if (tFreq.count(c) && windowFreq[c] == tFreq[c]) {
-                formed++;
+            if (tFreq.count(c)){
+                windowFreq[c]++;
+                if(windowFreq[c] == tFreq[c])
+                    formed++;
             }
             
             // Try to shrink window from left
@@ -186,13 +154,13 @@ public:
                 
                 // Remove character at left from window
                 char leftChar = s[left];
-                windowFreq[leftChar]--;
-                
-                // If leftChar is in t and frequency drops below required
-                if (tFreq.count(leftChar) && windowFreq[leftChar] < tFreq[leftChar]) {
-                    formed--;
+                if (windowFreq.count(leftChar)){
+                    windowFreq[leftChar]--;
+                    // If leftChar is in t and frequency drops below required
+                    if (windowFreq[leftChar] < tFreq[leftChar])
+                        formed--;
                 }
-                
+                   
                 left++;
             }
             
@@ -206,12 +174,7 @@ public:
 ```
 
 ## Explanation
-1. **Edge Cases**:
-   - If `t` is empty or `s` is shorter than `t`, return `""`.
-2. **Frequency Map for `t`**:
-   - Create a hash map `tFreq` to store the frequency of each character in `t`.
-   - Track `required` as the number of unique characters in `t` that need to be matched.
-3. **Sliding Window**:
+1. **Sliding Window**:
    - Use two pointers: `left` and `right` to define the window.
    - Use a hash map `windowFreq` to track character frequencies in the current window.
    - Use `formed` to count how many characters in the window match the required frequency from `t`.
@@ -223,14 +186,14 @@ public:
      - Remove the character at `s[left]` from `windowFreq`.
      - If the character is in `t` and its frequency drops below the required count, decrement `formed`.
      - Move `left` forward.
-4. **Result**:
+2. **Result**:
    - If no valid window is found (`minLen == INT_MAX`), return `""`.
    - Otherwise, return the substring of `s` from `minLeft` with length `minLen`.
 
 
 
 # 392. Is Subsequence
-
+https://leetcode.com/problems/is-subsequence/description/
 Given two strings s and t, return true if s is a subsequence of t, or false otherwise.
 
 A subsequence of a string is a new string that is formed from the original string by deleting some (can be none) of the characters without disturbing the relative positions of the remaining characters. (i.e., "ace" is a subsequence of "abcde" while "aec" is not).
@@ -254,11 +217,10 @@ public:
             if(t[i] == s[j])
             {
                 j++; //look for next char next
+                if(j == s.length())
+                    return true;
             }
         }
-        
-        if(j == s.length())
-            return true;
         
         return false;
     }
