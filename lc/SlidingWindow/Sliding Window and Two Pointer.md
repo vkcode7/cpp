@@ -1,10 +1,10 @@
 ```bash
 # 125. Valid Palindrome [Super Easy, use isalnum(), tolower()]
 # 76. Minimum Window Substring Solution [Easy]
-# 392. Is Subsequence
-# 844. Backspace String Compare Solution
-# 26. Remove Duplicates from Sorted Array Solution
-# 567. Permutation in String - Hash Table, Two Pointers, String, Sliding Window
+# 392. Is Subsequence [Easy]
+# 844. Backspace String Compare Solution [Super Easy with Stack]
+# 26. Remove Duplicates from Sorted Array Solution [Super Easy]
+# 567. Permutation in String - Hash Table, Two Pointers, String, Sliding Window [Easy]
 # 3. Longest Substring Without Repeating Characters - Hash Table, String, Sliding Window
 # 205. Isomorphic Strings - Hash Table, String
 # 5. Longest Palindromic Substring - Two Pointers, String, Dynamic Programming
@@ -192,7 +192,7 @@ public:
 
 
 
-# 392. Is Subsequence
+# 392. Is Subsequence [Easy]
 https://leetcode.com/problems/is-subsequence/description/
 Given two strings s and t, return true if s is a subsequence of t, or false otherwise.
 
@@ -202,10 +202,6 @@ A subsequence of a string is a new string that is formed from the original strin
 Example 1:
 Input: s = "abc", t = "ahbgdc"
 Output: true
-
-Example 2:
-Input: s = "axc", t = "ahbgdc"
-Output: false
 ```
 ```cpp
 class Solution {
@@ -228,10 +224,9 @@ public:
 ```
 
 
+# 844. Backspace String Compare Solution [Super Easy with Stack]
+https://leetcode.com/problems/backspace-string-compare/description/
 
-# 844. Backspace String Compare Solution
-
-## Problem Description
 Given two strings `s` and `t`, return `true` if they are equal when both are typed into empty text editors, where `'#'` represents a backspace character. A backspace deletes the character before it (if any).
 
 ### Example
@@ -254,7 +249,7 @@ public:
         {
             if(x == '#') {
                 if(!st.empty())
-                st.pop();
+                    st.pop();
             }
             else
                 st.push(x);
@@ -298,32 +293,14 @@ private:
 };
 ```
 
-## Explanation
-1. **Processing Strings**:
-   - Use a helper function `processString` to process each string by handling backspace characters.
-   - Iterate through each character in the string:
-     - If the character is not `'#'`, append it to the result string.
-     - If the character is `'#'` and the result string is not empty, remove the last character (simulate backspace).
-2. **Comparison**:
-   - Process both input strings `s` and `t` using `processString`.
-   - Compare the processed strings for equality.
-3. **Efficient Approach**:
-   - The solution builds the final strings by processing each character once, handling backspaces in a single pass.
-
 ## Time and Space Complexity
 - **Time Complexity**: O(n + m), where `n` and `m` are the lengths of strings `s` and `t`, respectively. Each string is processed once.
 - **Space Complexity**: O(n + m) in the worst case, for storing the processed strings. (Note: A more space-efficient solution using two pointers exists, but this approach is clearer and still meets constraints.)
 
-## Edge Cases
-- Empty strings: Both `s = ""` and `t = ""` return `true`.
-- Only backspaces: `s = "##"` and `t = "##"` return `true` (both process to empty).
-- Backspace with no characters: `s = "a#"` and `t = ""` return `true` (both process to empty).
-- Multiple backspaces: `s = "ab##"` and `t = "c#d#"` return `true` (both process to empty).
-- Normal strings: `s = "abc"` and `t = "abc"` return `true`.
 
-# 26. Remove Duplicates from Sorted Array Solution
+# 26. Remove Duplicates from Sorted Array Solution [Super Easy]
+https://leetcode.com/problems/remove-duplicates-from-sorted-array/
 
-## Problem Description
 Given a sorted array `nums`, remove the duplicates in-place such that each element appears only once and return the new length. Do not allocate extra space for another array; you must do this by modifying the input array in-place with O(1) extra memory.
 
 ### Example
@@ -337,6 +314,8 @@ Explanation: The function returns length = 2, with the first two elements of num
 Below is the C++ solution to remove duplicates from a sorted array in-place.
 
 ```cpp
+//T&S C: O(n), O(1)
+
 class Solution {
 public:
     int removeDuplicates(vector<int>& nums) {
@@ -345,7 +324,7 @@ public:
         for(int i =1; i < nums.size(); i++)
         {
             if(nums[i] == nums[i-1]) {
-                nums.erase(nums.begin()+i);
+                nums.erase(nums.begin()+i); //element at i-th index will be removed
                 k++;
                 i--;
             }
@@ -365,8 +344,7 @@ public:
         int writePos = 1; // Position to write the next unique element
         for (int i = 1; i < nums.size(); ++i) {
             if (nums[i] != nums[i - 1]) {
-                nums[writePos] = nums[i];
-                writePos++;
+                nums[writePos++] = nums[i];
             }
         }
         
@@ -374,24 +352,6 @@ public:
     }
 };
 ```
-
-## Explanation
-1. **Edge Case**:
-   - If the array is empty, return 0.
-2. **Two-Pointer Approach**:
-   - Use `writePos` to track the position where the next unique element should be placed (starts at 1 since the first element is always unique).
-   - Iterate through the array starting from index 1 (`i`).
-   - If the current element `nums[i]` is different from the previous element `nums[i - 1]`, it is unique:
-     - Copy `nums[i]` to `nums[writePos]`.
-     - Increment `writePos`.
-3. **In-Place Modification**:
-   - The array is modified such that all unique elements are moved to the front.
-   - Elements beyond `writePos` are irrelevant.
-4. **Return**: The new length of the array with duplicates removed (`writePos`).
-
-## Time and Space Complexity
-- **Time Complexity**: O(n), where `n` is the length of the array, as we traverse the array once.
-- **Space Complexity**: O(1), as we only use a constant amount of extra space for pointers.
 
 ## Edge Cases
 - Empty array: Return 0.
@@ -401,7 +361,7 @@ public:
 - Large sorted array with duplicates: Efficiently handles all cases.
 
 
-# 567. Permutation in String - Hash Table, Two Pointers, String, Sliding Window
+# 567. Permutation in String - Hash Table, Two Pointers, String, Sliding Window [Easy]
 https://leetcode.com/problems/permutation-in-string/description/
 
 Given two strings s1 and s2, return true if s2 contains a permutation of s1, or false otherwise.
