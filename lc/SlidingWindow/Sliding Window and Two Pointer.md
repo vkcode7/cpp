@@ -9,8 +9,8 @@
 # 205. Isomorphic Strings - Hash Table, String
 # 5. Longest Palindromic Substring - Two Pointers, String, Dynamic Programming
 # 451. Sort Characters By Frequency - Hash Table, Sorting, Heap (Priority Queue), Bucket Sort, Counting [Easy using a map and vector]
+# 2262. Substring with Largest Variance - Dynamic Programming [Hard, Revisit]
 
-# 2262. Substring with Largest Variance - Dynamic Programming
 # 394. Decode String - Stack, Recursion
 # 443. String Compression - Two Pointers
 # 387. First Unique Character in a String - Hash Table, Queue
@@ -839,10 +839,8 @@ The bucket sort approach is more efficient for large strings but slightly more c
 
 
 # 2262. Substring with Largest Variance - Dynamic Programming
+https://leetcode.com/problems/substring-with-largest-variance/description/
 
-This document describes the solution to the "Substring with Largest Variance" problem (LeetCode #2262).
-
-## Problem Description
 The variance of a string is defined as the largest difference between the number of occurrences of any two distinct characters in the string. Given a string `s`, return the largest variance possible among all substrings of `s`. A substring is a contiguous sequence of characters within `s`.
 
 ### Example
@@ -949,11 +947,9 @@ public:
 A brute-force approach checking all substrings and calculating variance for each is infeasible (O(n^2 * k)). The modified Kadane’s algorithm is optimal for the given constraints, balancing efficiency and correctness.
 
 
-# 394. Decode String - Stack, Recursion
+# 394. Decode String - Stack, Recursion [Easy]
+https://leetcode.com/problems/decode-string/description/
 
-This document describes the solution to the "Decode String" problem (LeetCode #394).
-
-## Problem Description
 Given an encoded string, return its decoded string. The encoding rule is: `k[encoded_string]`, where the `encoded_string` inside the square brackets is repeated exactly `k` times. `k` is a positive integer. The input string is guaranteed to be valid, with no extra white spaces, well-formed square brackets, and no digits in the original decoded string.
 
 ### Example
@@ -998,114 +994,85 @@ The problem can be solved using a stack-based approach to handle nested brackets
 ```cpp
 class Solution {
 public:
+    string reverse(string s)
+    {
+        string r = "";
+
+        for(int i = s.size()-1; i >= 0; i--)
+        {
+            r = r + s.at(i);
+        }
+
+        return r;
+    }
+
+    string repeat(string s, int k)
+    {
+        if (k < 2)
+            return s;
+
+        string r = "";
+        for(int i = 0; i < k; i++)
+        {
+            r += s;
+        }
+
+        return r;
+    }
+
     string decodeString(string s) {
         stack<char> st;
         
-        string enc;
-        for(auto x : s)
+        for(auto& c: s)
         {
-            if(x == ']')
+            if (c == ']')
             {
                 string sub = "";
-                while(st.top()!='[')
+                while(!st.empty() && st.top() != '[')
                 {
-                    sub += st.top();
+                    auto tc = st.top();
                     st.pop();
-                }  
-                st.pop(); //throw the '['
-                
-                //get the number now
-                int tens = 1;
+                    sub += tc;
+                }
+
+                //'['
+                st.pop(); //remove [
+                //3[a]2[bc]
+                //no more alphas
                 int num = 0;
+                int tens = 1;
                 while(!st.empty() && isdigit(st.top()))
                 {
-                    char dig = st.top();
-                    num = num + (tens * (dig - '0'));
+                    char cdigit = st.top();
+                    int digit = cdigit - '0';
+
+                    num = num + (digit * tens);
                     tens = tens * 10;
                     st.pop();
                 }
-                //now dump it back in stack
-                string encsub = "";
-                //reverse sub
-                string revsub = "";
-                 for(int j = sub.length()-1; j >= 0; j--)
-                    revsub += sub[j];
-                for(int i = 0; i < num; i++)
-                {
-                    encsub += revsub;
-                }
-                
-                for(auto y: encsub)
-                    st.push(y);
+                string rev = reverse(sub);
+                string enc = repeat(rev, num);
+
+                for(auto cs: enc)
+                    st.push(cs);
             }
             else
-                st.push(x);   
+            {
+                st.push(c);
+            }
         }
-                
+        
+        string enc = "";
         while(!st.empty())
         {
             enc += st.top();
             st.pop();  
         }  
-        string revenc = "";
-        for(int j = enc.length()-1; j >= 0; j--)
-            revenc += enc[j];
-            
-        return revenc;
+
+        return reverse(enc);
     }
 };
 ```
-
-```cpp
-class Solution {
-public:
-    string decodeString(string s) {
-        stack<int> countStack;
-        stack<string> stringStack;
-        string currString = "";
-        int currCount = 0;
-        
-        for (char c : s) {
-            if (isdigit(c)) {
-                currCount = currCount * 10 + (c - '0'); // Build multi-digit number
-            } else if (c == '[') {
-                countStack.push(currCount);
-                stringStack.push(currString);
-                currCount = 0;
-                currString = "";
-            } else if (c == ']') {
-                string temp = currString;
-                currString = stringStack.top();
-                stringStack.pop();
-                int count = countStack.top();
-                countStack.pop();
-                for (int i = 0; i < count; i++) {
-                    currString += temp;
-                }
-            } else {
-                currString += c; // Append letter to current string
-            }
-        }
-        
-        return currString;
-    }
-};
-```
-
-### How It Works
-- **Stacks**:
-  - `countStack`: Stores the repetition counts for each bracket.
-  - `stringStack`: Stores the partially decoded strings before entering a new bracket.
-- **Processing**:
-  - Digits: Accumulate to form multi-digit numbers (e.g., "10" as 10).
-  - `[`: Save the current state (count and string) and reset for the new nested section.
-  - Letters: Append to the current string.
-  - `]`: Pop the count and previous string, repeat the current string, and append to the previous string.
-- **Edge Cases**:
-  - Nested brackets: Handled by the stack, which preserves the hierarchy.
-  - No brackets: Treated as a simple string.
-  - Multi-digit numbers: Built correctly by multiplying by 10.
-- **Result**: The final `currString` is the fully decoded string.
 
 ### Time and Space Complexity
 - **Time Complexity**: O(n * maxK), where `n` is the length of the input string and `maxK` is the maximum repetition count (up to 300). Each character is processed once, but string repetition may amplify the output size.
@@ -1118,9 +1085,8 @@ public:
    - Space Complexity: O(m) for the recursion stack
 The stack-based approach is preferred for its iterative nature and clarity in handling nested structures.
 
-# 443. String Compression - Two Pointers
-
-This document describes the solution to the "String Compression" problem (LeetCode #443).
+# 443. String Compression - Two Pointers [Easy]
+https://leetcode.com/problems/string-compression/description/
 
 ## Problem Description
 Given an array of characters `chars`, compress it using the following algorithm:
@@ -1161,45 +1127,6 @@ The problem can be solved by iterating through the array, counting consecutive r
 3. Return the final `write` position as the new length.
 
 ### Example Implementation (C++)
-```cpp
-class Solution {
-public:
-    int compress(vector<char>& chars) {
-        queue<char> q;
-        
-        if(chars.size() <= 1)
-            return chars.size();
-        
-        for(int i = 0; i < chars.size(); i++)
-        {
-            int count = 1;
-            
-            q.push(chars[i]);
-            while(i+1 < chars.size() && chars[i] == chars[i+1]) {
-                count++;
-                i++;
-            }
-            
-            if(count > 1)
-            {
-                string scount = to_string(count);
-                for(auto c: scount)
-                    q.push(c);
-            }  
-        }
-        
-        chars.clear();
-        while(!q.empty())
-        {
-            chars.push_back(q.front());
-            q.pop();
-        }
-        
-        return chars.size();
-    }
-};
-```
-
 ```cpp
 class Solution {
 public:
