@@ -1,5 +1,29 @@
 # STL Containers and Classes for LeetCode
 
+## 1. std::string
+- **Initialization:** `string s = "abc";
+- **Description**: string.
+- **Key Methods**: s.size() or s.length() for size - they are same, s.empty(), s.clear, s.at(2), s1.compare(s2), s1.append(s2)
+  ```cpp
+    std::string str = "abcdef";
+    str.erase(2, 2); // Removes "cd" from str, str is now "abef"
+  
+    std::string str = "abcdef";
+    str.erase(2, 2); // Removes "cd" from str, str is now "abef"
+
+    std::string str = "Hello World";
+    size_t found = str.find("World"); // found is 6
+
+    std::string str = "abfg";
+    str.insert(2, "cde"); // str is now "abcdefg"
+
+    std::string str = "abcdef";
+    str.replace(2, 3, "xyz"); // str is now "abxyzf"
+
+    std::string str = "Hello World";
+    std::string sub = str.substr(6, 5); // sub is "World"
+  ```
+
 ## 1. std::vector
 - **Initialization:** `vector<int> v = {1, 2, 3}; or vector<int> v(n, 0);`
 - **Description**: Dynamic array with random access.
