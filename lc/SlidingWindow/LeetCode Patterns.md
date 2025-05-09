@@ -840,55 +840,67 @@ Many times bottom up is preferred since you can reduce the space complexity if y
 - Reduce time complexity from exponential to polynomial
 
 **Benefit**: Reduces time complexity by memoizing results of subproblems, avoiding redundant computations.  
-  
-```py
-"""
-Top-down recursive Fibonacci without memoization.
-Time: O(2^N) | Space: O(N)
-"""
-def fib_top_down(n):
-    if n == 0:
-        return 0
-    if n == 1:
-        return 1
-    return fib_top_down(n-1) + fib_top_down(n-2)
 
-"""
-Top-down recursive Fibonacci with memoization.
-Time: O(N) | Space: O(N)
-"""
-def fib_top_down_memo(n, memo={}):
-    if n in memo:
-        return memo[n]
-    if n == 0:
-        return 0
-    if n == 1:
-        return 1
-    memo[n] = fib_top_down_memo(n-1, memo) + fib_top_down_memo(n-2, memo)
-    return memo[n]
-"""
-Bottom-up Fibonacci using an array.
-Time: O(N) | Space: O(N)
-"""
-def fib_bottom_up_array(n):
-    dp = [0] * (n + 1)
-    dp[1] = 1
-    for i in range(2, n + 1):
-        dp[i] = dp[i - 1] + dp[i - 2]
-    return dp[n]
-"""
-Bottom-up Fibonacci using 2 variables.
-Time: O(N) | Space: O(1)
-"""
-def fib_bottom_up(n):
-    prev2, prev1 = 0, 1
+```cpp
+#include <vector>
+#include <unordered_map>
+
+// Top-down recursive Fibonacci without memoization
+// Time: O(2^n), Space: O(n) due to recursion stack
+long long fib_top_down(int n) {
+    if (n == 0) return 0;
+    if (n == 1) return 1;
+    return fib_top_down(n - 1) + fib_top_down(n - 2);
+}
+
+// Top-down recursive Fibonacci with memoization
+// Time: O(n), Space: O(n) for memoization and recursion stack
+long fib_top_down_memo(int n, std::unordered_map<int, long>& memo) {
+    if (memo.find(n) != memo.end()) {
+        return memo[n];
+    }
+    if (n == 0) return 0;
+    if (n == 1) return 1;
+    memo[n] = fib_top_down_memo(n - 1, memo) + fib_top_down_memo(n - 2, memo);
+    return memo[n];
+}
+
+// Wrapper function to initialize memoization map
+long fib_top_down_memo(int n) {
+    std::unordered_map<int, long> memo;
+    return fib_top_down_memo(n, memo);
+}
+
+// Bottom-up Fibonacci using an array
+// Time: O(n), Space: O(n)
+long fib_bottom_up_array(int n) {
+    if (n == 0) return 0;
+    if (n == 1) return 1;
     
-    for i in range(2, n + 1):
-        fib = prev2 + prev1
-        prev2 = prev1
-        prev1 = fib
-    return prev1
+    std::vector<long> dp(n + 1, 0);
+    dp[1] = 1;
+    for (int i = 2; i <= n; ++i) {
+        dp[i] = dp[i - 1] + dp[i - 2];
+    }
+    return dp[n];
+}
+
+// Bottom-up Fibonacci using two variables
+// Time: O(n), Space: O(1)
+long long fib_bottom_up(int n) {
+    if (n == 0) return 0;
+    if (n == 1) return 1;
+    
+    long long prev2 = 0, prev1 = 1;
+    for (int i = 2; i <= n; ++i) {
+        long long fib = prev2 + prev1;
+        prev2 = prev1;
+        prev1 = fib;
+    }
+    return prev1;
+}
 ```
+
 **Example Problems**:  
 - .5. Longest Palindromic Substring 
 - .0/1 Knapsack (Not on LeetCode, but common in interviews)
