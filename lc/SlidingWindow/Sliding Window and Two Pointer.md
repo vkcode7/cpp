@@ -1787,9 +1787,7 @@ Input: height = [1,8,6,2,5,4,8,3,7]
 Output: 49
 Explanation: The maximum area is formed by lines at indices 1 and 8 (heights 8 and 7), with area = min(8,7) * (8-1) = 49.
 ```
-
-<img src="../assets/question_11.jpg” width="20%">
-
+<img src="../assets/question_11.jpg" width="40%">
 
 ## Solution
 Below is the C++ solution to find the maximum area of water using a two-pointer approach.
