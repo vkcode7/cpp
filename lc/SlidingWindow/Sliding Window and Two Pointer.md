@@ -16,9 +16,9 @@
 # 273. Integer to English Words [Easy]
 # 283. Move Zeroes Solution - Two Pointers [Very Easy]
 # 88. Merge Sorted Array Solution - Two Pointers [Easy]
+# 239. Sliding Window Maximum - Queue, Sliding Window, Heap (Priority Queue), Monotonic Queue - [Medium Revisit]
+# 299. Bulls and Cows Solution [Easy]
 
-# 239. Sliding Window Maximum - Queue, Sliding Window, Heap (Priority Queue), Monotonic Queue
-# 299. Bulls and Cows Solution
 # 11. Container With Most Water Solution
 ```
 
