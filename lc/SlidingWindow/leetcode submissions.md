@@ -7,6 +7,7 @@
 # 20. Valid Parentheses Solution [Easy]
 # 242. Valid Anagram [Super Easy]
 # 70. Climbing Stairs - DP [Easy] Step(N) = Step(N-1) + Step(N-2)
+
 # 1004. Max Consecutive Ones III
 # 424. Longest Repeating Character Replacement
 # 904. Fruit Into Baskets Solution
@@ -14,6 +15,19 @@
 # 1480. Running Sum of 1d Array
 # 238. Product of Array Except Self
 ```
+
+LeetCode Submissions = 8/14
+BackTracking = 0/2
+Binary Search = 0/3
+Dynamic Programming = 0/11
+Graphs = 0/6
+LinkedList = 0/9
+Median and Moving Avg = 0/6
+Sliding Window = 17/20
+Binary Trees = 0/12
+Matrix = 0/6
+
+Total = 25/89
 
 # 1431. Kids With the Greatest Number of Candies [Super Easy] via Kadane
 https://leetcode.com/problems/kids-with-the-greatest-number-of-candies/description/
