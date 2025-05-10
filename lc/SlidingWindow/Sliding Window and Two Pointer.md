@@ -12,11 +12,11 @@
 # 2262. Substring with Largest Variance - Dynamic Programming [Hard, Revisit]
 # 394. Decode String - Stack, Recursion [Easy]
 # 443. String Compression - Two Pointers [Easy]
+# 387. First Unique Character in a String - Hash Table, Queue [Very Easy]
+# 273. Integer to English Words [Easy]
+# 283. Move Zeroes Solution - Two Pointers [Very Easy]
+# 88. Merge Sorted Array Solution - Two Pointers [Easy]
 
-# 387. First Unique Character in a String - Hash Table, Queue
-# 273. Integer to English Words
-# 283. Move Zeroes Solution - Two Pointers
-# 88. Merge Sorted Array Solution - Two Pointers
 # 239. Sliding Window Maximum - Queue, Sliding Window, Heap (Priority Queue), Monotonic Queue
 # 299. Bulls and Cows Solution
 # 11. Container With Most Water Solution
@@ -1190,12 +1190,9 @@ public:
   The in-place approach is preferred as it meets the problem’s requirement for in-place modification and minimizes space usage.
 
 
-# 387. First Unique Character in a String - Hash Table, Queue
+# 387. First Unique Character in a String - Hash Table, Queue [Very Easy]
+https://leetcode.com/problems/first-unique-character-in-a-string/
 
-
-This document describes the solution to the "First Unique Character in a String" problem (LeetCode #387).
-
-## Problem Description
 Given a string `s`, find the first non-repeating character in it and return its index. If no such character exists, return `-1`.
 
 ### Example
@@ -1230,39 +1227,6 @@ The problem can be solved using a frequency map to count character occurrences, 
 class Solution {
 public:
     int firstUniqChar(string s) {
-        if(s.empty())
-            return -1;
-        
-        unordered_map<char, int> unique;
-        int index = 0;
-        for(auto x : s)
-        {
-            if(unique.find(x) != unique.end())
-                unique[x] = -1;
-            else
-                unique[x] = index;
-            
-            index++;
-        }
-        
-        index = s.size();
-        for(auto it : unique)
-        {
-            if(it.second == -1)
-                continue;
-            
-            index = min(index, it.second);
-        }
-        
-        return index == s.size() ? -1 : index;
-    }
-};
-```
-
-```cpp
-class Solution {
-public:
-    int firstUniqChar(string s) {
         // Frequency map for lowercase letters
         vector<int> freq(26, 0);
         
@@ -1284,12 +1248,6 @@ public:
 ```
 
 ### How It Works
-- **Frequency Map**:
-  - Use a vector of size 26 (for lowercase letters) to store the count of each character.
-  - Iterate through the string and increment the count for each character (`c - 'a'` maps 'a' to  créditos: 0, 'b' to 1, etc.).
-- **Second Pass**:
-  - Iterate through the string and check the frequency of each character.
-  - Return the index of the first character with a frequency of 1.
 - **Edge Cases**:
   - Single character: Returns 0 (frequency is 1).
   - No unique character: Returns -1 (e.g., "aabb").
@@ -1310,11 +1268,9 @@ public:
 The vector-based approach is preferred for its simplicity and guaranteed O(1) space due to the fixed alphabet size.
 
 
-# 273. Integer to English Words
+# 273. Integer to English Words [Easy]
+https://leetcode.com/problems/integer-to-english-words/description/
 
-This document describes the solution to the "Integer to English Words" problem (LeetCode #273).
-
-## Problem Description
 Convert a non-negative integer `num` to its English words representation.
 
 ### Example
@@ -1481,7 +1437,7 @@ private:
 The iterative approach is preferred for its simplicity and constant space usage, avoiding recursion while clearly handling each group.
 
 
-# 283. Move Zeroes Solution - Two Pointers
+# 283. Move Zeroes Solution - Two Pointers [Very Easy]
 
 ## Problem Description
 Given an integer array `nums`, move all `0`'s to the end of it while maintaining the relative order of the non-zero elements. The operation must be done in-place without making a copy of the array.
@@ -1499,59 +1455,22 @@ Below is the C++ solution to move all zeroes to the end of the array.
 class Solution {
 public:
     void moveZeroes(vector<int>& nums) {
-        int np = 0;
-        int n = nums.size();
-        for(int zp = 0;zp < n-1;)
-        {
-            if(nums[zp] != 0) {
-                zp++;
-                continue;
-            }
-            
-            //zp
-            for(np = zp+1; np < n; np++)
-            {
-                if(nums[np])
-                {
-                    swap(nums[zp], nums[np]);
-                    zp++;
-                    break;
-                }                
-            } 
-            
-            if(np == n) // no more non zero left
-                break;
-        }
-    }
-};
-
-class Solution {
-public:
-    void moveZeroes(vector<int>& nums) {
         // Step 1: Move all non-zero elements to the front
-        int nonZeroPos = 0;
-        for (int i = 0; i < nums.size(); ++i) {
-            if (nums[i] != 0) {
-                nums[nonZeroPos++] = nums[i];
-            }
+        int write = 0;
+        for(int i=0; i < nums.size(); i++)
+        {
+            if(nums[i] != 0 )
+                nums[write++] = nums[i];
         }
-        
+
         // Step 2: Fill the rest with zeroes
-        while (nonZeroPos < nums.size()) {
-            nums[nonZeroPos++] = 0;
-        }
+        while(write < nums.size())
+            nums[write++] = 0;
     }
 };
+
+
 ```
-
-## Explanation
-1. **Two-Pointer Approach**:
-   - Use `nonZeroPos` to track the position where the next non-zero element should be placed.
-   - Iterate through the array, copying non-zero elements to `nonZeroPos` and incrementing it.
-2. **Fill Zeroes**:
-   - After all non-zero elements are moved to the front, fill the remaining positions from `nonZeroPos` to the end with zeroes.
-3. **In-Place**: The solution modifies the array directly without using extra space.
-
 ## Time and Space Complexity
 - **Time Complexity**: O(n), where `n` is the length of the array. We traverse the array once to move non-zero elements and once to fill zeroes.
 - **Space Complexity**: O(1), as we only use a constant amount of extra space.
@@ -1563,9 +1482,9 @@ public:
 - Single element: No change needed.
 
 
-# 88. Merge Sorted Array Solution - Two Pointers
+# 88. Merge Sorted Array Solution - Two Pointers [Easy]
+https://leetcode.com/problems/merge-sorted-array/description/
 
-## Problem Description
 Given two sorted integer arrays `nums1` and `nums2`, merge `nums2` into `nums1` as one sorted array. The number of elements initialized in `nums1` and `nums2` are `m` and `n` respectively. You may assume that `nums1` has a size equal to `m + n` such that it has enough space to hold additional elements from `nums2`. The merge must be done in-place.
 
 ### Example
@@ -1581,48 +1500,13 @@ Below is the C++ solution to merge two sorted arrays in  `nums1` and `nums2` in-
 class Solution {
 public:
     void merge(vector<int>& nums1, int m, vector<int>& nums2, int n) {
-        if(m == 0)
-        {
-            int i = 0;
-            for(auto x : nums2)
-                nums1[i++] = x;
-            
-            return;
-        }
-        
-        //make a copy
-        vector<int> cp(nums1.begin(), nums1.begin() + m);
-        
-        int m1 = 0, n1 = 0, k = 0;
-        while(m1 < m && n1 < n)
-        {
-            if(cp[m1] <= nums2[n1]) {
-                nums1[k++] = cp[m1++];
-            }
-            else
-                nums1[k++] = nums2[n1++];
-        }
-        
-        while(m1 < m)
-            nums1[k++] = cp[m1++];
-        
-        while(n1 < n)
-            nums1[k++] = nums2[n1++];
-            
-        return;
-    }
-};
-
-class Solution {
-public:
-    void merge(vector<int>& nums1, int m, vector<int>& nums2, int n) {
         int i = m - 1; // Pointer for nums1
         int j = n - 1; // Pointer for nums2
         int k = m + n - 1; // Pointer for merged array
         
         // Merge from the end to avoid overwriting
         while (j >= 0) {
-            if (i >= 0 && nums1[i] > nums2[j]) {
+            if (i >= 0 && nums1[i] > nums2[j]) {  //<=   NOTE i>=0 
                 nums1[k--] = nums1[i--];
             } else {
                 nums1[k--] = nums2[j--];
