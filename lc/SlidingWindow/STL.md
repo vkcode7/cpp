@@ -1,5 +1,14 @@
 # STL Containers and Classes for LeetCode
 
+## Key methods:
+- isalpha(c)
+- isdigit(c)
+- isalnum(c) [a-z. A-Z, 0-9]
+- to_string(156) => "156"
+- int stoi(s)
+- long stol(s)
+- long long stoll(s)
+
 ## 1. std::string
 - **Initialization:** `string s = "abc";
 - **Description**: string.
