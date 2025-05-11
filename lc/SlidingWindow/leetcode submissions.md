@@ -15,7 +15,7 @@
 # 1480. Running Sum of 1d Array
 # 238. Product of Array Except Self
 ```
-
+```matlib
 LeetCode Submissions = 8/14
 BackTracking = 0/2
 Binary Search = 0/3
@@ -23,11 +23,12 @@ Dynamic Programming = 0/11
 Graphs = 0/6
 LinkedList = 0/9
 Median and Moving Avg = 0/6
-Sliding Window = 17/20
+Sliding Window = 20/20
 Binary Trees = 0/12
 Matrix = 0/6
 
-Total = 25/89
+Total = 28/89
+```
 
 # 1431. Kids With the Greatest Number of Candies [Super Easy] via Kadane
 https://leetcode.com/problems/kids-with-the-greatest-number-of-candies/description/
