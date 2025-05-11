@@ -15,7 +15,7 @@
 # 238. Product of Array Except Self [Easy]
 ```
 ```matlib
-LeetCode Submissions = 8/14
+LeetCode Submissions = 14/14
 BackTracking = 0/2
 Binary Search = 3/3
 Dynamic Programming = 0/11
@@ -26,7 +26,7 @@ Sliding Window = 20/20
 Binary Trees = 0/12
 Matrix = 0/6
 
-Total = 31/89
+Total = 37/89
 ```
 
 # 1431. Kids With the Greatest Number of Candies [Super Easy] via Kadane
