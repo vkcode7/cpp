@@ -9,7 +9,7 @@
 # 205. Isomorphic Strings - Hash Table, String
 # 5. Longest Palindromic Substring - Two Pointers, String, Dynamic Programming
 # 451. Sort Characters By Frequency - Hash Table, Sorting, Heap (Priority Queue), Bucket Sort, Counting [Easy using a map and vector]
-# 2262. Substring with Largest Variance - Dynamic Programming [Hard, Revisit]
+# [2262. Substring with Largest Variance - Dynamic Programming [Revisit]](#2262.-Substring-with-Largest-Variance---Dynamic-Programming [Revisit])
 # 394. Decode String - Stack, Recursion [Easy]
 # 443. String Compression - Two Pointers [Easy]
 # 387. First Unique Character in a String - Hash Table, Queue [Very Easy]
@@ -838,7 +838,7 @@ public:
 The bucket sort approach is more efficient for large strings but slightly more complex to implement.
 
 
-# 2262. Substring with Largest Variance - Dynamic Programming
+# 2262. Substring with Largest Variance - Dynamic Programming [Revisit]
 https://leetcode.com/problems/substring-with-largest-variance/description/
 
 The variance of a string is defined as the largest difference between the number of occurrences of any two distinct characters in the string. Given a string `s`, return the largest variance possible among all substrings of `s`. A substring is a contiguous sequence of characters within `s`.
