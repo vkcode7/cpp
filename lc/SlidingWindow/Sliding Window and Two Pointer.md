@@ -18,8 +18,7 @@
 # 88. Merge Sorted Array Solution - Two Pointers [Easy]
 # 239. Sliding Window Maximum - Queue, Sliding Window, Heap (Priority Queue), Monotonic Queue - [Medium Revisit]
 # 299. Bulls and Cows Solution [Easy]
-
-# 11. Container With Most Water Solution
+# 11. Container With Most Water Solution [Medium]
 ```
 
 # How to use Sliding Window Technique?
