@@ -1,11 +1,11 @@
 ```bash
 # 21. Merge Two Sorted Lists [Super Easy]
-# 142. Linked List Cycle II - Hash Table, Linked List, Two Pointers [Easy]
+# 142. Linked List Cycle II - Hash Table, Linked List, Two Pointers [Medium]
 # 2. Add Two Numbers - Linked List, Recursion [Easy]
 # 876. Middle of the Linked List - Linked List, Two Pointers [Easy]
 # 206. Reverse Linked List - Linked List, Recursion [Easy]
-# 92. Reverse Linked List II
-# 234. Palindrome Linked List
+# 92. Reverse Linked List II - [Medium, Revisit]
+# 234. Palindrome Linked List [Easy]
 # 138. Copy List with Random Pointer - Hash Table, Linked List
 # 430. Flatten a Multilevel Doubly Linked List - Linked List, Depth-First Search, Doubly-Linked List
 ```
@@ -86,7 +86,7 @@ public:
 };
 ```
 
-# 142. Linked List Cycle II - Hash Table, Linked List, Two Pointers
+# 142. Linked List Cycle II - Hash Table, Linked List, Two Pointers [Medium]
 Given the head of a linked list, return the node where the cycle begins. If there is no cycle, return null.
 
 There is a cycle in a linked list if there is some node in the list that can be reached again by continuously following the next pointer. Internally, pos is used to denote the index of the node that tail's next pointer is connected to (0-indexed). It is -1 if there is no cycle. Note that pos is not passed as a parameter.
@@ -168,7 +168,7 @@ public:
 };
 ```
 
-# 2. Add Two Numbers - Linked List, Recursion
+# 2. Add Two Numbers - Linked List, Recursion [Easy]
 
 This document describes the solution to the "Add Two Numbers" problem (LeetCode #2).
 
@@ -300,7 +300,7 @@ public:
 - **Space Complexity**: O(max(N, M)), for the output list containing the result.
 
 
-# 876. Middle of the Linked List - Linked List, Two Pointers
+# 876. Middle of the Linked List - Linked List, Two Pointers [Easy]
 
 This document describes the solution to the "Middle of the Linked List" problem (LeetCode #876).
 
@@ -391,7 +391,7 @@ public:
 The Fast and Slow Pointer approach is preferred as it requires only one pass through the list.
 
 
-# 206. Reverse Linked List - Linked List, Recursion
+# 206. Reverse Linked List - Linked List, Recursion [Easy]
 
 This document describes the solution to the "Reverse Linked List" problem (LeetCode #206).
 
@@ -506,7 +506,7 @@ public:
 The iterative approach is preferred for its constant space complexity and simplicity.
 
 
-# 92. Reverse Linked List II Solution
+# 92. Reverse Linked List II [Medium, Revisit]
 
 ## Problem Description
 Given the head of a singly linked list and two integers `left` and `right` where `1 <= left <= right <= length of list`, reverse the nodes of the list from position `left` to position `right`, and return the reversed list.
@@ -610,7 +610,7 @@ public:
 - Full list reversal: Works when `left = 1` and `right = length`.
 
 
-# 234. Palindrome Linked List Solution
+# 234. Palindrome Linked List [Easy]
 
 ## Problem Description
 Given the head of a singly linked list, determine if it is a palindrome. A linked list is a palindrome if it reads the same forward and backward.
