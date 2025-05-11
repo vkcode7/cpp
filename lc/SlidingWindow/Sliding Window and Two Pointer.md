@@ -9,7 +9,7 @@
 # 205. Isomorphic Strings - Hash Table, String
 # 5. Longest Palindromic Substring - Two Pointers, String, Dynamic Programming
 # 451. Sort Characters By Frequency - Hash Table, Sorting, Heap (Priority Queue), Bucket Sort, Counting [Easy using a map and vector]
-# [2262. Substring with Largest Variance - Dynamic Programming [Revisit]](#2262.-Substring-with-Largest-Variance---Dynamic-Programming [Revisit])
+# 2262. Substring with Largest Variance - Dynamic Programming [Revisit]
 # 394. Decode String - Stack, Recursion [Easy]
 # 443. String Compression - Two Pointers [Easy]
 # 387. First Unique Character in a String - Hash Table, Queue [Very Easy]
