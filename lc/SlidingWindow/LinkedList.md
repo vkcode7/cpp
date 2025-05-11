@@ -1,11 +1,11 @@
 ```bash
 # 21. Merge Two Sorted Lists [Super Easy]
-# 142. Linked List Cycle II - Hash Table, Linked List, Two Pointers
-# 2. Add Two Numbers - Linked List, Recursion
-# 876. Middle of the Linked List - Linked List, Two Pointers
-# 206. Reverse Linked List - Linked List, Recursion
-# 92. Reverse Linked List II Solution
-# 234. Palindrome Linked List Solution
+# 142. Linked List Cycle II - Hash Table, Linked List, Two Pointers [Easy]
+# 2. Add Two Numbers - Linked List, Recursion [Easy]
+# 876. Middle of the Linked List - Linked List, Two Pointers [Easy]
+# 206. Reverse Linked List - Linked List, Recursion [Easy]
+# 92. Reverse Linked List II
+# 234. Palindrome Linked List
 # 138. Copy List with Random Pointer - Hash Table, Linked List
 # 430. Flatten a Multilevel Doubly Linked List - Linked List, Depth-First Search, Doubly-Linked List
 ```
