@@ -1,5 +1,5 @@
 ```bash
-# 21. Merge Two Sorted Lists
+# 21. Merge Two Sorted Lists [Super Easy]
 # 142. Linked List Cycle II - Hash Table, Linked List, Two Pointers
 # 2. Add Two Numbers - Linked List, Recursion
 # 876. Middle of the Linked List - Linked List, Two Pointers
@@ -10,7 +10,9 @@
 # 430. Flatten a Multilevel Doubly Linked List - Linked List, Depth-First Search, Doubly-Linked List
 ```
 
-# 21. Merge Two Sorted Lists
+# 21. Merge Two Sorted Lists [Super Easy]
+https://leetcode.com/problems/merge-two-sorted-lists/
+
 You are given the heads of two sorted linked lists list1 and list2.
 
 Merge the two lists into one sorted list. The list should be made by splicing together the nodes of the first two lists.
