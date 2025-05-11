@@ -1,19 +1,18 @@
 ```bash
 # 1431. Kids With the Greatest Number of Candies [Super Easy] via Kadane
 # 9. Palindrome Number [Super Easy] via reverse the number
-# 268. Missing Number Solution [Super Easy] via XORing [0^0 = 0; 0^1=1^0=1; 1^1=0]
-# 41. First Missing Positive Solution [Easy]
+# 268. Missing Number [Super Easy] via XORing [0^0 = 0; 0^1=1^0=1; 1^1=0]
+# 41. First Missing Positive [Easy]
 # 287. Find the Duplicate Number - sort and use xor between consecutive numbers in the vector [Easy]
-# 20. Valid Parentheses Solution [Easy]
+# 20. Valid Parentheses [Easy]
 # 242. Valid Anagram [Super Easy]
 # 70. Climbing Stairs - DP [Easy] Step(N) = Step(N-1) + Step(N-2)
-
-# 1004. Max Consecutive Ones III
-# 424. Longest Repeating Character Replacement
-# 904. Fruit Into Baskets Solution
-# 724. Find Pivot Index
-# 1480. Running Sum of 1d Array
-# 238. Product of Array Except Self
+# 1004. Max Consecutive Ones III [Medium, Revisit]
+# 424. Longest Repeating Character Replacement [Medium, Revisit]
+# 904. Fruit Into Baskets [Medium, Revisit]
+# 724. Find Pivot Index [Easy]
+# 1480. Running Sum of 1d Array [Super Easy]
+# 238. Product of Array Except Self [Easy]
 ```
 ```matlib
 LeetCode Submissions = 8/14
@@ -33,9 +32,6 @@ Total = 31/89
 # 1431. Kids With the Greatest Number of Candies [Super Easy] via Kadane
 https://leetcode.com/problems/kids-with-the-greatest-number-of-candies/description/
 
-This document describes the solution to the "Kids With the Greatest Number of Candies" problem (LeetCode #1431).
-
-## Problem Description
 Given an array `candies` where `candies[i]` represents the number of candies the `i`-th kid has, and an integer `extraCandies`, determine whether each kid can have the greatest number of candies among all kids by giving them all the `extraCandies`. Return a boolean array `result` of length `n`, where `result[i]` is `true` if, after giving the `i`-th kid all the extra candies, they will have the greatest number of candies, and `false` otherwise. Multiple kids can have the greatest number of candies.
 
 ### Example
@@ -146,7 +142,7 @@ public:
 - **Space Complexity**: O(1), as we only use a constant amount of extra space (excluding the input).
 
 
-# 268. Missing Number Solution [Super Easy] via XORing [0^0 = 0; 0^1=1^0=1; 1^1=0]
+# 268. Missing Number [Super Easy] via XORing [0^0 = 0; 0^1=1^0=1; 1^1=0]
 https://leetcode.com/problems/missing-number/description/
 
 ## Problem Description
@@ -188,7 +184,7 @@ public:
 - **Space Complexity**: O(1), as we only use a single variable for the result.
   
 
-# 41. First Missing Positive Solution [Easy]
+# 41. First Missing Positive [Easy]
 
 ## Problem Description
 Given an unsorted integer array `nums`, return the smallest missing positive integer. You must implement an algorithm that runs in O(n) time and uses O(1) auxiliary space (i.e., modify the array in-place).
@@ -276,7 +272,7 @@ public:
 };
 ```
 
-# 20. Valid Parentheses Solution [Easy]
+# 20. Valid Parentheses [Easy]
 https://leetcode.com/problems/valid-parentheses/description/
 
 ## Problem Description
@@ -422,7 +418,7 @@ public:
 };
 ```
 
-# 1004. Max Consecutive Ones III
+# 1004. Max Consecutive Ones III [Medium, Revisit]
 https://leetcode.com/problems/max-consecutive-ones-iii/
 
 Given a binary array nums and an integer k, return the maximum number of consecutive 1's in the array if you can flip at most k 0's.
@@ -466,7 +462,7 @@ public:
 };
 ```
 
-# 424. Longest Repeating Character Replacement
+# 424. Longest Repeating Character Replacement [Medium, Revisit]
 
 You are given a string s and an integer k. You can choose any character of the string and change it to any other uppercase English character. You can perform this operation at most k times.
 
@@ -526,7 +522,6 @@ public:
 
 # 904. Fruit Into Baskets Solution
 
-## Problem Description
 You are visiting a farm with a single row of fruit trees arranged in an array `fruits`, where `fruits[i]` represents the type of fruit on the `i`th tree. You have two baskets, and each basket can hold only one type of fruit with no limit on the amount. Starting at any tree, you can pick one fruit from each tree as you move right, but you must stop if you encounter a fruit type that cannot fit in either basket. Return the maximum number of fruits you can pick.
 
 ### Example
