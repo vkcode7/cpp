@@ -1,11 +1,11 @@
 ```bash
-# 704. Binary Search Solution
-# 33. Search in Rotated Sorted Array
-# 278. First Bad Version Solution
+# 704. Binary Search [Super Easy]
+# 33. Search in Rotated Sorted Array [Easy]
+# 278. First Bad Version [Easy]
 ```
-# 704. Binary Search Solution
+# 704. Binary Search
+https://leetcode.com/problems/binary-search/
 
-## Problem Description
 Given a sorted integer array `nums` (in ascending order) and an integer `target`, return the index of `target` in `nums`. If `target` does not exist in the array, return `-1`. You must implement an algorithm with O(log n) time complexity.
 
 ### Example
@@ -21,37 +21,36 @@ Explanation: 2 does not exist in nums so return -1
 
 ## Solution
 Below is the C++ solution to perform binary search on a sorted array.
-
 ```cpp
 class Solution {
 public:
     int search(vector<int>& nums, int target) {
-        int left = 0, right = nums.size() - 1;
-        
-        while (left <= right) {
-            int mid = left + (right - left) / 2; // Avoid integer overflow
-            if (nums[mid] == target) {
-                return mid;
-            } else if (nums[mid] < target) {
-                left = mid + 1;
-            } else {
-                right = mid - 1;
-            }
+        int l = 0;
+        int r = nums.size() - 1;
+        while(l < r)
+        {
+            int m = l + (r-l) / 2;
+            if(nums[m] == target)
+                return m;
+
+            if(nums[m] < target)
+                l = m + 1;
+            else
+                r = m - 1;
         }
-        
-        return -1;
+
+        return -1;    
     }
 };
 ```
-## Time and Space Complexity
+
 - **Time Complexity**: O(log n), where `n` is the length of the array, as the search space is halved in each step.
 - **Space Complexity**: O(1), as only a constant amount of extra space is used for pointers.
 
+
 # 33. Search in Rotated Sorted Array
+https://leetcode.com/problems/search-in-rotated-sorted-array/description/
 
-This document describes the solution to the "Search in Rotated Sorted Array" problem (LeetCode #33).
-
-## Problem Description
 Given an integer array `nums` sorted in ascending order and rotated at some pivot unknown to you (e.g., `[0,1,2,4,5,6,7]` might become `[4,5,6,7,0,1,2]`), and an integer `target`, return the index of `target` in `nums`, or `-1` if it is not present. The algorithm must run in O(log n) time complexity.
 
 ### Example
@@ -68,13 +67,6 @@ Input: nums = [1], target = 0
 Output: -1
 Explanation: Single element array does not contain 0.
 ```
-
-### Constraints
-- `1 <= nums.length <= 5000`
-- `-10^4 <= nums[i] <= 10^4`
-- All values of `nums` are unique.
-- `nums` is an ascending sorted array that is possibly rotated.
-- `-10^4 <= target <= 10^4`
 
 ## Solution Approach
 The problem can be solved using a modified binary search that accounts for the rotation by determining which half of the array is sorted and whether the target lies in that half.
@@ -220,9 +212,9 @@ public:
 The modified binary search approach is preferred for its simplicity, as it combines pivot handling and target search in a single pass, avoiding the need to explicitly find the pivot.
 
 
-# 278. First Bad Version Solution
+# 278. First Bad Version
+https://leetcode.com/problems/first-bad-version/description/
 
-## Problem Description
 You are a product manager and currently leading a team to develop a new product. Unfortunately, the latest version of your product fails the quality check. Since each version is developed based on the previous version, all the versions after a bad version are also bad. Given `n` versions numbered from `1` to `n`, and an API `isBadVersion(version)` that returns whether a version is bad, find the first bad version. You should minimize the number of calls to the API.
 
 ### Example
