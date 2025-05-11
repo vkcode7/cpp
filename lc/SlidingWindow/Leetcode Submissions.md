@@ -18,7 +18,7 @@
 ```matlib
 LeetCode Submissions = 8/14
 BackTracking = 0/2
-Binary Search = 0/3
+Binary Search = 3/3
 Dynamic Programming = 0/11
 Graphs = 0/6
 LinkedList = 0/9
@@ -27,7 +27,7 @@ Sliding Window = 20/20
 Binary Trees = 0/12
 Matrix = 0/6
 
-Total = 28/89
+Total = 31/89
 ```
 
 # 1431. Kids With the Greatest Number of Candies [Super Easy] via Kadane
