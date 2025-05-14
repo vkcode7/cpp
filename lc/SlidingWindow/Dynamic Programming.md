@@ -1,10 +1,10 @@
 ```bash
-# 509. Fibonacci Number
-# 70. Climbing Stairs
-# 152. Maximum Product Subarray Solution
-# 121. Best Time to Buy and Sell Stock - Array, Dynamic Programming
-# 322. Coin Change - Array, Dynamic Programming, Breadth-First Search
-# 53. Maximum Subarray - Array, Divide and Conquer, Dynamic Programming
+# 509. Fibonacci Number [Super Easy]
+# 70. Climbing Stairs [Easy]
+# 152. Maximum Product Subarray Solution [Easy]
+# 121. Best Time to Buy and Sell Stock - Array, Dynamic Programming [Easy]
+# 322. Coin Change - Dynamic Programming [Easy, Revisit]
+# 53. Maximum Subarray - Array, Divide and Conquer, Dynamic Programming [Easy]
 # 42. Trapping Rain Water - Two Pointers, Dynamic Programming, Stack, Monotonic Stack
 # 198. House Robber Solution
 # 139. Word Break Solution
@@ -12,12 +12,16 @@
 # 2272. Substring with Largest Variance Solution
 ```
 
-# 509. Fibonacci Number
+# 509. Fibonacci Number [Super Easy]
+https://leetcode.com/problems/fibonacci-number/
+
 The Fibonacci numbers, commonly denoted F(n) form a sequence, called the Fibonacci sequence, such that each number is the sum of the two preceding ones, starting from 0 and 1. That is,
 
 F(0) = 0, F(1) = 1
 F(n) = F(n - 1) + F(n - 2), for n > 1.
+
 Given n, calculate F(n).
+
 ```cpp
 class Solution {
 public:
@@ -25,9 +29,22 @@ public:
         return n < 2 ? n : fib(n-1) + fib(n-2);
     }
 };
+
+class SolutionUsingDp {
+public:
+    map<int,int> mf;
+    int fib(int n) {
+        if(mf.find(n) != mf.end())
+            return mf[n];
+
+        int fn = n < 2 ? n : fib(n-2) + fib(n-1);
+        mf[n] = fn;
+        return fn;
+    }
+};
 ```
 
-# 70. Climbing Stairs
+# 70. Climbing Stairs [Super Easy]
 https://leetcode.com/problems/climbing-stairs/
 
 You are climbing a staircase. It takes n steps to reach the top.
@@ -75,9 +92,9 @@ public:
 };
 ```
 
-# 152. Maximum Product Subarray Solution
+# 152. Maximum Product Subarray  [Easy]
+https://leetcode.com/problems/maximum-product-subarray/description/
 
-## Problem Description
 Given an integer array `nums`, find a contiguous non-empty subarray within the array that has the largest product, and return the maximum product. The array may contain positive, negative, and zero values.
 
 ### Example
@@ -156,7 +173,7 @@ public:
 ```
 
 
-# 121. Best Time to Buy and Sell Stock - Array, Dynamic Programming
+# 121. Best Time to Buy and Sell Stock - Array, Dynamic Programming [Easy]
 https://leetcode.com/problems/best-time-to-buy-and-sell-stock/description/
 
 You are given an array prices where prices[i] is the price of a given stock on the ith day.
@@ -186,21 +203,23 @@ Constraints:
 class Solution {
 public:
     int maxProfit(vector<int>& prices) {
-        int max_profit = 0;
-        int buy_price = INT_MAX;
-        for(auto x: prices)
+        int maxProfit = 0;
+        int buyPrice = prices[0];
+
+        for(int i=1; i < prices.size(); i++)
         {
-            buy_price = min(buy_price, x);
-            max_profit = max(x - buy_price, max_profit);             
+            int x = prices[i];
+            buyPrice = min(x, buyPrice);
+            maxProfit = max(maxProfit, x - buyPrice);
         }
-        
-        return max_profit;
+
+        return maxProfit;
     }
 };
 ```
 
 
-# 322. Coin Change - Array, Dynamic Programming, Breadth-First Search
+# 322. Coin Change - Dynamic Programming [Easy, Revisit]
 https://leetcode.com/problems/coin-change/description/
 
 You are given an integer array coins representing coins of different denominations and an integer amount representing a total amount of money.
@@ -261,9 +280,9 @@ public:
 ```
 
 
-# 53. Maximum Subarray - Array, Divide and Conquer, Dynamic Programming
+# 53. Maximum Subarray - [Easy]
+https://leetcode.com/problems/maximum-subarray/
 
-## Problem Description
 Given an integer array `nums`, find the subarray (containing at least one number) which has the largest sum and return its sum.
 
 ### Example
