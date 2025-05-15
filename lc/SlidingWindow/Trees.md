@@ -19,7 +19,7 @@
 Given the root of a binary tree, return the level order traversal of its nodes' values (i.e., from left to right, level by level).
 
 ### Example
-<img src="../assets/tree102.jpg” width="20%">
+<img src="../assets/tree102.jpg" width="30%">
 
 ```
 Input: root = [3,9,20,null,null,15,7]
@@ -162,7 +162,7 @@ public:
 Given the root of a binary tree, return the bottom-up level order traversal of its nodes' values (i.e., from left to right, level by level, starting from the deepest level up to the root).
 
 ### Example
-<img src="../assets/tree107.jpg” width="20%">
+<img src="../assets/tree107.jpg" width="30%">
 
 ```
 Input: root = [3,9,20,null,null,15,7]
@@ -493,14 +493,14 @@ Input: root = [3,1,4,null,2], k = 1
 Output: 1
 Explanation: Inorder traversal is [1,2,3,4], so the 1st smallest is 1.
 ```
-<img src="../assets/kthtree1.jpg" width="20%">
+<img src="..//kthtree1.jpg" width="20%">
 
 ```
 Input: root = [5,3,6,2,4,null,null,1], k = 3
 Output: 3
 Explanation: Inorder traversal is [1,2,3,4,5,6], so the 3rd smallest is 3.
 ```
-<img src="../assets/kthtree2.jpg" width="20%">
+<img src="..//kthtree2.jpg" width="20%">
 
 ```
 Try to utilize the property of a BST.
@@ -635,14 +635,14 @@ Input: root = [1,2,3,null,5,null,4]
 Output: [1,3,4]
 Explanation: From the right side, the visible nodes are 1 (root), 3 (right child at level 1), and 4 (rightmost at level 2).
 ```
-<img src="../assets/tree1_199.png" width="20%">
+<img src="..//tree1_199.png" width="20%">
 
 ```
 Input: root = [1,2,3,4,null,null,null,5]
 
 Output: [1,3,4,5]
 ```
-<img src="../assets/tree1_199.png" width="20%">
+<img src="..//tree1_199.png" width="20%">
 
 
 ```
@@ -799,7 +799,7 @@ Input: root = []
 Output: []
 Explanation: An empty tree has no nodes to connect.
 ```
-<img src="../assets/116_sample.png" width="30%">
+<img src="..//116_sample.png" width="30%">
 
 
 ### Constraints
@@ -1536,7 +1536,7 @@ Input: root = [2,1,3]
 Output: true
 Explanation: The tree is a valid BST (1 < 2 < 3).
 ```
-<img src="../assets/bstree1.jpg” width="20%">
+<img src="../assets/bstree1.jpg" width="30%">
 
 ### Example
 ```
@@ -1544,7 +1544,8 @@ Input: root = [5,1,4,null,null,3,6]
 Output: false
 Explanation: The root node's value is 5 but its right child's value is 4.
 ```
-<img src="../assets/bstree2.jpg” width="20%">
+<img src="../assets/bstree2.jpg" width="30%">
+
 
 ## Solution
 Below is the C++ solution to validate a binary search tree using recursive inorder traversal.
