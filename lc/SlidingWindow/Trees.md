@@ -1,6 +1,6 @@
 ```bash
-# 102. Binary Tree Level Order Traversal Solution
-# 107. Binary Tree Level Order Traversal II Solution
+# 102. Binary Tree Level Order Traversal Solution [Easy]
+# 107. Binary Tree Level Order Traversal II [Easy, Understand how to calc the tree height]
 # 114. Flatten Binary Tree to Linked List - Linked List, Stack, Tree, Depth-First Search, Binary Tree
 # 230. Kth Smallest Element in a BST - Tree, Depth-First Search, Binary Search Tree, Binary Tree
 # 199. Binary Tree Right Side View - Depth-First Search, Breadth-First Search, Binary Tree
@@ -13,7 +13,7 @@
 # 98. Validate Binary Search Tree Solution
 ```
 
-# 102. Binary Tree Level Order Traversal Solution
+# 102. Binary Tree Level Order Traversal -[Easy]
 
 ## Problem Description
 Given the root of a binary tree, return the level order traversal of its nodes' values (i.e., from left to right, level by level).
@@ -50,43 +50,7 @@ Below is the C++ solution to perform level order traversal of a binary tree usin
  *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
  * };
  */
-class Solution {
-public:
-    vector<vector<int>> levelOrder(TreeNode* root) {
-        vector<vector<int>> vOut;
-        if(root)
-        {
-            queue<TreeNode*> q;
-            q.push(root); //add root node to queue
 
-            while(q.size() > 0) {
-                int qSize = q.size(); //gives num of nodes at same level
-                 
-                vector<int> val(qSize, 0);
-                
-                //iterate through all nodes and add their kids
-                for(int i = 0; i < qSize; i++) 
-                {
-                    TreeNode * node = q.front();
-                    val[i] = node->val;
-
-                    if(node->left)
-                        q.push(node->left);
-
-                    if(node->right)
-                        q.push(node->right);
-
-                    //pop the node just processed
-                    q.pop(); //removes the node from Q
-                }
-
-                vOut.push_back(val);         
-            } 
-        }
-        
-        return vOut;
-    }
-};
 
 class Solution {
 public:
@@ -106,7 +70,7 @@ public:
             // Process all nodes at the current level
             for (int i = 0; i < levelSize; ++i) {
                 TreeNode* node = q.front();
-                q.pop();
+
                 level.push_back(node->val);
                 
                 // Add children to the queue
@@ -116,6 +80,8 @@ public:
                 if (node->right) {
                     q.push(node->right);
                 }
+
+                q.pop(); //remove the node just processed
             }
             
             // Add the current level to the result
@@ -127,36 +93,12 @@ public:
 };
 ```
 
-## Explanation
-1. **Edge Case**:
-   - If the root is `nullptr`, return an empty vector.
-2. **BFS with Queue**:
-   - Use a queue to process nodes level by level.
-   - Initialize the queue with the root node.
-   - While the queue is not empty:
-     - Get the number of nodes at the current level (`levelSize`).
-     - Create a vector `level` to store the values of the current level.
-     - Process each node in the current level:
-       - Pop the front node from the queue.
-       - Add its value to `level`.
-       - Push its left and right children (if they exist) to the queue.
-     - After processing all nodes in the level, add `level` to the result.
-3. **Result**:
-   - The `result` vector contains vectors of node values, each representing one level of the tree.
-
-## Time and Space Complexity
+## Time and Space Complexity 
 - **Time Complexity**: O(n), where `n` is the number of nodes in the tree. Each node is processed exactly once.
 - **Space Complexity**: O(w), where `w` is the maximum width of the tree (i.e., the maximum number of nodes at any level). The queue stores at most one level of nodes, and the `level` vector temporarily stores node values for each level. In a balanced binary tree, `w` is O(n/2), and in a skewed tree, `w` is O(1).
 
-## Edge Cases
-- Empty tree: Return `[]`.
-- Single node: Return `[[val]]` (e.g., `root = [1]` returns `[[1]]`).
-- Skewed tree: `root = [1,null,2,null,3]` returns `[[1],[2],[3]]`.
-- Complete binary tree: Handles large trees with up to `n = 2000` nodes.
-- Unbalanced tree: Correctly processes levels with varying numbers of nodes.
 
-
-# 107. Binary Tree Level Order Traversal II Solution
+# 107. Binary Tree Level Order Traversal II [Easy, Understand how to calc the tree height]
 
 ## Problem Description
 Given the root of a binary tree, return the bottom-up level order traversal of its nodes' values (i.e., from left to right, level by level, starting from the deepest level up to the root).
