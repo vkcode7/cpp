@@ -1,15 +1,15 @@
 ```bash
 # 509. Fibonacci Number [Super Easy]
 # 70. Climbing Stairs [Easy]
-# 152. Maximum Product Subarray Solution [Easy]
+# 152. Maximum Product Subarray [Easy]
 # 121. Best Time to Buy and Sell Stock - Array, Dynamic Programming [Easy]
 # 322. Coin Change - Dynamic Programming [Easy, Revisit]
 # 53. Maximum Subarray - Array, Divide and Conquer, Dynamic Programming [Easy]
-# 42. Trapping Rain Water - Two Pointers, Dynamic Programming, Stack, Monotonic Stack
-# 198. House Robber Solution
-# 139. Word Break Solution
-# 300. Longest Increasing Subsequence Solution
-# 2272. Substring with Largest Variance Solution
+# 42. Trapping Rain Water - Two Pointers, Dynamic Programming, Stack, Monotonic Stack [Medium]
+# 198. House Robber [Medium]
+# 139. Word Break [Medium]
+# 300. Longest Increasing Subsequence [Medium]
+# 2272. Substring with Largest Variance
 ```
 
 # 509. Fibonacci Number [Super Easy]
@@ -366,8 +366,8 @@ A divide-and-conquer approach can also solve this problem by splitting the array
 
 
 # 42. Trapping Rain Water - Two Pointers, Dynamic Programming, Stack, Monotonic Stack
+https://leetcode.com/problems/trapping-rain-water/
 
-## Problem Description
 Given `n` non-negative integers representing an elevation map where the width of each bar is 1, compute how much water it can trap after raining. The elevation map is represented by an array `height` where `height[i]` is the height of the bar at index `i`.
 
 ### Example
@@ -408,6 +408,49 @@ The problem can be solved efficiently using a two-pointer technique to calculate
 ```cpp
 class Solution {
 public:
+    int trap(vector<int>& height) {
+        int n = height.size();
+        vector<int> lh(n, 0);
+        vector<int> rh(n, 0);
+
+        int maxL = 0;
+        int maxR = 0;
+
+        for(int i=0, j = n-1; i < n; i++, j--)
+        {
+            maxL = max(maxL, height[i]);
+            lh[i] = maxL - height[i];
+
+            maxR = max(maxR, height[j]);
+            rh[j] = maxR - height[j];
+        }
+
+        int sum = 0;
+        for(int i=0; i< n; i++)
+            sum += min(lh[i], rh[i]);
+
+        return sum;
+    }
+};
+```
+
+```
+Input: height
+[0,1,0,2,1,0,1,3,2,1,2,1]
+
+height on left: maxL - input
+[0 0 1 0 1 2 1 0 1 2 1 2]
+
+height on right: maxR - input
+[3 2 3 1 2 3 2 0 0 1 0 0]
+
+final height: min(left, right)
+[0,1,0,2,1,0,1,3,2,1,2,1]
+```
+
+```cpp
+class Solution {
+public:
     int trap(vector<int>& height)
     {
         if(height.empty())
@@ -435,10 +478,9 @@ public:
 };
 ```
 
+# 198. House Robber [Medium, Revisit]
+https://leetcode.com/problems/house-robber/
 
-# 198. House Robber Solution
-
-## Problem Description
 You are a professional robber planning to rob houses along a street. Each house has a certain amount of money stashed, represented by a non-negative integer array `nums`. The only constraint is that you cannot rob two adjacent houses. Return the maximum amount of money you can rob without alerting the police.
 
 ### Example
@@ -522,9 +564,8 @@ public:
 - Large array with varying values: Efficiently computes the maximum using the iterative approach.
 
 
-# 139. Word Break Solution
+# 139. Word Break [medium, Revisit]
 
-## Problem Description
 Given a string `s` and a dictionary of strings `wordDict`, return `true` if `s` can be segmented into a space-separated sequence of one or more dictionary words. The same word in the dictionary may be reused multiple times in the segmentation.
 
 ### Example
@@ -545,7 +586,7 @@ Input: s = "catsandog", wordDict = ["cats","dog","sand","and","cat"]
 Output: false
 ```
 
-## Solution
+## Solution 
 Below is the C++ solution to determine if a string can be segmented into words from a dictionary using dynamic programming.
 
 ```cpp
@@ -630,9 +671,8 @@ public:
 - Long string with valid segmentation: Efficiently handles constraints (`s.length <= 300`).
 
 
-# 300. Longest Increasing Subsequence Solution
+# 300. Longest Increasing Subsequence [Medium, Revisit]
 
-## Problem Description
 Given an integer array `nums`, return the length of the longest strictly increasing subsequence. A subsequence is a sequence that can be derived from an array by deleting some or no elements without changing the order of the remaining elements.
 
 ### Example
@@ -655,32 +695,8 @@ Output: 1
 Below is the C++ solution to find the length of the longest increasing subsequence using dynamic programming.
 
 ```cpp
-class Solution {
-public:
-    int lengthOfLIS(vector<int>& nums) {
-        vector<int> T(nums.size()+1, 1); //initialize to 1
-        
-        for(int i=1; i < nums.size(); i++)
-        {
-            int j = 0;
-            while(j < i)
-            {
-                if(nums[j] < nums[i])
-                {
-                    T[i] = max(T[i], T[j]+1);
-                }
-                
-                ++j;   
-            }            
-        }
-        
-        int maxT = 1;
-        for(auto& t : T)
-            maxT = max(maxT, t);
-        
-        return maxT;
-    }
-};
+[10,9,2,5,3,7,101,18]
+[ 1,1,1,2,2,3,  4, 4]
 
 class Solution {
 public:
@@ -737,7 +753,7 @@ public:
 - Large array: Handles up to `n = 2500` within constraints.
 
 
-# 2272. Substring with Largest Variance Solution
+# 2272. Substring with Largest Variance
 
 ## Problem Description
 Given a string `s` consisting of lowercase letters, return the largest variance of any substring. The variance of a substring is defined as the largest difference between the frequencies of any two distinct characters in that substring. If no substring contains at least two distinct characters, return 0.
