@@ -23,10 +23,10 @@ Graphs = 0/6
 LinkedList = 7/9
 Median and Moving Avg = 0/6
 Sliding Window = 20/20
-Binary Trees = 7/12
+Binary Trees = 12/16
 Matrix = 0/6
 
-Total = 61/89
+Total = 66/93
 ```
 
 # 1431. Kids With the Greatest Number of Candies [Super Easy] via Kadane
