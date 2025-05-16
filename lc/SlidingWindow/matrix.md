@@ -1,7 +1,7 @@
 ```bash
 # 118. Pascal's Triangle Solution
 # 54. Spiral Matrix Solution
-# 200. Number of Islands - Array, Depth-First Search, Breadth-First Search, Union Find, Matrix
+# 200. Number of Islands - Graph
 # 73. Set Matrix Zeroes - Hash Table, Matrix
 # 79. Word Search - Backtracking, Depth-First Search, Matrix
 # 733. Flood Fill Solution
