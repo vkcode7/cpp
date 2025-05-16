@@ -1148,3 +1148,42 @@ private:
 The recursive approach is preferred for its clarity and natural handling of the pre-order traversal required for flattening.
 
 
+# 143. Reorder List
+
+You are given the head of a singly linked-list. The list can be represented as:
+```
+L0 → L1 → … → Ln - 1 → Ln
+```
+Reorder the list to be on the following form:
+```
+L0 → Ln → L1 → Ln - 1 → L2 → Ln - 2 → …
+```
+You may not modify the values in the list's nodes. Only nodes themselves may be changed.
+
+```
+1-2-3-4
+1-4-2-3
+
+1-2-3-4-5
+1-5-2-4-3
+```
+
+This problem is a combination of these three easy problems:
+
+- Middle of the Linked List.
+- Reverse Linked List.
+- Merge Two Sorted Lists.
+
+Overview
+```
+Find a middle node of the linked list.
+If there are two middle nodes, return the second middle node.
+Example: for the list 1->2->3->4->5->6, the middle element is 4.
+
+Once a middle node has been found, reverse the second part of the list.
+Example: convert 1->2->3->4->5->6 into 1->2->3->4 and 6->5->4.
+
+Now merge the two sorted lists.
+Example: merge 1->2->3->4 and 6->5->4 into 1->6->2->5->3->4.
+```
+
