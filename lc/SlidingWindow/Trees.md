@@ -741,7 +741,7 @@ Input: root = []
 Output: []
 Explanation: An empty tree has no nodes to connect.
 ```
-<img src="..//116_sample.png" width="30%">
+<img src="../assets/116_sample.png" width="30%">
 
 
 ### Constraints
@@ -904,9 +904,6 @@ The BFS approach is presented for its clarity and general applicability, but the
 
 
 # 117. Populating Next Right Pointers in Each Node II - Linked List, Tree, Depth-First Search, Breadth-First Search, Binary Tree
-
-
-This document describes the solution to the "Populating Next Right Pointers in Each Node II" problem (LeetCode #117).
 
 ## Problem Description
 Given a binary tree (not necessarily perfect), populate each node's `next` pointer to point to its next right node on the same level. If there is no next right node, the `next` pointer should be set to `nullptr`. The tree is modified in-place.
