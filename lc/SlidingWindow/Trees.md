@@ -295,6 +295,44 @@ If you notice carefully in the flattened tree, each node's right child points to
 
 <img src="../assets/flaten.jpg" width="50%">
 
+```bash
+    1
+   / \
+  2   5
+ / \   \
+3   4   6
+
+
+    1        4
+   /          \
+  2     =>     5
+ / \            \
+3   4            6
+
+
+1
+ \
+  2
+ / \
+3   4
+     \
+      5
+       \
+        6
+
+1
+ \
+  2
+   \
+    3
+     \
+      4
+       \
+        5
+         \
+          6
+```
+
 
 ### Constraints
 - The number of nodes in the tree is in the range `[0, 2000]`.
