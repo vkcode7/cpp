@@ -1,7 +1,7 @@
 ```bash
 # 102. Binary Tree Level Order Traversal Solution [Easy]
 # 107. Binary Tree Level Order Traversal II [Easy, Understand how to calc the tree height]
-# 114. Flatten Binary Tree to Linked List - Linked List, Stack, Tree, Depth-First Search, Binary Tree
+# 114. Flatten Binary Tree to Linked List - [Easy]
 # 230. Kth Smallest Element in a BST - Tree, Depth-First Search, Binary Search Tree, Binary Tree
 # 199. Binary Tree Right Side View - Depth-First Search, Breadth-First Search, Binary Tree
 # 116. Populating Next Right Pointers in Each Node
@@ -19,7 +19,7 @@
 Given the root of a binary tree, return the level order traversal of its nodes' values (i.e., from left to right, level by level).
 
 ### Example
-<img src="../assets/tree102.jpg" width="30%">
+<img src="../assets/tree102.jpg" width="20%">
 
 ```
 Input: root = [3,9,20,null,null,15,7]
@@ -104,7 +104,7 @@ public:
 Given the root of a binary tree, return the bottom-up level order traversal of its nodes' values (i.e., from left to right, level by level, starting from the deepest level up to the root).
 
 ### Example
-<img src="../assets/tree107.jpg" width="30%">
+<img src="../assets/tree107.jpg" width="20%">
 
 ```
 Input: root = [3,9,20,null,null,15,7]
@@ -266,7 +266,7 @@ public:
 - Unbalanced tree: Correctly processes levels with varying numbers of nodes.
 
 
-# 114. Flatten Binary Tree to Linked List - Linked List, Stack, Tree, Depth-First Search, Binary Tree
+# 114. Flatten Binary Tree to Linked List [Easy]
 
 This document describes the solution to the "Flatten Binary Tree to Linked List" problem (LeetCode #114).
 
