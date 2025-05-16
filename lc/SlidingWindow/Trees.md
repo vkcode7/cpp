@@ -1461,7 +1461,7 @@ public:
 ```
 
 
-# 98. Validate Binary Search Tree Solution
+# 98. Validate Binary Search Tree
 
 ## Problem Description
 Given the root of a binary tree, determine if it is a valid binary search tree (BST). A valid BST is defined as follows:
@@ -1571,3 +1571,173 @@ private:
 - Large valid BST: Efficiently validates within constraints.
 - Invalid subtree: Detects cases like `[5,4,6,null,null,3,7]` where `3` violates the BST property in the right subtree.
 
+## 314. Binary Tree Vertical Order Traversal
+```
+      3
+    /  \
+   9   20
+      /  \
+     15   7
+
+     Output: [9], [3,15], [20], [7]
+```
+Given the root of a binary tree, return the vertical order traversal of its nodes' values. (i.e., from top to bottom, column by column).
+
+If two nodes are in the same row and column, the order should be from left to right.
+
+```c++
+class Solution {
+public:
+    vector<vector<int>> verticalOrder(TreeNode* root) {
+        vector<vector<int>> res;
+        
+        if(!root) return res;
+        
+        map<int, vector<int>> map;
+        
+        queue<pair<TreeNode* , int>> q;
+        
+        q.push({root, 0});
+        
+        while(!q.empty()) {
+            int size = q.size();
+            
+            for(int i = 0; i < size; i++) {
+                TreeNode* curr = q.front().first;
+                int dir = q.front().second;
+                q.pop();
+                map[dir].push_back(curr->val);
+                if(curr->left) q.push({curr->left, dir - 1});
+                if(curr->right) q.push({curr->right, dir + 1});
+            }
+        }
+        
+        for(auto i : map) {
+            res.push_back(i.second);
+        }
+        return res;
+    }
+};
+```
+
+## 124. Binary Tree Maximum Path Sum
+https://leetcode.com/problems/binary-tree-maximum-path-sum/description/
+
+A path in a binary tree is a sequence of nodes where each pair of adjacent nodes in the sequence has an edge connecting them. A node can only appear in the sequence at most once. Note that the path does not need to pass through the root.
+
+The path sum of a path is the sum of the node's values in the path.
+
+Given the root of a binary tree, return the maximum path sum of any non-empty path.
+
+```cpp
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode() : val(0), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+ * };
+ */
+class Solution {
+public:
+    int maxPathSum(TreeNode* root) {
+        maxSum = INT_MIN;
+        maxPathSubTreeSum(root);
+        return maxSum;
+    }
+
+private:
+    int maxSum;
+    // post order traversal of subtree rooted at `root`
+    int maxPathSubTreeSum(TreeNode* root) {
+        if (root == nullptr) {
+            return 0;
+        }
+        // add the path sum from left subtree. Note that if the path
+        // sum is negative, we can ignore it, or count it as 0.
+        // This is the reason we use `max` here.
+        int gainFromLeft = max(maxPathSubTreeSum(root->left), 0);
+        // add the path sum from right subtree. 0 if negative
+        int gainFromRight = max(maxPathSubTreeSum(root->right), 0);
+        // if left or right path sum are negative, they are counted
+        // as 0, so this statement takes care of all four scenarios
+        maxSum = max(maxSum, gainFromLeft + gainFromRight + root->val);
+        // return the max sum for a path starting at the root of subtree
+        return max(gainFromLeft + root->val, gainFromRight + root->val);
+    }
+};
+```
+
+
+## 236. Lowest Common Ancestor of a Binary Tree
+https://leetcode.com/problems/lowest-common-ancestor-of-a-binary-tree/description/
+
+
+## 257. Binary Tree Paths
+
+Given the root of a binary tree, return all root-to-leaf paths in any order.
+
+A leaf is a node with no children.
+
+```
+Approach
+Perform DFS starting from the root.
+Maintain a current path string.
+At each node:
+ -Append the node's value.
+- If it's a leaf, add the path to the result.
+- Otherwise, recurse for its children.
+
+Complexity
+Time: O(n), where n is the number of nodes.
+Space: O(h), where h is the tree height.
+```
+
+```cpp
+class Solution {
+public:
+    void dfs(TreeNode* node ,string current,vector<string>& ans){
+            
+            current+=to_string(node->val);
+
+            if(!node->left && !node->right){
+                ans.push_back(current);
+            }
+            current+="->";
+            if(node->left) dfs(node->left,current,ans);
+            if(node->right) dfs(node->right,current,ans);
+            current.pop_back();
+    }
+    vector<string> binaryTreePaths(TreeNode* root) {
+        vector<string> ans;
+        if(!root) return ans;
+
+    
+        dfs(root,"",ans);
+        return ans;
+    }
+};
+```
+
+OR
+
+```cpp
+class Solution {
+public:
+    void findPath(TreeNode* node, vector<string>& ans, string temp) {
+        temp += to_string(node->val);  // Add the current node value to the path
+        if (node->left) findPath(node->left, ans, temp + "->");  // Traverse left
+        if (node->right) findPath(node->right, ans, temp + "->"); // Traverse right
+        if (!node->left && !node->right) ans.push_back(temp);  // Add path if leaf node
+    }
+
+    vector<string> binaryTreePaths(TreeNode* root) {
+        vector<string> ans;
+        if (root) findPath(root, ans, "");  // Start traversal from the root
+        return ans;
+    }
+};
+```
