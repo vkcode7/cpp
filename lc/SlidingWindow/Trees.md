@@ -6,11 +6,16 @@
 # 199. Binary Tree Right Side View - Depth-First Search, Breadth-First Search, Binary Tree [Easy]
 # 116. Populating Next Right Pointers in Each Node [Easy]
 # 117. Populating Next Right Pointers in Each Node II - [Easy]
-# 105. Construct Binary Tree from Preorder and Inorder Traversal - Hash Table, Divide and Conquer, Tree, Binary Tree
-# 112. Path Sum - Tree, Depth-First Search, Breadth-First Search, Binary Tree
-# 107. Binary Tree Level Order Traversal II - Tree, Breadth-First Search, Binary Tree
-# 589. N-ary Tree Preorder Traversal - Stack, Tree, Depth-First Search
-# 98. Validate Binary Search Tree Solution
+# 105. Construct Binary Tree from Preorder and Inorder Traversal - Map, Recursion [Medium]
+# 112. Path Sum - Tree, Depth-First Search, Breadth-First Search, Binary Tree [Easy]
+# 107. Binary Tree Level Order Traversal II - BFS [Easy, once height is calculated]
+# 589. N-ary Tree Preorder Traversal - Stack, Tree, Depth-First Search [Easy]
+# 98. Validate Binary Search Tree Solution [Easy]
+
+# 314. Binary Tree Vertical Order Traversal
+# 124. Binary Tree Maximum Path Sum
+# 236. Lowest Common Ancestor of a Binary Tree
+# 257. Binary Tree Paths
 ```
 
 # 102. Binary Tree Level Order Traversal -[Easy]
@@ -1153,38 +1158,39 @@ private:
 
 ```cpp
 class Solution {
+    unordered_map<int, int> mapIn;
+    int preorderIndex = 0;
+
 public:
     TreeNode* buildTree(vector<int>& preorder, vector<int>& inorder) {
-        // Map to store inorder value-to-index mappings
-        unordered_map<int, int> inorderMap;
-        for (int i = 0; i < inorder.size(); i++) {
-            inorderMap[inorder[i]] = i;
-        }
+         for (int i = 0; i < inorder.size(); i++)
+            mapIn[inorder[i]] = i;
         
-        int preorderIndex = 0;
-        return build(preorder, inorder, 0, inorder.size() - 1, preorderIndex, inorderMap);
+        preorderIndex = 0;
+
+        //left and right of the inorder tree
+        return splitTree(preorder, 0, preorder.size()-1);
     }
     
 private:
-    TreeNode* build(vector<int>& preorder, vector<int>& inorder, int inStart, int inEnd, 
-                    int& preorderIndex, unordered_map<int, int>& inorderMap) {
-        if (inStart > inEnd) {
+    TreeNode* splitTree(vector<int>& P, int left, int right) {
+        if( left > right )
             return nullptr;
-        }
+
+        int rootValue = P[preorderIndex++];
+
+        int inorderRootIndex = mapIn[rootValue]; //where is root located in inorder?
         
-        // Create root node from current preorder element
-        TreeNode* root = new TreeNode(preorder[preorderIndex++]);
+        TreeNode* root = new TreeNode(rootValue);  
         
-        // Find root's position in inorder
-        int inorderRootIndex = inorderMap[root->val];
-        
-        // Recursively build left and right subtrees
-        root->left = build(preorder, inorder, inStart, inorderRootIndex - 1, preorderIndex, inorderMap);
-        root->right = build(preorder, inorder, inorderRootIndex + 1, inEnd, preorderIndex, inorderMap);
+        //build left and right tree
+        root->left = splitTree(P, left, inorderRootIndex - 1); //skip root index
+        root->right = splitTree(P, inorderRootIndex + 1, right); //skip root index
         
         return root;
     }
 };
+
 ```
 
 ### How It Works
@@ -1275,13 +1281,14 @@ public:
         
         targetSum -= root->val;
         
-        if(!root->left && !root->right) 
+        if(!root->left && !root->right) //if this is a leaf node check.
             return (targetSum ==0);
         
         return hasPathSum(root->left, targetSum) || hasPathSum(root->right, targetSum);
     }
 };
 ```
+
 
 # 107. Binary Tree Level Order Traversal II - Tree, Breadth-First Search, Binary Tree
 https://leetcode.com/problems/binary-tree-level-order-traversal-ii/description/
@@ -1382,6 +1389,7 @@ public:
 };
 ```
 
+
 # 589. N-ary Tree Preorder Traversal - Stack, Tree, Depth-First Search
 https://leetcode.com/problems/n-ary-tree-preorder-traversal/description/
 
@@ -1435,26 +1443,19 @@ public:
 
 class Solution {
 public:
-    
     void Traverse(Node *node, vector<int>& vOut) {
-        if(node == nullptr)
+        if(!node)
             return;
         
-        for(auto& n : node->children) {
-            if(n) {
-                vOut.push_back(n->val);
-                Traverse(n, vOut);  
-            }
-        }
+        vOut.push_back(node->val);
+
+        for(auto& n : node->children)
+            Traverse(n, vOut);  
     }
     
     vector<int> preorder(Node* root) {
         vector<int> vOut;
-        if(root) {
-            vOut.push_back(root->val);
-            Traverse(root, vOut);
-        }  
-        
+        Traverse(root, vOut); 
         return vOut;
     }
 };
@@ -1507,39 +1508,19 @@ public:
         return help(root, INT_MIN, INT_MAX);
     }
     
-    bool help(TreeNode* root, long min, long max){
-        if(!root)   return true;
-        //left should always be between -inf and max=root->val
-        //right between min=root->val and +inf
-        if(root->val <= min || root->val >= max)  return false;
-        return help(root->left, min, root->val) && help(root->right, root->val, max);
+    bool help(TreeNode* node, long min, long max){
+        if(!node)   
+            return true;
+
+        //left should always be between -inf and parent
+        //right between parent and +inf
+        if(node->val <= min || node->val >= max)  
+            return false;
+
+        return help(node->left, min, node->val) && help(node->right, node->val, max);
     }
 };
 
-class Solution {
-public:
-    bool isValidBST(TreeNode* root) {
-        return validate(root, nullptr, nullptr);
-    }
-    
-private:
-    bool validate(TreeNode* node, TreeNode* minNode, TreeNode* maxNode) {
-        // Empty node is valid
-        if (!node) {
-            return true;
-        }
-        
-        // Check if current node's value is within valid range
-        if ((minNode && node->val <= minNode->val) || (maxNode && node->val >= maxNode->val)) {
-            return false;
-        }
-        
-        // Recursively validate left and right subtrees
-        // Left subtree: all values must be < node->val
-        // Right subtree: all values must be > node->val
-        return validate(node->left, minNode, node) && validate(node->right, node, maxNode);
-    }
-};
 ```
 
 ## Explanation
@@ -1571,7 +1552,7 @@ private:
 - Large valid BST: Efficiently validates within constraints.
 - Invalid subtree: Detects cases like `[5,4,6,null,null,3,7]` where `3` violates the BST property in the right subtree.
 
-## 314. Binary Tree Vertical Order Traversal
+# 314. Binary Tree Vertical Order Traversal
 ```
       3
     /  \
@@ -1591,11 +1572,12 @@ public:
     vector<vector<int>> verticalOrder(TreeNode* root) {
         vector<vector<int>> res;
         
-        if(!root) return res;
+        if(!root)
+            return res;
         
         map<int, vector<int>> map;
         
-        queue<pair<TreeNode* , int>> q;
+        queue<pair<TreeNode*, int>> q;
         
         q.push({root, 0});
         
@@ -1620,7 +1602,7 @@ public:
 };
 ```
 
-## 124. Binary Tree Maximum Path Sum
+# 124. Binary Tree Maximum Path Sum
 https://leetcode.com/problems/binary-tree-maximum-path-sum/description/
 
 A path in a binary tree is a sequence of nodes where each pair of adjacent nodes in the sequence has an edge connecting them. A node can only appear in the sequence at most once. Note that the path does not need to pass through the root.
@@ -1672,11 +1654,11 @@ private:
 ```
 
 
-## 236. Lowest Common Ancestor of a Binary Tree
+# 236. Lowest Common Ancestor of a Binary Tree
 https://leetcode.com/problems/lowest-common-ancestor-of-a-binary-tree/description/
 
 
-## 257. Binary Tree Paths
+# 257. Binary Tree Paths
 
 Given the root of a binary tree, return all root-to-leaf paths in any order.
 
