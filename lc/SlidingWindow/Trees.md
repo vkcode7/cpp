@@ -478,14 +478,14 @@ Input: root = [3,1,4,null,2], k = 1
 Output: 1
 Explanation: Inorder traversal is [1,2,3,4], so the 1st smallest is 1.
 ```
-<img src="..//kthtree1.jpg" width="20%">
+<img src="../assets/kthtree1.jpg" width="50%">
 
 ```
 Input: root = [5,3,6,2,4,null,null,1], k = 3
 Output: 3
 Explanation: Inorder traversal is [1,2,3,4,5,6], so the 3rd smallest is 3.
 ```
-<img src="..//kthtree2.jpg" width="20%">
+<img src="../assets/kthtree2.jpg" width="50%">
 
 ```
 Try to utilize the property of a BST.
