@@ -8,6 +8,7 @@
 # 234. Palindrome Linked List [Easy]
 # 138. Copy List with Random Pointer - Hash Table, Linked List
 # 430. Flatten a Multilevel Doubly Linked List - Linked List, Depth-First Search, Doubly-Linked List
+# 143. Reorder List
 ```
 
 # 21. Merge Two Sorted Lists [Super Easy]
