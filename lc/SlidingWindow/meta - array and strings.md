@@ -674,3 +674,115 @@ public:
     }
 };
 ```
+
+
+# 157. Read N Characters Given Read4
+
+Given a file and assume that you can only read the file using a given method read4, implement a method to read n characters.
+
+Method read4:
+The API read4 reads four consecutive characters from file, then writes those characters into the buffer array buf4.
+
+The return value is the number of actual characters read.
+
+Note that read4() has its own file pointer, much like FILE *fp in C.
+
+```
+Definition of read4:
+
+    Parameter:  char[] buf4
+    Returns:    int
+
+buf4[] is a destination, not a source. The results from read4 will be copied to buf4[].
+
+
+Example 1:
+
+Input: file = "abc", n = 4
+Output: 3
+Explanation: After calling your read method, buf should contain "abc". We read a total of 3 characters from the file, so return 3.
+Note that "abc" is the file's content, not buf. buf is the destination buffer that you will have to write the results to.
+Example 2:
+
+Input: file = "abcde", n = 5
+Output: 5
+Explanation: After calling your read method, buf should contain "abcde". We read a total of 5 characters from the file, so return 5.
+Example 3:
+
+Input: file = "abcdABCD1234", n = 12
+Output: 12
+Explanation: After calling your read method, buf should contain "abcdABCD1234". We read a total of 12 characters from the file, so return 12.
+```
+
+```cpp
+This solution causes TLE
+
+/**
+ * The read4 API is defined in the parent class Reader4.
+ *     int read4(char *buf4);
+ */
+
+class Solution {
+public:
+    /**
+     * @param buf Destination buffer
+     * @param n   Number of characters to read
+     * @return    The number of actual characters read
+     */
+    int read(char *buf, int n) {
+        //buf = new char[n+1];
+        int read = 0;
+        int totalRead = 0;
+        do {
+            char curr_buf[4];
+            //char *curr_buf = buf + totalRead;
+            read = read4(curr_buf);
+            int remaining = n - totalRead;
+            if(remaining >= 4) {
+                strncpy(buf + totalRead, curr_buf, read);
+                totalRead += read;
+            }
+            else {
+                strncpy(buf + totalRead, curr_buf, min(remaining, read));
+                totalRead += remaining;
+            }
+
+
+        } while (totalRead < n );
+
+        return totalRead;
+    }
+};
+```
+
+```cpp
+//Accepted and Expected solution
+class Solution {
+public:
+    int read(char *buf, int n) {
+        int copiedChars = 0;
+        int readChars = 4;
+        int remainingChars = n;
+
+        // While there are at least 4 characters remaining to be read and the
+        // last call to readChars returned 4 characters, write directly to buf.
+        while (remainingChars >= 4 && readChars == 4) {
+            readChars = read4(buf + copiedChars);
+            copiedChars += readChars;
+        }
+
+        // If there are between 1 and 3 characters that we still want to read
+        // and readChars was not 0 last time we called read4, then create a
+        // buffer for just this one call so we can ensure buf does not overflow.
+        if (remainingChars && readChars) {
+            char buf4[4];
+            readChars = read4(buf4);
+            for (int i = 0; i < min(remainingChars, readChars); i++) {
+                buf[copiedChars++] = buf4[i];
+            }
+        }
+
+        return min(n, copiedChars);
+    }
+};
+```
