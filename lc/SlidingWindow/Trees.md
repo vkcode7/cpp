@@ -1762,6 +1762,17 @@ private:
 
 # 426. Convert a Binary Search Tree to a sorted Circular Doubly-Linked List in place. (In-Order Traversal)
 
+- Initiate the first and the last nodes as nulls.
+- Call the standard inorder recursion helper(root) :
+  - If the node is not null :
+    - Call the recursion for the left subtree helper(node.left).
+    - If the last node is not null, link the last and the current node nodes.
+    - Else initiate the first node.
+    - Mark the current node as the last one: last = node.
+    - Call the recursion for the right subtree helper(node.right).
+- Link the first and the last nodes to close the DLL ring and then return the first node.
+
+```cpp
 /*
 // Definition for a Node.
 class Node {
@@ -1793,27 +1804,25 @@ class Solution {
   Node* last = NULL;
 
   void helper(Node* node) {
-    if (node) {
-      // left
-      helper(node->left);
+    if(!node)
+        return;
 
-      // node 
-      if (last) {
+    // left
+    helper(node->left);
+
+    // node 
+    if(!first)
+        first = last = node;
+    else {
         // link the previous node (last)
         // with the current one (node)
         last->right = node;
         node->left = last;
-      }
-      else {
-        // keep the smallest node
-        // to close DLL later on
-        first = node;
-      }
-      last = node;
-
-      // right
-      helper(node->right);
+        last = node;
     }
+
+    // right
+    helper(node->right);
   }
 
   Node* treeToDoublyList(Node* root) {
@@ -1827,3 +1836,4 @@ class Solution {
     return first;
   }
 };
+```
