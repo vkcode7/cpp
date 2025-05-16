@@ -3,8 +3,8 @@
 # 107. Binary Tree Level Order Traversal II [Easy, Understand how to calc the tree height]
 # 114. Flatten Binary Tree to Linked List - [Easy]
 # 230. Kth Smallest Element in a BST - [Easy via in order traversal]
-# 199. Binary Tree Right Side View - Depth-First Search, Breadth-First Search, Binary Tree
-# 116. Populating Next Right Pointers in Each Node
+# 199. Binary Tree Right Side View - Depth-First Search, Breadth-First Search, Binary Tree [Easy]
+# 116. Populating Next Right Pointers in Each Node [Easy]
 # 117. Populating Next Right Pointers in Each Node II - Linked List, Tree, Depth-First Search, Breadth-First Search, Binary Tree
 # 105. Construct Binary Tree from Preorder and Inorder Traversal - Hash Table, Divide and Conquer, Tree, Binary Tree
 # 112. Path Sum - Tree, Depth-First Search, Breadth-First Search, Binary Tree
@@ -607,7 +607,7 @@ The recursive inorder approach is preferred for its simplicity and because the B
 
 
 
-# 199. Binary Tree Right Side View - Depth-First Search, Breadth-First Search, Binary Tree
+# 199. Binary Tree Right Side View - Breadth-First Search [Easy]
 
 This document describes the solution to the "Binary Tree Right Side View" problem (LeetCode #199).
 
@@ -627,7 +627,7 @@ Input: root = [1,2,3,4,null,null,null,5]
 
 Output: [1,3,4,5]
 ```
-<img src="../assets/tree1_199.png" width="20%">
+<img src="../assets/tree2_199.png" width="20%">
 
 
 ```
@@ -701,53 +701,10 @@ public:
 };
 ```
 
-```cpp
-class Solution {
-public:
-    vector<int> rightSideView(TreeNode* root) {
-        vector<int> result;
-        if (!root) return result;
-        
-        queue<TreeNode*> q;
-        q.push(root);
-        
-        while (!q.empty()) {
-            int levelSize = q.size();
-            TreeNode* rightmost = nullptr;
-            
-            // Process all nodes at the current level
-            for (int i = 0; i < levelSize; i++) {
-                TreeNode* node = q.front();
-                q.pop();
-                rightmost = node; // Last node in level is rightmost
-                
-                // Add children to queue
-                if (node->left) q.push(node->left);
-                if (node->right) q.push(node->right);
-            }
-            
-            // Add rightmost node's value to result
-            result.push_back(rightmost->val);
-        }
-        
-        return result;
-    }
-};
-```
-
 ### How It Works
 - **BFS**:
   - Use a queue to traverse the tree level by level.
   - For each level, process all nodes and track the last one (rightmost).
-- **Level Processing**:
-  - Record the size of the current level (`levelSize`).
-  - Pop each node, update `rightmost`, and enqueue its children (left then right).
-  - After processing the level, add the `rightmost` node’s value to the result.
-- **Edge Cases**:
-  - Empty tree: Return empty vector.
-  - Single node: Return vector with that node’s value.
-  - Skewed tree: Correctly captures the only node at each level.
-- **Result**: Returns the values of the rightmost nodes at each level, from top to bottom.
 
 ### Time and Space Complexity
 - **Time Complexity**: O(n), where `n` is the number of nodes, as each node is processed exactly once.
@@ -763,7 +720,7 @@ The BFS approach is preferred for its intuitive level-by-level processing, which
 
 
 
-# 116. Populating Next Right Pointers in Each Node
+# 116. Populating Next Right Pointers in Each Node - [Easy]
 
 This document describes the solution to the "Populating Next Right Pointers in Each Node" problem (LeetCode #116).
 
