@@ -620,14 +620,14 @@ Input: root = [1,2,3,null,5,null,4]
 Output: [1,3,4]
 Explanation: From the right side, the visible nodes are 1 (root), 3 (right child at level 1), and 4 (rightmost at level 2).
 ```
-<img src="..//tree1_199.png" width="20%">
+<img src="../assets/tree1_199.png" width="20%">
 
 ```
 Input: root = [1,2,3,4,null,null,null,5]
 
 Output: [1,3,4,5]
 ```
-<img src="..//tree1_199.png" width="20%">
+<img src="../assets/tree1_199.png" width="20%">
 
 
 ```
