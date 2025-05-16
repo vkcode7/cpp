@@ -16,6 +16,9 @@
 # 124. Binary Tree Maximum Path Sum
 # 236. Lowest Common Ancestor of a Binary Tree
 # 257. Binary Tree Paths
+
+# 543. Diameter of Binary Tree
+# 426. Convert a Binary Search Tree to a sorted Circular Doubly-Linked List in place. (In-Order Traversal)
 ```
 
 # 102. Binary Tree Level Order Traversal -[Easy]
@@ -1723,3 +1726,104 @@ public:
     }
 };
 ```
+
+
+# 543. Diameter of Binary Tree
+https://leetcode.com/problems/diameter-of-binary-tree/description/
+
+Given the root of a binary tree, return the length of the diameter of the tree.
+
+The diameter of a binary tree is the length of the longest path between any two leaf nodes in a tree. This path may or may not pass through the root.
+
+The length of a path between two leaf nodes is represented by the number of edges between them.
+
+```cpp
+class Solution {
+public:
+    int diameterOfBinaryTree(TreeNode* root) {
+        int diameter = 0;
+        height(root, diameter);
+        return diameter;
+    }
+    
+private:
+    int height(TreeNode* node, int& diameter) {
+        if (!node) return 0;
+        
+        int leftHt = height(node->left, diameter);
+        int rightHt = height(node->right, diameter);
+        
+        diameter = max(diameter, leftHt + rightHt);
+        
+        return 1 + max(leftHt, rightHt);
+    }
+};
+```
+
+# 426. Convert a Binary Search Tree to a sorted Circular Doubly-Linked List in place. (In-Order Traversal)
+
+/*
+// Definition for a Node.
+class Node {
+public:
+    int val;
+    Node* left;
+    Node* right;
+
+    Node() {}
+
+    Node(int _val) {
+        val = _val;
+        left = NULL;
+        right = NULL;
+    }
+
+    Node(int _val, Node* _left, Node* _right) {
+        val = _val;
+        left = _left;
+        right = _right;
+    }
+};
+*/
+
+class Solution {
+  public:
+  // the smallest (first) and the largest (last) nodes
+  Node* first = NULL;
+  Node* last = NULL;
+
+  void helper(Node* node) {
+    if (node) {
+      // left
+      helper(node->left);
+
+      // node 
+      if (last) {
+        // link the previous node (last)
+        // with the current one (node)
+        last->right = node;
+        node->left = last;
+      }
+      else {
+        // keep the smallest node
+        // to close DLL later on
+        first = node;
+      }
+      last = node;
+
+      // right
+      helper(node->right);
+    }
+  }
+
+  Node* treeToDoublyList(Node* root) {
+    if (!root) return NULL;
+
+    helper(root);
+
+    // close DLL
+    last->right = first;
+    first->left = last;
+    return first;
+  }
+};
