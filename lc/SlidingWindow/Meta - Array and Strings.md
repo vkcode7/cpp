@@ -1,3 +1,5 @@
+# Arrays and Strings
+
 ## 8. String to Integer (atoi)
 
 ```
@@ -626,7 +628,7 @@ public:
 ```
 
 
-# 314. Binary Tree Vertical Order Traversal
+## 314. Binary Tree Vertical Order Traversal
 ```
       3
     /  \
@@ -676,7 +678,7 @@ public:
 ```
 
 
-# 157. Read N Characters Given Read4
+## 157. Read N Characters Given Read4
 
 Given a file and assume that you can only read the file using a given method read4, implement a method to read n characters.
 
@@ -730,59 +732,245 @@ public:
      * @return    The number of actual characters read
      */
     int read(char *buf, int n) {
-        //buf = new char[n+1];
-        int read = 0;
+        int read = 4;
         int totalRead = 0;
-        do {
+
+        while(n - totalRead >= 4) {
+            read = read4(buf + totalRead);
+            totalRead += read;
+            if(read < 4)
+                break;
+        }
+
+        if(n - totalRead < 4 && read) {
             char curr_buf[4];
-            //char *curr_buf = buf + totalRead;
-            read = read4(curr_buf);
-            int remaining = n - totalRead;
-            if(remaining >= 4) {
-                strncpy(buf + totalRead, curr_buf, read);
-                totalRead += read;
-            }
-            else {
-                strncpy(buf + totalRead, curr_buf, min(remaining, read));
-                totalRead += remaining;
-            }
+            read = read4(buf + totalRead);
+            *(buf + totalRead + read) = 0; 
+            totalRead += read;
+        }
 
-
-        } while (totalRead < n );
-
-        return totalRead;
+        return min(n, totalRead);
     }
 };
 ```
 
+## 161. One Edit Distance
+Given two strings s and t, return true if they are both one edit distance apart, otherwise return false.
+
+A string s is said to be one distance apart from a string t if you can:
+
+- Insert exactly one character into s to get t.
+- Delete exactly one character from s to get t.
+- Replace exactly one character of s with a different character to get t.
+ 
+```
+Example 1:
+
+Input: s = "ab", t = "acb"
+Output: true
+Explanation: We can insert 'c' into s to get t.
+Example 2:
+
+Input: s = "", t = ""
+Output: false
+Explanation: We cannot get t from s by only one step.
+```
+
 ```cpp
-//Accepted and Expected solution
 class Solution {
 public:
-    int read(char *buf, int n) {
-        int copiedChars = 0;
-        int readChars = 4;
-        int remainingChars = n;
+    bool isOneEditDistance(string s, string t) {
+        int ns = s.size();
+        int nt = t.size();
 
-        // While there are at least 4 characters remaining to be read and the
-        // last call to readChars returned 4 characters, write directly to buf.
-        while (remainingChars >= 4 && readChars == 4) {
-            readChars = read4(buf + copiedChars);
-            copiedChars += readChars;
-        }
+        // Ensure that s is shorter than t.
+        if (ns > nt) return isOneEditDistance(t, s);
 
-        // If there are between 1 and 3 characters that we still want to read
-        // and readChars was not 0 last time we called read4, then create a
-        // buffer for just this one call so we can ensure buf does not overflow.
-        if (remainingChars && readChars) {
-            char buf4[4];
-            readChars = read4(buf4);
-            for (int i = 0; i < min(remainingChars, readChars); i++) {
-                buf[copiedChars++] = buf4[i];
-            }
-        }
+        // The strings are NOT one edit away distance
+        // if the length diff is more than 1.
+        if (nt - ns > 1) return false;
 
-        return min(n, copiedChars);
+        for (int i = 0; i < ns; i++)
+            if (s[i] != t[i])
+                // if strings have the same length
+                if (ns == nt) return s.substr(i + 1) == t.substr(i + 1);
+                // If strings have different lengths
+                else
+                    return s.substr(i) == t.substr(i + 1);
+
+        // If there are no diffs in ns distance
+        // The strings are one edit away only if
+        // t has one more character.
+        return (ns + 1 == nt);
     }
 };
+```
+
+## 340. Longest Substring with At Most K Distinct Characters
+
+Given a string s and an integer k, return the length of the longest substring of s that contains at most k distinct characters.
+
+```
+Example 1:
+
+Input: s = "eceba", k = 2
+Output: 3
+Explanation: The substring is "ece" with length 3.
+Example 2:
+
+Input: s = "aa", k = 1
+Output: 2
+Explanation: The substring is "aa" with length 2.
+```
+
+```cpp
+class Solution {
+public:
+    int lengthOfLongestSubstringKDistinct(string s, int k) {
+        unordered_map<char, int> map;
+        int start = 0, end = 0, counter = 0, len = 0;   
+        while(end < s.size()) {
+            if(map[s[end ++]] ++ == 0) counter ++;
+            
+            // Found more than K distinct chars
+            while(counter > k) {
+                if(map[s[start ++]] -- == 1) counter --;
+            }
+            len = max(len, end - start);
+        }
+        return len;
+    }
+};
+```
+
+## 468. Validate IP Address
+https://leetcode.com/problems/validate-ip-address/description/
+
+Given a string queryIP, return "IPv4" if IP is a valid IPv4 address, "IPv6" if IP is a valid IPv6 address or "Neither" if IP is not a correct IP of any type.
+
+```
+A valid IPv4 address is an IP in the form "x1.x2.x3.x4" where 0 <= xi <= 255 and xi cannot contain leading zeros. For example, "192.168.1.1" and "192.168.1.0" are valid IPv4 addresses while "192.168.01.1", "192.168.1.00", and "192.168@1.1" are invalid IPv4 addresses.
+
+A valid IPv6 address is an IP in the form "x1:x2:x3:x4:x5:x6:x7:x8" where:
+
+1 <= xi.length <= 4
+xi is a hexadecimal string which may contain digits, lowercase English letter ('a' to 'f') and upper-case English letters ('A' to 'F').
+Leading zeros are allowed in xi.
+For example, "2001:0db8:85a3:0000:0000:8a2e:0370:7334" and "2001:db8:85a3:0:0:8A2E:0370:7334" are valid IPv6 addresses, while "2001:0db8:85a3::8A2E:037j:7334" and "02001:0db8:85a3:0000:0000:8a2e:0370:7334" are invalid IPv6 addresses.
+
+Example 1:
+
+Input: queryIP = "172.16.254.1"
+Output: "IPv4"
+Explanation: This is a valid IPv4 address, return "IPv4".
+Example 2:
+
+Input: queryIP = "2001:0db8:85a3:0:0:8A2E:0370:7334"
+Output: "IPv6"
+Explanation: This is a valid IPv6 address, return "IPv6".
+Example 3:
+
+Input: queryIP = "256.256.256.256"
+Output: "Neither"
+Explanation: This is neither a IPv4 address nor a IPv6 address.
+```
+
+```c++
+class Solution {
+public:
+    string validateIPv4(string IP) {
+        IP.push_back('.');  // add extra . at end to handle last group
+        stringstream ss(IP);
+        string block;
+        int count = 0;
+        while (getline(ss, block, '.')) {
+            count++;
+            // Validate integer in range (0, 255):
+            // 1. length of chunk is between 1 and 3
+            if (block.length() == 0 || block.length() > 3) return "Neither";
+            // 2. no extra leading zeros
+            if (block[0] == '0' && block.length() != 1) return "Neither";
+            for (char ch : block) {
+                // 3. only digits are allowed
+                if (!isdigit(ch)) return "Neither";
+            }
+            // 4. less than or equal to 255
+            if (stoi(block) > 255) return "Neither";
+        }
+        return (count == 4 && ss.eof()) ? "IPv4" : "Neither";
+    }
+
+    string validateIPv6(string IP) {
+        IP.push_back(':');  // add extra : at end to handle last group
+        stringstream ss(IP);
+        string block;
+        int count = 0;
+        while (getline(ss, block, ':')) {
+            count++;
+            // Validate hexadecimal in range (0, 2**16):
+            // 1. at least one and not more than 4 hexdigits in one chunk
+            if (block.length() == 0 || block.length() > 4) return "Neither";
+            for (char ch : block) {
+                // 2. only hexdigits are allowed: 0-9, a-f, A-F
+                if (!isxdigit(ch)) return "Neither";
+            }
+        }
+        return (count == 8 && ss.eof()) ? "IPv6" : "Neither";
+    }
+
+    string validIPAddress(string IP) {
+        return (count(begin(IP), end(IP), '.') == 3)
+                   ? validateIPv4(IP)
+                   : (count(begin(IP), end(IP), ':') == 7 ? validateIPv6(IP)
+                                                          : "Neither");
+    }
+};
+```
+
+## 680. Valid Palindrome II
+Given a string s, return true if the s can be palindrome after deleting at most one character from it.
+
+```
+Example 1:
+
+Input: s = "aba"
+Output: true
+Example 2:
+
+Input: s = "abca"
+Output: true
+Explanation: You could delete the character 'c'.
+Example 3:
+
+Input: s = "abc"
+Output: false
+```
+
+```c++
+class Solution {
+public:
+    bool ispalindrome(string s, int i, int j){
+        while(i < j){
+            if(s.at(i) == s.at(j)){
+                i++;
+                j--;
+            }else return false;
+        }
+        return true;
+    }
+    bool validPalindrome(string s) {
+        int i  = 0;
+        int j = s.size()-1;
+        while(i < j){
+            if(s.at(i) == s.at(j)){
+                i++;
+                j--;
+            }else{
+                return ispalindrome(s, i+1, j) || ispalindrome(s, i, j-1);
+            }
+        }
+        return true;
+    }
+};
+
 ```
