@@ -5,7 +5,7 @@
 # 230. Kth Smallest Element in a BST - [Easy via in order traversal]
 # 199. Binary Tree Right Side View - Depth-First Search, Breadth-First Search, Binary Tree [Easy]
 # 116. Populating Next Right Pointers in Each Node [Easy]
-# 117. Populating Next Right Pointers in Each Node II - Linked List, Tree, Depth-First Search, Breadth-First Search, Binary Tree
+# 117. Populating Next Right Pointers in Each Node II - [Easy]
 # 105. Construct Binary Tree from Preorder and Inorder Traversal - Hash Table, Divide and Conquer, Tree, Binary Tree
 # 112. Path Sum - Tree, Depth-First Search, Breadth-First Search, Binary Tree
 # 107. Binary Tree Level Order Traversal II - Tree, Breadth-First Search, Binary Tree
