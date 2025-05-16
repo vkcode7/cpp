@@ -2,7 +2,7 @@
 # 102. Binary Tree Level Order Traversal Solution [Easy]
 # 107. Binary Tree Level Order Traversal II [Easy, Understand how to calc the tree height]
 # 114. Flatten Binary Tree to Linked List - [Easy]
-# 230. Kth Smallest Element in a BST - Tree, Depth-First Search, Binary Search Tree, Binary Tree
+# 230. Kth Smallest Element in a BST - [Easy via in order traversal]
 # 199. Binary Tree Right Side View - Depth-First Search, Breadth-First Search, Binary Tree
 # 116. Populating Next Right Pointers in Each Node
 # 117. Populating Next Right Pointers in Each Node II - Linked List, Tree, Depth-First Search, Breadth-First Search, Binary Tree
@@ -377,20 +377,28 @@ struct TreeNode {
  * };
  */
 class Solution {
-public:    
-    void flatten(TreeNode* root) {        
-        while (root) {
-            if (root->left && root->right) {
-                TreeNode* t = root->left; //2
-                while (t->right)
-                    t = t->right;
-                t->right = root->right;
+public:
+    void flatten(TreeNode* root) {   
+        if(!root)
+            return;
+
+        TreeNode * n = root;     
+        while (n) {
+            if(n->left && n->right)
+            {
+                TreeNode * ln = n->left; 
+                while(ln->right)
+                    ln = ln->right;
+
+                ln->right = n->right;
+                n->right = nullptr;
             }
 
-            if(root->left)
-                root->right = root->left;
-            root->left = NULL;
-            root = root->right;
+            if(n->left)
+                n->right = n->left;
+
+            n->left = nullptr;
+            n = n->right;
         }
     }
 };
@@ -460,11 +468,8 @@ The recursive approach is preferred for its clarity and straightforward implemen
 
 
 
-# 230. Kth Smallest Element in a BST - Tree, Depth-First Search, Binary Search Tree, Binary Tree
+# 230. Kth Smallest Element in a BST - [Easy]
 
-This document describes the solution to the "Kth Smallest Element in a BST" problem (LeetCode #230).
-
-## Problem Description
 Given the root of a binary search tree (BST) and an integer `k`, return the `k`-th smallest element in the BST (1-indexed). A BST has the property that for any node, all values in the left subtree are less than the node’s value, and all values in the right subtree are greater.
 
 ### Example
