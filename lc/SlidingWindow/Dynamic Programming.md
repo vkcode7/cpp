@@ -9,8 +9,10 @@
 # 198. House Robber [Medium]
 # 139. Word Break [Medium]
 # 300. Longest Increasing Subsequence [Medium]
-# 2272. Substring with Largest Variance
+# 2272. Substring with Largest Variance[Medium, Revisit]
 ```
+
+**Kadane's algorithm** is a dynamic programming algorithm that finds the maximum subarray sum in an array of integers. It maintains two values: global_max, which represents the maximum sum encountered so far, and local_max, which represents the maximum sum ending at the current index. As the algorithm traverses the array from left to right, it updates these values. The algorithm is efficient because it only requires O(n) time and O(1) space to store two values and does not need any additional data structures.
 
 # 509. Fibonacci Number [Super Easy]
 https://leetcode.com/problems/fibonacci-number/
@@ -774,6 +776,64 @@ No letter occurs more than once in s, so the variance of every substring is 0.
 
 ## Solution
 Below is the C++ solution to find the largest variance in a substring using a modified Kadane's algorithm approach.
+
+```cpp
+class Solution {   //<-- THIS IS BEST AND EASIEST
+public:
+    int largestVariance(string s) {
+        map<char, int> mFreq;
+
+        for (char ch : s) {
+            mFreq[ch]++;
+        }
+        int globalMax = 0;
+        
+        for (auto [major, major_count]: mFreq) {
+            for (auto [minor, minor_count]: mFreq) {
+                // major and minor cannot be the same, and both must appear in s.
+                if (major == minor)
+                    continue;
+                
+                // Find the maximum variance of major - minor.        
+                int majorCountTracker = 0;
+                int minorCountTracker = 0;
+                
+                for (char ch : s) {    
+                    if (ch == major) {
+                        majorCountTracker++;
+                    }
+                    if (ch == minor) {
+                        minorCountTracker++;
+                        minor_count--; // The remaining minor in the rest of s.
+                    }
+                    
+                    // Only update the variance (local_max) if there is at least one minor.
+                    if (minorCountTracker > 0) //basically both major and minor found
+                        globalMax = max(globalMax, majorCountTracker - minorCountTracker);
+                    
+                    // We can discard the previous string if there is at least one remaining minor
+                    // restart from current position in s 
+                    if (majorCountTracker < minorCountTracker && minor_count > 0) {
+                        majorCountTracker = minorCountTracker = 0;
+                    }
+                }
+            }
+        }
+        
+        return globalMax;
+    }
+};
+```
+### Complexity Analysis for above solution [Medium, Revisit]
+
+Let n be the length of the input string s and k be the number of distinct characters in s.
+
+Time complexity: O(n⋅k^2)
+
+Kadane's algorithm requires O(n) time to traverse s. For each pair of alphabets (major, minor), we need to traverse s once. In the worst-case scenario, s contains k=26 different letters, so there are k⋅(k−1) possible pairs of letters.
+Space complexity: O(1)
+
+In the Kadane's algorithm, we only need to update a few variables, major_count, minor_count, rest_minor and global_max, which require O(1) space.
 
 ```cpp
 class Solution {
