@@ -2,13 +2,13 @@
 # 56. Merge Intervals [Easy]
 # 253. Meeting Rooms II [Easy]
 # 210. Course Schedule II - Depth-First Search - Breadth-First Search, Graph, Topological Sort [Easy]
-# 1971. Find if Path Exists in Graph - Depth-First Search, Breadth-First Search, Union Find, Graph
-# 797. All Paths From Source to Target - Backtracking, Depth-First Search, Breadth-First Search, Graph
+# 1971. Find if Path Exists in Graph - BFS [Easy]
+# 797. All Paths From Source to Target - BFS [Easy]
 # 133. Clone Graph [Easy via BFS and a map of visited nodes]
 # 269. Alien Dictionary [Medium]
-# 317. Shortest Distance from All Buildings
+# 317. Shortest Distance from All Buildings [Medium, Revisit]
 # 721. Accounts Merge
-# 785. Is Graph Bipartite? [Easy]
+# 785. Is Graph Bipartite? [Medium]
 ```
 
 # 56. Merge Intervals [Easy]
@@ -423,12 +423,10 @@ private:
 The DFS approach is chosen for its clarity in cycle detection and straightforward implementation, but Kahn’s algorithm is equally valid and may be preferred for iterative solutions.
 
 
-# 1971. Find if Path Exists in Graph - Depth-First Search, Breadth-First Search, Union Find, Graph
+# 1971. Find if Path Exists in Graph - Breadth-First Search [Easy]
 
-## Problem Description
 You are given an undirected graph with `n` nodes labeled from `0` to `n-1` and a list of undirected edges (each edge is a pair of nodes). Write a function to check whether there is a valid path from node `source` to node `destination` in the graph. A valid path is a sequence of nodes where each consecutive pair is connected by an edge.
 
-### Example
 ```
 Input: n = 3, edges = [[0,1],[1,2],[2,0]], source = 0, destination = 2
 Output: true
@@ -626,7 +624,7 @@ private:
 The DFS approach is chosen for its simplicity and recursive elegance, but BFS is equally valid and may be preferred for finding the shortest path in an unweighted graph.
 
 
-# 797. All Paths From Source to Target - Backtracking, Depth-First Search, Breadth-First Search, Graph
+# 797. All Paths From Source to Target - Breadth-First Search [Easy]
 
 This document describes the solution to the "All Paths From Source to Target" problem (LeetCode #797).
 
@@ -687,8 +685,8 @@ public:
         q.push({0, {0}});
         
         while (!q.empty()) {
-            auto [current, path] = q.front();
-            q.pop();
+            auto [current, path] = q.front(); 
+            q.pop(); //DISCARD
             
             // If target node is reached, add path to result
             if (current == n - 1) {
@@ -698,7 +696,7 @@ public:
             
             // Explore all neighbors
             for (int next : graph[current]) {
-                vector<int> newPath = path;
+                vector<int> newPath = path; //<--- USE THE PATH SO FAR TO CONTINUE
                 newPath.push_back(next);
                 q.push({next, newPath});
             }
@@ -904,7 +902,7 @@ public:
 - Large graph: The solution efficiently handles graphs within the constraint of up to 100 nodes.
 
 
-# 269. Alien Dictionary
+# 269. Alien Dictionary [Medium, Revisit]
 
 There is a new alien language that uses the English alphabet. However, the order of the letters is unknown to you.
 
@@ -1056,7 +1054,7 @@ The point (1,2) is an ideal empty land to build a house, as the total travel dis
 So return 7.
 ```
 
-### Approach 1: BFS from Empty Land to All Houses
+### Approach 1: BFS from Empty Land to All Houses [Medium, Revisit]
 
 Our goal is to find the empty land cell with the shortest total distance to all houses, so we must first find the shortest total distance to all houses from each empty land cell.
 As previously mentioned, this can be accomplished using BFS. For each empty cell (cell value equals 0) in the grid, start a BFS and sum all the distances to houses (cell value equals 1) from this cell. We will also keep track of the number of houses we have reached from this source cell (empty cell).
@@ -1177,6 +1175,96 @@ public:
 };
 ```
 
+### Another approach:
+
+The intuition behind the code is to find the point which is closest to all the buildings. The idea is to first find the total number of buildings in the grid and then, for each empty cell, calculate the distance to all the buildings. We keep a running total of these distances in a 2D array dist. After calculating the distance to all the buildings for each empty cell, we find the cell with the minimum sum of distances and return that distance as the result.
+
+
+Let's understand why we need bfs to this problem, why we are not using manhattan distance to solve this problem?
+
+
+Answer - Suppose in this grid, obstacle wouldn't have given, then in this case for each empty land i.e. grid[i][j] = 0, we traverse all houses i.e. grid[i][j] = 1, and add the Manhattan Distance:
+distance = |x1 - x2| + |y1 - y2|, where (x1, y1) are the coordinates of empty land and (x2, y2) are the coordinates of a house.We keep a running total of these manhattan distances in a 2D array. After calculating the manhattan distance to all the buildings for each empty cell, we find the cell with the minimum sum of distances and return that distance as the result. But due to obstacle present in the grid we will get wrong distance using manhattan formula. See below image how it is wrong.
+
+
+To calculate the distances, we use Breadth-First Search (BFS) starting from each building. This allows us to traverse the grid in all four directions (left, right, up, down) to reach every empty cell. The distance to each empty cell is stored in the dist array and updated as we traverse the grid.
+
+
+Finally, we return the minimum sum of distances as the result. If there is no empty cell with a minimum sum of distances, we return -1, indicating that it is not possible to build a house that reaches all the buildings.
+
+#### Algo used:
+- Initialize two 2D arrays, sum and reach, of the same size as the grid. sum[i][j] stores the sum of distances from the cell (i, j) to all the buildings, and reach[i][j] stores the number of buildings that are reachable from the cell (i, j).
+- Traverse the grid and for every building, perform a BFS from the building to find all the empty cells that are reachable from the building. For each reachable cell, update sum[i][j] and reach[i][j].
+- After the BFS, traverse dist and reach arrays and find the cell (i, j) such that reach[i][j] is equal to the number of buildings and sum[i][j] is minimum. If such a cell does not exist, return -1.
+- Return the value stored in sum[i][j].
+
+#### Time Complexity and Space Complexity:
+Time complexity: O(m * n * (m * n)), where m is the number of rows in the grid and n is the number of columns in the grid. This is because for each building, we need to perform a BFS, which takes O(m * n) time, and we need to perform BFS for all the buildings and in worst case there are m*n buildings. Hence, the total time complexity would be O(m * n * (m * n)).
+
+Space complexity: O(m * n), as we need to store the dist and reach arrays, which are of size m * n.
+
+```cpp
+class Solution {
+
+public:
+    int shortestDistance(vector<vector<int>>& grid) {
+        int m = grid.size(); //rows
+        int n = grid[0].size(); //cols
+
+        //sum[i][j] stores the sum of distances from the cell (i, j) to all the buildings
+        vector<vector<int>> sum(m, vector<int>(n, 0));
+        //reach[i][j] stores the number of buildings that are reachable from the cell (i, j).
+        vector<vector<int>> reach(m, vector<int>(n, 0));
+        //find the total number of buildings in the grid
+        int building_count = 0;
+        
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < n; j++) {
+                if (grid[i][j] == 1) {
+                    building_count++;
+                    queue<pair<int, int>> q;
+                    q.push({i, j});
+                    vector<vector<bool>> visited(m, vector<bool>(n, false));
+                    visited[i][j] = true;
+                    //totalDistance is help us to find total distance between the house(cell (i, j)) and all the buildings
+                    int totalDistance = 0;
+                    vector<pair<int, int>> dirs = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}};
+                    
+                    while (!q.empty()) {
+                        int size = q.size();
+                        totalDistance++;
+                        while (size--) {
+                            auto [x, y] = q.front();
+                            q.pop();
+                            for (auto [dx, dy] : dirs) {
+                                int i = x + dx;
+                                int j = y + dy;
+                                if (i >= 0 && i < m && j >= 0 && j < n && grid[i][j] == 0 && !visited[i][j]) {
+                                    q.push({i, j});
+                                    visited[i][j] = true;
+                                    sum[i][j] += totalDistance;
+                                    reach[i][j]++;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        
+        int res = INT_MAX;
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < n; j++) {
+                if (grid[i][j] == 0 && reach[i][j] == building_count) {
+                    res = min(res, sum[i][j]);
+                }
+            }
+        }
+        
+        return res == INT_MAX ? -1 : res;
+    }
+};
+```
 
 # 721. Accounts Merge
 https://leetcode.com/problems/accounts-merge/description/
@@ -1288,7 +1376,7 @@ public:
 };
 ```
 
-# 785. Is Graph Bipartite?
+# 785. Is Graph Bipartite? [Medium, revisit]
 
 There is an undirected graph with n nodes, where each node is numbered between 0 and n - 1. You are given a 2D array graph, where graph[u] is an array of nodes that node u is adjacent to. More formally, for each v in graph[u], there is an undirected edge between node u and node v. The graph has the following properties:
 
