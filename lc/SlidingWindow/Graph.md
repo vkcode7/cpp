@@ -1,22 +1,20 @@
 ```bash
-# 56. Merge Intervals
-# 253. Meeting Rooms II
-# 210. Course Schedule II - Depth-First Search - Breadth-First Search, Graph, Topological Sort
+# 56. Merge Intervals [Easy]
+# 253. Meeting Rooms II [Easy]
+# 210. Course Schedule II - Depth-First Search - Breadth-First Search, Graph, Topological Sort [Easy]
 # 1971. Find if Path Exists in Graph - Depth-First Search, Breadth-First Search, Union Find, Graph
 # 797. All Paths From Source to Target - Backtracking, Depth-First Search, Breadth-First Search, Graph
 # 133. Clone Graph [Easy via BFS and a map of visited nodes]
-# 269. Alien Dictionary
+# 269. Alien Dictionary [Medium]
 # 317. Shortest Distance from All Buildings
 # 721. Accounts Merge
-# 785. Is Graph Bipartite?
+# 785. Is Graph Bipartite? [Easy]
 ```
 
-# 56. Merge Intervals
+# 56. Merge Intervals [Easy]
 
-## Problem Description
 Given an array of intervals where `intervals[i] = [start_i, end_i]`, merge all overlapping intervals and return an array of the non-overlapping intervals that cover all the intervals in the input.
 
-### Example
 ```
 Input: intervals = [[1,3],[2,6],[8,10],[15,18]]
 Output: [[1,6],[8,10],[15,18]]
@@ -30,11 +28,6 @@ Input: intervals = [[1,4],[0,4]]
 Output: [[0,4]]
 Explanation: Intervals [0,4] and [1,4] overlap, so they are merged into [0,4].
 ```
-
-### Constraints
-- `1 <= intervals.length <= 10^4`
-- `intervals[i].length == 2`
-- `0 <= start_i <= end_i <= 10^4`
 
 ## Solution Approach
 The problem can be solved by sorting the intervals by start time and then merging overlapping intervals in a single pass.
@@ -125,11 +118,9 @@ public:
 The sort and merge approach is preferred for its simplicity and direct handling of intervals without needing to process events separately.
 
 
-# 253. Meeting Rooms II
+# 253. Meeting Rooms II [Easy]
 
-This document describes the solution to the "Meeting Rooms II" problem (LeetCode #253).
 
-## Problem Description
 Given an array of meeting time intervals `intervals` where `intervals[i] = [start_i, end_i]`, return the minimum number of conference rooms required to accommodate all meetings without conflicts.
 
 ### Example
@@ -142,10 +133,6 @@ Input: intervals = [[7,10],[2,4]]
 Output: 1
 Explanation: No overlap, so only one room is needed.
 ```
-
-### Constraints
-- `1 <= intervals.length <= 10^4`
-- `0 <= start_i < end_i <= 10^6`
 
 ## Solution Approach
 The problem can be solved efficiently using a chronological ordering approach by separating start and end times, sorting them, and tracking the maximum number of overlapping meetings.
@@ -257,9 +244,7 @@ public:
 The chronological ordering approach is preferred for its simplicity and clarity, avoiding the need for a heap while maintaining the same time complexity.
 
 
-
-
-# 210. Course Schedule II - Depth-First Search - Breadth-First Search, Graph, Topological Sort
+# 210. Course Schedule II - BFS [Easy]
 
 ## Problem Description
 There are a total of `numCourses` courses labeled from `0` to `numCourses - 1`. You are given an array `prerequisites` where `prerequisites[i] = [a_i, b_i]` indicates that you must take course `b_i` first before taking course `a_i`. Return the ordering of courses you should take to finish all courses. If there are multiple valid orderings, return any one. If it is impossible to finish all courses, return an empty array.
