@@ -19,14 +19,14 @@ LeetCode Submissions = 14/14
 BackTracking = 0/2
 Binary Search = 3/3
 Dynamic Programming = 11/11
-Graphs = 6/10
+Graphs = 9/10
 LinkedList = 8/10
 Median and Moving Avg = 0/6
 Sliding Window = 20/20
 Binary Trees = 15/18
 Matrix = 0/6
 
-Total = 77/100
+Total = 80/100
 ```
 
 # 1431. Kids With the Greatest Number of Candies [Super Easy] via Kadane
