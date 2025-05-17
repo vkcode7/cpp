@@ -4,7 +4,7 @@
 # 210. Course Schedule II - Depth-First Search - Breadth-First Search, Graph, Topological Sort
 # 1971. Find if Path Exists in Graph - Depth-First Search, Breadth-First Search, Union Find, Graph
 # 797. All Paths From Source to Target - Backtracking, Depth-First Search, Breadth-First Search, Graph
-# 133. Clone Graph Solution
+# 133. Clone Graph [Easy via BFS and a map of visited nodes]
 ```
 
 # 56. Merge Intervals
@@ -811,142 +811,97 @@ private:
 The BFS approach is provided here as an alternative to the previously shared DFS solution, offering a different perspective. BFS may be less memory-efficient due to storing multiple paths in the queue but is intuitive for level-by-level exploration.
 
 
-# 133. Clone Graph Solution
+# 133. Clone Graph Solution [Easy]
+https://leetcode.com/problems/clone-graph/
 
-## Problem Description
 Given a reference of a node in a connected undirected graph, return a deep copy (clone) of the graph. Each node in the graph contains a value (`int`) and a list of its neighbors. The graph is represented using an adjacency list, and you must ensure the cloned graph has the same structure and values but uses new nodes.
 
-### Example 1
 ```
+Example 1
 Input: adjList = [[2,4],[1,3],[2,4],[1,3]]
 Output: [[2,4],[1,3],[2,4],[1,3]]
 Explanation: The graph has 4 nodes. Node 1's neighbors are nodes 2 and 4, node 2's neighbors are nodes 1 and 3, etc. The output is a deep copy of this graph.
 ```
-<img src="../assets/133_clone_graph_question.png” width="20%">
+<img src="../assets/133_clone_graph_question.png" width="20%">
 
-### Example 2
+```
+Example 2
 Input: adjList = [[]]
 Output: [[]]
 Explanation: Note that the input contains one empty list. The graph consists of only one node with val = 1 and it does not have any neighbors.
 
-### Example 3
+Example 3
 Input: adjList = []
 Output: []
 Explanation: This an empty graph, it does not have any nodes.
-
+```
 
 ## Solution
-Below is the C++ solution to clone a graph using a depth-first search (DFS) approach.
 ```cpp
-
+//using BFS
 class Solution {
-    Node * clone(Node * node, map<int, Node*>& nodes)
-    {
-        if(nodes.find(node->val) == nodes.end())
-        {
-            Node * nclone = new Node(node->val);
-            nodes[node->val] = nclone;
-
-            for (auto n : node->neighbors)
-            {
-                Node * child = nullptr;
-                if(nodes.find(n->val) == nodes.end())
-                {
-                    child = clone(n, nodes);
-                }
-                else
-                    child = nodes[n->val];
-                
-                nclone->neighbors.push_back(child);       
-            }
-            
-        }
-        
-        return nodes[node->val];
-    }
-    
 public:
     Node* cloneGraph(Node* node) {
         if(!node)
             return node;
-        
-        if(node->neighbors.size() == 0)
-            return new Node(node->val);
-        
-        map<int, Node*> nodes;  
-        return clone(node, nodes);
+
+        map<Node*, Node*> v;
+
+        queue<Node*> q;
+        q.push(node);
+
+        v[node] = new Node(node->val);
+        //start BFS traversal
+        while(!q.empty())
+        {
+            Node *n = q.front();
+            for(auto x: n->neighbors)
+            {
+                if(v.count(x) == 0)
+                {
+                    Node * nx = new Node(x->val);
+                    v[x] = nx;
+                    q.push(x);
+                }
+
+                v[n]->neighbors.push_back(v[x]);
+            }
+            q.pop();
+        }
+
+        return v[node];
     }
 };
 ```
+
+Below is the C++ solution to clone a graph using a depth-first search (DFS) approach.
 
 ```cpp
-/*
-// Definition for a Node.
-class Node {
-public:
-    int val;
-    vector<Node*> neighbors;
-    Node() {
-        val = 0;
-        neighbors = vector<Node*>();
-    }
-    Node(int _val) {
-        val = _val;
-        neighbors = vector<Node*>();
-    }
-    Node(int _val, vector<Node*> _neighbors) {
-        val = _val;
-        neighbors = _neighbors;
-    }
-};
-*/
+//DFS
 class Solution {
 public:
+    unordered_map<Node*, Node*> v;
+
     Node* cloneGraph(Node* node) {
-        if (!node) {
-            return nullptr;
+        if(!node)
+            return node;
+
+        queue<Node*> q;
+        if(v.count(node) == 0)
+            v[node] = new Node(node->val);
+
+        for(auto x: node->neighbors)
+        {
+            if(v.count(x) == 0) //not visited yet
+                cloneGraph(x);
+
+            v[node]->neighbors.push_back(v[x]);
         }
-        
-        // Map to store original node to its clone
-        unordered_map<Node*, Node*> visited;
-        return dfs(node, visited);
-    }
-    
-private:
-    Node* dfs(Node* node, unordered_map<Node*, Node*>& visited) {
-        // If node is already cloned, return its clone
-        if (visited.find(node) != visited.end()) {
-            return visited[node];
-        }
-        
-        // Create a new node with the same value
-        Node* clone = new Node(node->val);
-        visited[node] = clone;
-        
-        // Recursively clone all neighbors
-        for (Node* neighbor : node->neighbors) {
-            clone->neighbors.push_back(dfs(neighbor, visited));
-        }
-        
-        return clone;
+
+        return v[node];
     }
 };
 ```
-
-## Explanation
-1. **Edge Case**:
-   - If the input node is `nullptr`, return `nullptr`.
-2. **DFS with Memoization**:
-   - Use a hash map (`visited`) to store the mapping of original nodes to their clones to avoid duplicating nodes and handle cycles.
-   - For each node:
-     - If it has already been cloned (exists in `visited`), return its clone.
-     - Otherwise, create a new node with the same value.
-     - Store the original node and its clone in `visited`.
-     - Recursively clone all neighbors and add them to the clone's neighbor list.
-3. **Deep Copy**:
-   - The solution ensures all nodes and their connections are copied, creating a new graph with the same structure.
-4. **Handle Cycles**:
-   - The `visited` map prevents infinite recursion in cyclic graphs by reusing already cloned nodes.
 
 ## Time and Space Complexity
 - **Time Complexity**: O(V + E), where `V` is the number of vertices (nodes) and `E` is the number of edges (neighbor connections). Each node and edge is processed once.
