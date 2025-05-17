@@ -9,7 +9,7 @@
 # 198. House Robber [Medium]
 # 139. Word Break [Medium]
 # 300. Longest Increasing Subsequence [Medium]
-# 2272. Substring with Largest Variance[Medium, Revisit]
+# 2272. Substring with Largest Variance [Medium, Revisit]
 ```
 
 **Kadane's algorithm** is a dynamic programming algorithm that finds the maximum subarray sum in an array of integers. It maintains two values: global_max, which represents the maximum sum encountered so far, and local_max, which represents the maximum sum ending at the current index. As the algorithm traverses the array from left to right, it updates these values. The algorithm is efficient because it only requires O(n) time and O(1) space to store two values and does not need any additional data structures.
