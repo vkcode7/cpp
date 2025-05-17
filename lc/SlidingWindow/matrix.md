@@ -1,7 +1,7 @@
 ```bash
 # 118. Pascal's Triangle Solution
 # 54. Spiral Matrix Solution
-# 200. Number of Islands - Graph
+# 200. Number of Islands - Graph [Easy]
 # 73. Set Matrix Zeroes - Hash Table, Matrix
 # 79. Word Search - Backtracking, Depth-First Search, Matrix
 # 733. Flood Fill Solution
@@ -281,6 +281,8 @@ n == grid[i].length
 grid[i][j] is '0' or '1'.
 ```
 ```c++
+//This is a DFS solution
+
 class Solution {
 public:
     void markIsland(vector<vector<char>>& grid, int row, int col, int rows, int cols)
@@ -320,6 +322,51 @@ public:
 };
 ```
 
+```cpp
+//BFS solution
+/*
+Treat the 2d grid map as an undirected graph and there is an edge
+between two horizontally or vertically adjacent nodes of value '1'.
+
+Linear scan the 2d grid map, if a node contains a '1', then it is a root node
+that triggers a Breadth First Search. Put it into a queue and set its value
+as '0' to mark as visited node. Iteratively search the neighbors of enqueued
+nodes until the queue becomes empty.
+*/
+int numIslands(vector<vector<char>>& grid) {
+    
+    int islands = 0;
+    for(int row = 0; row < grid.size(); row++)
+    {
+        int cols = grid[0].size();
+        for(int col = 0; col < cols; col++)
+        {
+            if(grid[row][col] == '1') {
+                islands++;
+                queue<pair<int,int>> q;
+                q.push({row, col});
+                while(!q.empty())
+                {
+                    auto [r, c] = q.front();
+                    q.pop();
+                    
+                    if(r-1 >= 0 && grid[r-1][c] == '1') {
+                        q.push({r-1,c}); grid[r-1][c] = '0'; }
+                    if(r+1 < grid.size() && grid[r+1][c] == '1') {
+                        q.push({r+1,c});  grid[r+1][c] = '0'; }                   
+                    if(c-1 >= 0 && grid[r][c-1] == '1') {
+                        q.push({r,c-1}); grid[r][c-1] = '0'; }    
+                    if(c+1 < cols && grid[r][c+1] == '1') {
+                        q.push({r,c+1}); grid[r][c+1] = '0'; }  
+                }
+            }
+        }
+        
+    }
+    
+    return islands;
+}
+```
 
 # 73. Set Matrix Zeroes - Hash Table, Matrix
 
