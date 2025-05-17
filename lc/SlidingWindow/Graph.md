@@ -5,6 +5,10 @@
 # 1971. Find if Path Exists in Graph - Depth-First Search, Breadth-First Search, Union Find, Graph
 # 797. All Paths From Source to Target - Backtracking, Depth-First Search, Breadth-First Search, Graph
 # 133. Clone Graph [Easy via BFS and a map of visited nodes]
+# 269. Alien Dictionary
+# 317. Shortest Distance from All Buildings
+# 721. Accounts Merge
+# 785. Is Graph Bipartite?
 ```
 
 # 56. Merge Intervals
@@ -913,3 +917,436 @@ public:
 - Cyclic graph: The `visited` map ensures cycles are handled correctly.
 - Disconnected graph: The problem guarantees a connected graph, so no need to handle disconnected cases.
 - Large graph: The solution efficiently handles graphs within the constraint of up to 100 nodes.
+
+
+# 269. Alien Dictionary
+
+There is a new alien language that uses the English alphabet. However, the order of the letters is unknown to you.
+
+You are given a list of strings words from the alien language's dictionary. Now it is claimed that the strings in words are sorted lexicographically by the rules of this new language.
+
+If this claim is incorrect, and the given arrangement of string in words cannot correspond to any order of letters, return "".
+
+Otherwise, return a string of the unique letters in the new alien language sorted in lexicographically increasing order by the new language's rules. If there are multiple solutions, return any of them.
+
+```
+Example 1:
+
+Input: words = ["wrt","wrf","er","ett","rftt"]
+Output: "wertf"
+Example 2:
+
+Input: words = ["z","x"]
+Output: "zx"
+Example 3:
+
+Input: words = ["z","x","z"]
+Output: ""
+Explanation: The order is invalid, so return "".
+```
+
+A few things to keep in mind:
+
+- The letters within a word don't tell us anything about the relative order. For example, the presence of the word kitten in the list does not tell us that the letter k is before the letter i.
+- The input can contain words followed by their prefix, for example, abcd and then ab. These cases will never result in a valid alphabet (because in a valid alphabet, prefixes are always first). You'll need to make sure your solution detects these cases correctly.
+- There can be more than one valid alphabet ordering. It is fine for your algorithm to return any one of them.
+- Your output string must contain all unique letters that were within the input list, including those that could be in any position within the ordering. It should not contain any additional letters that were not in the input.
+
+```cpp
+class Solution {
+public:
+    string alienOrder(vector<string>& words) {
+        map<char, vector<char>> adjList;
+        map<char, int> counts;
+
+        for(auto s: words)
+        {
+            for(auto c: s)
+            {
+                if(counts.count(c) == 0) {
+                    counts[c] = 0;
+                    adjList[c] = vector<char>();
+                }
+            }
+        }
+
+        cout<< "test 1"<<endl;
+        //find edges
+        for(int i=0; i < words.size() - 1; i++) {
+            string w1 = words[i];
+            string w2 = words[i+1];
+
+            int n1 = w1.size();
+            int n2 = w2.size();
+            //check if word 2 is not a prefix of word 1
+            //prefixes should always be first
+            if(n1 > n2 && w1.substr(0, n2) == w2)
+                return ""; //bail out
+
+            for(int j=0; j < min(n1, n2); j++)
+                if (w1[j] != w2[j]) {
+                    adjList[w1[j]].push_back(w2[j]);
+                    counts[w2[j]]++;
+                    break;
+                }
+        }
+
+        //print adjList
+        for(auto [k, v]: adjList) {
+            cout<<k<<": ";
+            for(auto c: v)
+                cout<<c<<", ";
+            cout<<endl;
+        }
+
+        for (auto [k, v] : counts) {
+            cout<<k<<": "<<v<<endl;
+            /*
+            e: 1
+            f: 1
+            r: 1
+            t: 1
+            w: 0
+            */
+        }
+        //["wrt","wrf","er","ett","rftt"]
+        /* Above prints:
+        e: r, 
+        f: 
+        r: t, 
+        t: f, 
+        w: e, 
+        */
+
+        string ans = "";
+        queue<char> q;
+
+        for (auto [k, v] : counts)
+            if(v == 0)
+                q.push(k);
+
+        while(!q.empty())
+        {
+            char c = q.front();
+            q.pop();
+
+            ans += c;
+            for(char next : adjList[c])
+            {
+                counts[next]--;
+                if(counts[next] == 0)
+                    q.push(next);
+            }
+        }
+        
+        if(ans.size() < counts.size())
+            return "";
+  
+        return ans;
+    }
+};
+```
+
+# 317. Shortest Distance from All Buildings
+
+You are given an m x n grid grid of values 0, 1, or 2, where:
+
+- each 0 marks an empty land that you can pass by freely,
+- each 1 marks a building that you cannot pass through, and
+- each 2 marks an obstacle that you cannot pass through.
+You want to build a house on an empty land that reaches all buildings in the shortest total travel distance. You can only move up, down, left, and right.
+
+Return the shortest travel distance for such a house. If it is not possible to build such a house according to the above rules, return -1.
+
+The total travel distance is the sum of the distances between the houses of the friends and the meeting point.
+```
+1-0-2-0-1
+0-0-0-0-0
+0-0-1-0-0
+
+Input: grid = [[1,0,2,0,1],[0,0,0,0,0],[0,0,1,0,0]]
+Output: 7
+Explanation: Given three buildings at (0,0), (0,4), (2,2), and an obstacle at (0,2).
+The point (1,2) is an ideal empty land to build a house, as the total travel distance of 3+3+1=7 is minimal.
+So return 7.
+```
+
+### Approach 1: BFS from Empty Land to All Houses
+
+Our goal is to find the empty land cell with the shortest total distance to all houses, so we must first find the shortest total distance to all houses from each empty land cell.
+As previously mentioned, this can be accomplished using BFS. For each empty cell (cell value equals 0) in the grid, start a BFS and sum all the distances to houses (cell value equals 1) from this cell. We will also keep track of the number of houses we have reached from this source cell (empty cell).
+If we cannot reach all the houses from the current empty cell, then it is not a valid empty cell. Furthermore, we can be certain that any cell visited during this BFS also cannot reach all of the houses. So we will mark all cells visited during this BFS as obstacles to ensure that we do not start another BFS from this region.
+
+### Algorithm
+
+- For each empty cell (grid[i][j] equals 0), start a BFS:
+   - In the BFS, traverse all 4-directionally adjacent cells that are not blocked or visited and keep track of the distance from the start cell. Each iteration adds 1 to the distance.
+   - Every time we reach a house, increment houses reached counter housesReached by 1, and increase the total distance distanceSum by the current distance (i.e., the distance from the start cell to the house).
+   - If housesReached equals totalHouses, then return the total distance.
+   - Otherwise, the starting cell (and every cell visited during this BFS) cannot reach all of the houses. So set every visited empty land cell equal to 2 so that we do not start a new BFS from that cell and return INT_MAX.
+- Each time a total distance is returned from a BFS call, update the minimum distance (minDistance).
+- If it is possible to reach all houses from any empty land cell, then return the minimum distance found. Otherwise, return -1.
+
+```cpp
+class Solution {
+private:
+    int bfs(vector<vector<int>>& grid, int row, int col, int totalHouses) {
+        // Next four directions.
+        int dirs[4][2] = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}};
+        
+        int rows = grid.size();
+        int cols = grid[0].size();
+        int distanceSum = 0;
+        int housesReached = 0;
+
+        // Queue to do a bfs, starting from (r,c) cell
+        queue<pair<int, int>> q;
+        q.push({ row, col });
+
+        // Keep track of visited cells
+        vector<vector<bool>> vis(rows, vector<bool> (cols, false));
+        vis[row][col] = true;
+
+        int steps = 0;
+
+        while (!q.empty() && housesReached != totalHouses) {
+            for (int i = q.size(); i > 0; --i) {
+                auto curr = q.front();
+                q.pop();
+
+                row = curr.first;
+                col = curr.second;
+
+                // If this cell is a house, then add the distance from the source to this cell
+                // and we go past from this cell.
+                if (grid[row][col] == 1) {
+                    distanceSum += steps;
+                    housesReached++;
+                    continue;
+                }
+
+                // This cell was an empty cell, hence traverse the next cells which is not a blockage.
+                for (auto& dir : dirs) {
+                    int nextRow = row + dir[0];
+                    int nextCol = col + dir[1];
+
+                    if (nextRow >= 0 && nextCol >= 0 && nextRow < rows && nextCol < cols) {
+                        if (!vis[nextRow][nextCol] && grid[nextRow][nextCol] != 2) {
+                            vis[nextRow][nextCol] = true;
+                            q.push({nextRow, nextCol});
+                        }
+                    }
+                }
+            }
+            
+            // After traversing one level cells, increment the steps by 1 to reach to next level.
+            steps++;
+        }
+
+        // If we did not reach all houses, then any cell visited also cannot reach all houses.
+        // Set all cells visted to 2 so we do not check them again and return INT_MAX.
+        if (housesReached != totalHouses) {
+            for (row = 0; row < rows; row++) {
+                for (col = 0; col < cols; col++) {
+                    if (grid[row][col] == 0 && vis[row][col]) {
+                        grid[row][col] = 2;
+                    }
+                }
+            }
+            return INT_MAX;
+        }
+        // If we have reached all houses then return the total distance calculated.
+        return distanceSum;
+    }
+
+public:
+    int shortestDistance(vector<vector<int>>& grid) {
+        int minDistance = INT_MAX;
+        int rows = grid.size();
+        int cols = grid[0].size();
+        int totalHouses = 0;
+
+        for (int row = 0; row < rows; ++row) {
+            for (int col = 0; col < cols; ++col) {
+                if (grid[row][col] == 1) { 
+                    totalHouses++;
+                }
+            }
+        }
+
+        // Find the min distance sum for each empty cell.
+        for (int row = 0; row < rows; ++row) {
+            for (int col = 0; col < cols; ++col) {
+                if (grid[row][col] == 0) {
+                    minDistance = min(minDistance, bfs(grid, row, col, totalHouses));
+                }
+            }
+        }
+
+        // If it is impossible to reach all houses from any empty cell, then return -1.
+        if (minDistance == INT_MAX) {
+            return -1;
+        }
+        return minDistance;
+    }
+};
+```
+
+
+# 721. Accounts Merge
+https://leetcode.com/problems/accounts-merge/description/
+
+### Algorithm - Disjoint Set Union (DSU)
+
+- Traverse over each account, and for each account, traverse over all of its emails. If we see an email for the first time, then set the group of the email as the index of the current account in emailGroup .
+- Otherwise, if the email has already been seen in another account, then we will union the current group (i) and the group the current email belongs to (emailGroup[email]).
+- After traversing over every account and merging the accounts that share a common email, we will now traverse over every email once more. Each email will be added to a map (components) where the key is the email's representative, and the value is a list of emails with that representative.
+- Traverse over components, here the keys are the group indices and the value is the list of emails belonging to this group (person). Since the emails must be "in sorted order" we will sort the list of emails for each group. Lastly, we can get the account name using the accountList[group][0]. In accordance with the instructions, we will insert this name at the beginning of the email list.
+- Store the list created in step 4 in our final result (mergedAccount).
+
+```cpp
+class DSU {
+public:
+    vector<int> representative;
+    vector<int> size;
+    
+    DSU(int sz) : representative(sz), size(sz) {
+        for (int i = 0; i < sz; ++i) {
+            // Initially each group is its own representative
+            representative[i] = i;
+            // Intialize the size of all groups to 1
+            size[i] = 1;
+        }
+    }
+    
+    // Finds the representative of group x
+    int findRepresentative(int x) {
+        if (x == representative[x]) {
+            return x;
+        }
+        
+        // This is path compression
+        return representative[x] = findRepresentative(representative[x]);
+    }
+    
+    // Unite the group that contains "a" with the group that contains "b"
+    void unionBySize(int a, int b) {
+        int representativeA = findRepresentative(a);
+        int representativeB = findRepresentative(b);
+        
+        // If nodes a and b already belong to the same group, do nothing.
+        if (representativeA == representativeB) {
+            return;
+        }
+        
+        // Union by size: point the representative of the smaller
+        // group to the representative of the larger group.
+        if (size[representativeA] >= size[representativeB]) {
+            size[representativeA] += size[representativeB];
+            representative[representativeB] = representativeA;
+        } else {
+            size[representativeB] += size[representativeA];
+            representative[representativeA] = representativeB;
+        }
+    }
+};
+
+class Solution {
+public:
+    vector<vector<string>> accountsMerge(vector<vector<string>>& accountList) {
+        int accountListSize = accountList.size();
+        DSU dsu(accountListSize);
+        
+        // Maps email to their component index
+        unordered_map<string, int> emailGroup;
+        
+        for (int i = 0; i < accountListSize; i++) {
+            int accountSize = accountList[i].size();
+
+            for (int j = 1; j < accountSize; j++) {
+                string email = accountList[i][j];
+                string accountName = accountList[i][0];
+                
+                // If this is the first time seeing this email then
+                // assign component group as the account index
+                if (emailGroup.find(email) == emailGroup.end()) {
+                    emailGroup[email] = i;
+                } else {
+                    // If we have seen this email before then union this
+                    // group with the previous group of the email
+                    dsu.unionBySize(i, emailGroup[email]);
+                }
+            }
+        }
+    
+        // Store emails corresponding to the component's representative
+        unordered_map<int, vector<string>> components;
+        for (auto emailIterator : emailGroup) {
+            string email = emailIterator.first;
+            int group = emailIterator.second;
+            components[dsu.findRepresentative(group)].push_back(email);
+        }
+
+        // Sort the components and add the account name
+        vector<vector<string>> mergedAccounts;
+        for (auto componentIterator : components) {
+            int group = componentIterator.first;
+            vector<string> component = {accountList[group][0]};
+            component.insert(component.end(), componentIterator.second.begin(), 
+                             componentIterator.second.end());
+            sort(component.begin() + 1, component.end());
+            mergedAccounts.push_back(component);
+        }
+        
+        return mergedAccounts;
+    }
+};
+```
+
+# 785. Is Graph Bipartite?
+
+There is an undirected graph with n nodes, where each node is numbered between 0 and n - 1. You are given a 2D array graph, where graph[u] is an array of nodes that node u is adjacent to. More formally, for each v in graph[u], there is an undirected edge between node u and node v. The graph has the following properties:
+
+```
+There are no self-edges (graph[u] does not contain u).
+There are no parallel edges (graph[u] does not contain duplicate values).
+If v is in graph[u], then u is in graph[v] (the graph is undirected).
+The graph may not be connected, meaning there may be two nodes u and v such that there is no path between them.
+A graph is bipartite if the nodes can be partitioned into two independent sets A and B such that every edge in the graph connects a node in set A and a node in set B.
+```
+
+Return true if and only if it is bipartite.
+```cpp
+class Solution {
+public:
+    bool isBipartite(vector<vector<int>>& gr) {
+        int n = gr.size();
+        vector<int> colour(n, 0);
+
+        for(int node = 0; node < n; node++){
+            if(colour[node] != 0) 
+                continue; //already processed
+
+            queue<int> q;
+            q.push(node);
+            colour[node] = 1;
+
+            while(!q.empty()){
+                int cur = q.front();
+                q.pop();
+
+                for(int ne : gr[cur]){
+                    if(colour[ne] == 0){
+                        colour[ne] = -colour[cur];
+                        q.push(ne);
+                    }else if(colour[ne] != -colour[cur]){
+                        return false;
+                    }
+                }
+            }
+        }
+
+        return true;
+    }
+};
+```
