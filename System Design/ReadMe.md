@@ -1,6 +1,6 @@
 # Delivery Framework
 Delivery framework is a sequence of steps and timings.
-<img src="../assets/DeliveryFramework.png" width="50%">
+<img src="assets/DeliveryFramework.png" width="100%">
 
 ## Requirements (~5 minutes)
 The goal of the requirements section is to get a clear understanding of the system that you are being asked to design. To do this, we suggest you break your requirements into two sections.
