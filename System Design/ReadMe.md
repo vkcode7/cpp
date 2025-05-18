@@ -1,5 +1,6 @@
-# OverallStructure
-<img src="assets/OverallStructure.png" width="100%">
+# Overall Structure
+Here is overall structure:
+<img src="assets/OverallStructure.png" width="50%">
 
 # Delivery Framework
 Delivery framework is a sequence of steps and timings.
