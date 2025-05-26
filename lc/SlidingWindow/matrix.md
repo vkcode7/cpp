@@ -688,67 +688,16 @@ private:
 - **Result**: Returns `true` if the word is found, `false` otherwise.
 
 ### Time and Space Complexity
-- **Time Complexity**: O(m * n * 4^L), where `m` and `n` are the dimensions of the grid, and `L` is the length of the word. Each cell can start a DFS, and each DFS may explore up to 4 directions for each character.
-- **Space Complexity**: O(L) for the recursion stack, where `L` is the length of the word. The board is modified in-place.
+- **Time Complexity**: O(N⋅3^L) where N is the number of cells in the board and L is the length of the word to be matched.
 
-### Alternative Approach
-1. **DFS with Visited Array**:
-   - Use a separate `visited` array to track used cells instead of modifying the board.
-   - Time Complexity: O(m * n * 4^L)
-   - Space Complexity: O(m * n) for the visited array
-The in-place modification approach is preferred to minimize space usage.
-```cpp
-class Solution {
-public:
-    int trap(vector<int>& height) {
-        int left = 0, right = height.size() - 1;
-        int leftMax = 0, rightMax = 0;
-        int water = 0;
-        
-        while (left < right) {
-            if (height[left] < height[right]) {
-                leftMax = max(leftMax, height[left]);
-                water += leftMax - height[left];
-                left++;
-            } else {
-                rightMax = max(rightMax, height[right]);
-                water += rightMax - height[right];
-                right--;
-            }
-        }
-        
-        return water;
-    }
-};
-```
+For the backtracking function, initially we could have at most 4 directions to explore, but further the choices are reduced into 3 (since we won't go back to where we come from).
+As a result, the execution trace after the first step could be visualized as a 3-nary tree, each of the branches represent a potential exploration in the corresponding direction. Therefore, in the worst case, the total number of invocation would be the number of nodes in a full 3-nary tree, which is about 3^L.
 
-### How It Works
-- **Two Pointers**: Process the array from both ends, moving toward the center.
-- **Water Calculation**:
-  - Water at an index is determined by the minimum of the maximum heights on both sides minus the height at that index.
-  - By processing the smaller height first, we ensure the water calculation is valid (bounded by the opposite side’s max).
-- **Max Tracking**:
-  - `leftMax` tracks the tallest bar from the left.
-  - `rightMax` tracks the tallest bar from the right.
-- **Edge Cases**:
-  - Single element: No water can be trapped (handled by `left < right`).
-  - Monotonic array: No water trapped (algorithm correctly yields 0).
-- **Result**: The total water trapped is accumulated in `water`.
+We iterate through the board for backtracking, i.e. there could be N times invocation for the backtracking function in the worst case.
 
-### Time and Space Complexity
-- **Time Complexity**: O(n), where `n` is the length of the `height` array, as we traverse the array once with two pointers.
-- **Space Complexity**: O(1), as we only use a constant amount of extra space.
+**Space Complexity:** O(L) where L is the length of the word to be matched.
 
-### Alternative Approaches
-1. **Two Arrays**:
-   - Precompute `leftMax` and `rightMax` for each index using two arrays.
-   - Time Complexity: O(n)
-   - Space Complexity: O(n)
-2. **Stack**:
-   - Use a stack to track indices of decreasing heights, calculating water when a taller bar is found.
-   - Time Complexity: O(n)
-   - Space Complexity: O(n)
-The two-pointer approach is preferred for its optimal space complexity and simplicity.
+The main consumption of the memory lies in the recursion call of the backtracking function. The maximum length of the call stack would be the length of the word. Therefore, the space complexity of the algorithm is O(L).
 
 
 # 733. Flood Fill Solution
