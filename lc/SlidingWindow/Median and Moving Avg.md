@@ -1,10 +1,10 @@
 ```bash
-# 215. Kth Largest Element in an Array Solution
-# 295. Find Median from Data Stream - Two Pointers, Design, Sorting, Heap (Priority Queue), Data Stream
-# 4. Median of Two Sorted Arrays
-# 346. Moving Average from Data Stream
-# 7. Reverse Integer
-# 1046. Last Stone Weight Solution
+# 215. Kth Largest Element in an Array [Easy]
+# 295. Find Median from Data Stream - Heap (Priority Queue), Data Stream [Easy]
+# 4. Median of Two Sorted Arrays [Hard, Revisit]
+# 346. Moving Average from Data Stream [Easy]
+# 7. Reverse Integer [Easy]
+# 1046. Last Stone Weight Solution [Easy]
 ```
 
 # 215. Kth Largest Element in an Array Solution
