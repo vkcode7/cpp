@@ -6,7 +6,7 @@
 # 206. Reverse Linked List - Linked List, Recursion [Easy]
 # 92. Reverse Linked List II - [Medium, Revisit]
 # 234. Palindrome Linked List [Easy]
-# 138. Copy List with Random Pointer - Hash Table, Linked List
+# 138. Copy List with Random Pointer - Hash Table, Linked List [Easy]
 # 430. Flatten a Multilevel Doubly Linked List - Linked List, Depth-First Search, Doubly-Linked List
 # 143. Reorder List
 ```
@@ -976,13 +976,13 @@ You are given a doubly linked list, which contains nodes that have a next pointe
 ```
 Input: head = [1,2,3,4,5,6,null,null,null,7,8,9,10,null,null,11,12]
 ```
-<img src="../assets/flatten11.jpg" width="20%">
+<img src="../assets/flatten11.jpg" width="40%">
 
 ```
 Output: [1,2,3,7,8,11,12,9,10,4,5,6]
 Explanation: The multilevel list with child pointers (e.g., 3->7, 8->11) is flattened into a single list in pre-order.
 ```
-<img src="../assets/flatten12.jpg" width="20%">
+<img src="../assets/flatten12.jpg" width="50%">
 
 ```
 Input: head = [1,2,null,3]
@@ -996,8 +996,6 @@ Input: head = []
 Output: []
 Explanation: An empty list remains empty.
 ```
-
-
 
 ### Constraints
 - The number of nodes in the list is in the range `[0, 1000]`.
