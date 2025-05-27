@@ -21,6 +21,71 @@
 # 426. Convert a Binary Search Tree to a sorted Circular Doubly-Linked List in place. (In-Order Traversal)
 ```
 
+# 173. Binary Search Iterator - using Controlled Recursion
+https://leetcode.com/problems/binary-search-tree-iterator/description/
+
+```c++
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode() : val(0), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+ * };
+ */
+class BSTIterator {
+public:
+    stack<TreeNode*> stack;
+
+    BSTIterator(TreeNode* root) {
+        // Stack for the recursion simulation
+        _leftmostInorder(root);
+    }
+
+    void _leftmostInorder(TreeNode* root) {
+        // For a given node, add all the elements in the leftmost branch of the
+        // tree under it to the stack.
+        while (root != NULL) {
+            stack.push(root);
+            root = root->left;
+        }
+    }
+
+    /**
+     * @return the next smallest number
+     */
+    int next() {
+        // Node at the top of the stack is the next smallest element
+        TreeNode* topmostNode = this->stack.top();
+        this->stack.pop();
+
+        // Need to maintain the invariant. If the node has a right child, call
+        // the helper function for the right child
+        if (topmostNode->right != NULL) {
+            this->_leftmostInorder(topmostNode->right);
+        }
+
+        return topmostNode->val;
+    }
+
+    /**
+     * @return whether we have a next smallest number
+     */
+    bool hasNext() { return !stack.empty(); }
+};
+
+/**
+ * Your BSTIterator object will be instantiated and called as such:
+ * BSTIterator* obj = new BSTIterator(root);
+ * int param_1 = obj->next();
+ * bool param_2 = obj->hasNext();
+ */
+```
+
+
 # 102. Binary Tree Level Order Traversal -[Easy]
 
 ## Problem Description
