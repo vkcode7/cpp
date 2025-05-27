@@ -2000,3 +2000,66 @@ public:
     bool search(string word) { return searchInNode(word, trie); }
 };
 ```
+
+
+# 297. Serialize and Deserialize Binary Tree
+
+```cpp
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+class Codec {
+public:
+
+    void tree2str(TreeNode* node, string& s)
+    {
+        if(!node)
+            s += "null,";
+        else
+        {
+            s += to_string(node->val);
+            s += ",";
+            tree2str(node->left, s);
+            tree2str(node->right, s);
+        }
+    }
+
+    // Encodes a tree to a single string.
+    string serialize(TreeNode* root) {
+        string str = "";
+        tree2str(root, str);
+        return str;
+    }
+
+    TreeNode *build(string& data){
+        int index = data.find(",");
+        string val = data.substr(0, index);
+
+        data = data.substr(index + 1);
+
+        if(val=="null") 
+            return nullptr;
+
+        TreeNode * curr=new TreeNode(stoi(val));
+
+        curr->left=build(data);
+        curr->right=build(data);
+        return curr;
+    }
+
+    // Decodes your encoded data to tree.
+    TreeNode* deserialize(string data) {
+        return build(data);
+    }
+};
+
+// Your Codec object will be instantiated and called as such:
+// Codec ser, deser;
+// TreeNode* ans = deser.deserialize(ser.serialize(root));
+```
