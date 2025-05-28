@@ -1523,6 +1523,75 @@ trie.startsWith("ca");   // Returns true
 - Word Search II (LeetCode #212)  
 - Add and Search Word (LeetCode #211)
 
+### 211. Design Add and Search Words Data Structure
+https://leetcode.com/problems/design-add-and-search-words-data-structure/description/
+
+```c++
+struct TrieNode {
+    unordered_map<char, TrieNode*> children;
+    bool word = false;
+};
+
+class WordDictionary {
+    TrieNode* trie;
+public:
+    WordDictionary() {
+       trie = new TrieNode(); 
+    }
+    
+    /** Returns if the word is in the node. */
+    bool searchInNode(string word, TrieNode* node) {
+        for (int i = 0; i < word.length(); ++i) {
+            char ch = word[i];
+            if (!node->children.count(ch)) {
+                // If the current character is '.'
+                // check all possible nodes at this level
+                if (ch == '.') {
+                    for (auto x : node->children) {
+                        TrieNode* child = x.second;
+                        if (searchInNode(word.substr(i + 1), child)) {
+                            return true;
+                        }
+                    }
+                }
+                // If no nodes lead to answer
+                // or the current character != '.'
+                return false;
+            } else {
+                // If the character is found
+                // go down to the next level in trie
+                node = node->children[ch];
+            }
+        }
+        return node->word;
+    }
+
+    void addWord(string word) {
+        TrieNode* node = trie;
+
+        for (char ch : word) {
+            if (node->children.count(ch) == 0) { //first char not found
+                node->children[ch] = new TrieNode();
+            }
+            node = node->children[ch];
+        }
+
+        node->word = true;
+    }
+    
+    bool search(string word) {
+        return searchInNode(word, trie);
+    }
+};
+
+/**
+ * Your WordDictionary object will be instantiated and called as such:
+ * WordDictionary* obj = new WordDictionary();
+ * obj->addWord(word);
+ * bool param_2 = obj->search(word);
+ */
+```
+
 
 ## Greedy
 **Use Case**: Make locally optimal choices to achieve a global optimum, such as selecting activities or solving jump games.  
