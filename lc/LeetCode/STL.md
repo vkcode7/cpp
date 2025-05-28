@@ -115,6 +115,7 @@
 ```cpp
     // Use a max-heap to maintain the k smallest elements
     std::priority_queue<int> max_heap; //LARGEST value is at TOP, hence max_heap; std::less<int> by default
+    //same as std::priority_queue<int, std::vector<int>, std::less<int>> max_heap;
     for (int num : arr) {
         max_heap.push(num); //PUSH
         if (max_heap.size() > static_cast<size_t>(k)) {
