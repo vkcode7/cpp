@@ -21,7 +21,7 @@
 | Operator     | Description                                | Example                  |
 |--------------|--------------------------------------------|--------------------------|
 | &            | Bitwise AND                                | a & b (result: 0001)     |
-| |            | Bitwise OR                                 | a \| b (result: 0111)    |
+| |            | Bitwise OR                                 | a | b (result: 0111)     |
 | ^            | Bitwise XOR (Exclusive OR)                 | a ^ b (result: 0110)     |
 | ~            | Bitwise NOT (Complement)                   | ~a (result: 11111010)    |
 | <<           | Left Shift                                 | a << 1 (result: 1010)    |
