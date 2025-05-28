@@ -826,19 +826,40 @@ Explanation: The substring is "aa" with length 2.
 ```cpp
 class Solution {
 public:
-    int lengthOfLongestSubstringKDistinct(string s, int k) {
-        unordered_map<char, int> map;
-        int start = 0, end = 0, counter = 0, len = 0;   
-        while(end < s.size()) {
-            if(map[s[end ++]] ++ == 0) counter ++;
-            
-            // Found more than K distinct chars
-            while(counter > k) {
-                if(map[s[start ++]] -- == 1) counter --;
+    int lengthOfLongestSubstringKDistinct(string s, int k) 
+    {
+        int windowStart = 0; 
+        unordered_map<int, int> map; 
+        int maxLength = INT_MIN; 
+
+        for(int windowEnd = 0; windowEnd < s.length(); windowEnd++)
+        {
+            //add everyelement to the map with frequency, 
+            //if element exists, increase the frequency.
+            map[s[windowEnd]]++; 
+
+            //we found a substring with more than k distinct elments. 
+            //at this point we will shrink the windowStart to elimiate distinct chars. 
+            while(map.size() > k)
+            {
+
+                map[s[windowStart]]--;
+                    
+                //should be a separate if instead of else, as if after decreasing frequency
+                //the final frequency is 0, the element should be removed form the map to reduce total distinct count. 
+                if(map[s[windowStart]] == 0)
+                {
+                    map.erase(s[windowStart]);
+                }
+
+                //increament windowStart to keep srinking the window.
+                windowStart++;
             }
-            len = max(len, end - start);
+
+            maxLength = max(maxLength, (windowEnd - windowStart + 1));
         }
-        return len;
+
+        return maxLength;
     }
 };
 ```
