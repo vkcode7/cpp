@@ -1,4 +1,5 @@
 ```bash
+# 523. Continuous Subarray Sum
 # 125. Valid Palindrome [Super Easy, use isalnum(), tolower()]
 # 76. Minimum Window Substring Solution [Easy]
 # 392. Is Subsequence [Easy]
@@ -46,6 +47,54 @@ A monotonic stack is a stack where elements are maintained in either a strictly 
 Here we introduce an interesting data structure. It's a deque with an interesting property - the elements in the deque from head to tail are in decreasing order (hence the name monotonic).
 
 To achieve this property, we modify the push operation so that when we push an element into the deque, we first pop everything smaller than it out of the deque.
+
+# 523. Continuous Subarray Sum
+Given an integer array nums and an integer k, return true if nums has a good subarray or false otherwise.
+
+A good subarray is a subarray where:
+
+its length is at least two, and
+the sum of the elements of the subarray is a multiple of k.
+
+```bash
+Example 1:
+Input: nums = [23,2,4,6,7], k = 6
+Output: true
+Explanation: [2, 4] is a continuous subarray of size 2 whose elements sum up to 6.
+```
+
+```cpp
+class Solution {
+public:
+/*
+For each cumulative sum, calculate the remainder when it is divided by k. The remainder can help us determine if the sum of any subarray (up to the current index) is a multiple of k.
+
+If at two different points in the array, the cumulative sums give the same remainder when divided by k, it means the sum of the elements between ↔️ these two points is a multiple of k.
+*/
+    unordered_map<int, int> remaindersFound;
+
+    bool checkSubarraySum(vector<int>& nums, int k) {
+        int currSum = 0;
+        remaindersFound[0] = -1; // To handle the case when subarray starts from index 0
+
+        for (int i = 0; i < nums.size(); i++) {
+            currSum += nums[i];
+            int remainder = currSum % k;
+
+            if (remaindersFound.find(remainder) != remaindersFound.end()) {
+                // Check if the length of the subarray is at least 2
+                if (i - remaindersFound[remainder] >= 2) {
+                    return true;
+                }
+            } else {
+                remaindersFound[remainder] = i;
+            }
+        }
+
+        return false;    
+    }
+};
+```
 
 # 125. Valid Palindrome [Super Easy]
 https://leetcode.com/problems/valid-palindrome/
