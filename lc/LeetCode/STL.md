@@ -5,9 +5,12 @@
 - isdigit(c)
 - isalnum(c) [a-z. A-Z, 0-9]
 - to_string(156) => "156"
+- string(3, 'x') => 'xxx'
 - int stoi(s)
 - long stol(s)
 - long long stoll(s)
+- sort(nums.begin(), nums.end())
+- reverse(nums.begin(), nums.end())
 
 ## 1. std::string
 - **Initialization:** `string s = "abc";
