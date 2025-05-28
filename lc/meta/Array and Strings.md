@@ -717,8 +717,6 @@ Explanation: After calling your read method, buf should contain "abcdABCD1234". 
 ```
 
 ```cpp
-This solution causes TLE
-
 /**
  * The read4 API is defined in the parent class Reader4.
  *     int read4(char *buf4);
@@ -727,29 +725,40 @@ This solution causes TLE
 class Solution {
 public:
     /**
-     * @param buf Destination buffer
-     * @param n   Number of characters to read
-     * @return    The number of actual characters read
+     * Reads characters into buf from a file and returns the actual number
+     * of characters read, which could be less than n if the end of file is reached.
+     * @param buf - Destination buffer to store read characters
+     * @param n   - Number of characters to be read 
+     * @return    - Actual number of characters read
      */
-    int read(char *buf, int n) {
-        int read = 4;
-        int totalRead = 0;
+    int read(char* buf, int n) {
+        char tempBuffer[4]; // Temporary buffer to hold read chunks of 4 characters
+        int totalCharsRead = 0; // Total characters read
 
-        while(n - totalRead >= 4) {
-            read = read4(buf + totalRead);
-            totalRead += read;
-            if(read < 4)
+        while (true) {
+            // Read up to 4 characters into tempBuffer from file
+            int charsRead = read4(tempBuffer);
+          
+            // Transfer characters from tempBuffer to destination buf
+            for (int j = 0; j < charsRead; ++j) {
+                buf[totalCharsRead++] = tempBuffer[j];
+
+                // If the number of characters requested (n) is reached,
+                // return the number of characters read so far.
+                if (totalCharsRead == n) {
+                    return n;
+                }
+            }
+
+            // Break the loop if we read less than 4 characters,
+            // which means end of file is reached
+            if (charsRead < 4) {
                 break;
+            }
         }
 
-        if(n - totalRead < 4 && read) {
-            char curr_buf[4];
-            read = read4(buf + totalRead);
-            *(buf + totalRead + read) = 0; 
-            totalRead += read;
-        }
-
-        return min(n, totalRead);
+        // Return total number of characters actually read
+        return totalCharsRead;
     }
 };
 ```
