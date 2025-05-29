@@ -25,8 +25,9 @@ Median and Moving Avg = 5/6
 Sliding Window = 20/20
 Binary Trees = 15/18
 Matrix = 6/6
+Hash tables = 6/6
 
-Total = 93/100
+Total = 99/106
 ```
 
 # 1431. Kids With the Greatest Number of Candies [Super Easy] via Kadane
