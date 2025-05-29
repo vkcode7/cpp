@@ -1190,39 +1190,6 @@ struct TreeNode {
 ```
 
 ### Example Implementation (C++)
-```cpp
-class Solution {
-    unordered_map<int, int> mapIn;
-
-public:
-    TreeNode* buildTree(vector<int>& preorder, vector<int>& inorder) {
-         for (int i = 0; i < inorder.size(); i++)
-            mapIn[inorder[i]] = i;
-        
-        int rootIndex = 0; //the first element in preorder is root
-        return splitTree(preorder, rootIndex, 0, inorder.size()-1);   
-        
-        //preorder =>root,left,(right=root,left,right)
-        //inorder => left,root,(right=left,root,right)
-    }
-    
-private:
-    TreeNode* splitTree(vector<int>& P, int pivotix, int ileft, int iright) {
-        int rval = P[pivotix];
-        int inPivot = mapIn[rval]; //where is root located in inorder?
-        
-        TreeNode* root = new TreeNode(rval);  
-        
-        if (inPivot > ileft)
-            root->left = splitTree(P, pivotix+1, ileft, inPivot-1);
-        
-        if (inPivot < iright)
-            root->right = splitTree(P, pivotix+inPivot-ileft+1, inPivot+1, iright);
-        
-        return root;
-    }
-};
-```
 
 ```cpp
 class Solution {
