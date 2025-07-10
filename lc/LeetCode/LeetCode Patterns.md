@@ -681,34 +681,66 @@ def bfs(graph, start):
 
 **Benefit**: Provides a linear ordering of nodes in a DAG, useful for dependency resolution.  
 
-```py
-"""
-Topological Sort only works on DAG graphs with no cycles
-"""
-def topological_sort(graph):
-    visited = set()
-    topo_order = []
-    def hasCycle(node, curpath):
-        visited.add(node)
-        curpath.add(node)
+```c++
+/**
+ * Topological Sort only works on DAG graphs with no cycles
+ */
+class TopologicalSort {
+private:
+    const unordered_map<int, vector<int>>& graph;
+    unordered_set<int> visited;
+    vector<int> topo_order;
+    
+    bool hasCycle(int node, unordered_set<int>& curpath) {
+        visited.insert(node);
+        curpath.insert(node);
         
-        for neighbor in graph[node]:
-            if neighbor in curpath: # cycle detected, no topo sort
-                return True
-            if neighbor in visited:
-                continue
-            if hasCycle(neighbor, curpath):
-                return True
+        // Check if node exists in graph
+        if (graph.find(node) != graph.end()) {
+            for (int neighbor : graph.at(node)) {
+                if (curpath.count(neighbor)) { // cycle detected, no topo sort
+                    return true;
+                }
+                if (visited.count(neighbor)) {
+                    continue;
+                }
+                if (hasCycle(neighbor, curpath)) {
+                    return true;
+                }
+            }
+        }
         
-        curpath.remove(node)
-        topo_order.append(node) # process node
-        return False
-    for node in graph:
-        if node not in visited:
-            if hasCycle(node, set()):
-                return None # cycle detected, no topo sort
-    # reverse to get the correct topological order
-    return topo_order[::-1]
+        curpath.erase(node);
+        topo_order.push_back(node); // process node
+        return false;
+    }
+    
+public:
+    TopologicalSort(const unordered_map<int, vector<int>>& g) : graph(g) {}
+    
+    vector<int> sort() {
+        visited.clear();
+        topo_order.clear();
+        
+        for (const auto& [node, neighbors] : graph) {
+            if (visited.count(node) == 0) {
+                unordered_set<int> curpath;
+                if (hasCycle(node, curpath)) {
+                    return {}; // cycle detected, no topo sort (return empty vector)
+                }
+            }
+        }
+        
+        // reverse to get the correct topological order
+        reverse(topo_order.begin(), topo_order.end());
+        return topo_order;
+    }
+};
+
+vector<int> topological_sort(const unordered_map<int, vector<int>>& graph) {
+    TopologicalSort ts(graph);
+    return ts.sort();
+}
 ```
 **Example Problems**:  
 - Course Schedule (LeetCode #207)  
@@ -720,54 +752,106 @@ def topological_sort(graph):
 <img src="../assets/Snip_36.png" width="50%">
 
 In a matrix, neighbors are up/down/left/right cells, with some examples including diagonals too.
-```py
-"""
-DFS for a matrix, visiting all connected cells.
-"""
-def dfs_matrix(matrix):
-    m, n = len(matrix), len(matrix[0])
-    visited = set()
-    result = []
-    def explore(i, j):
-        if not (0 <= i < m and 0 <= j < n):
-            return
-        if ((i,j)) in visited:
-            return
-        visited.add((i,j))
-        result.append(matrix[i][j])  # process the cell
-        # Explore neighbors (up, down, left, right)
-        for deltaI, deltaJ in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
-            explore(i + deltaI, j + deltaJ)
-    def dfs_driver():
-        for i in range(m):
-            for j in range(n):
-                if (i, j) not in visited:
-                    explore(i, j)
-    dfs_driver()
-    return result
+```c++
+#include <vector>
+#include <set>
+#include <queue>
+#include <utility>
 
-"""
-BFS for a matrix, visiting all connected cells.
-"""
-from collections import deque
-def bfs_matrix(matrix, startI, startJ):
-    m, n = len(matrix), len(matrix[0])
-    visited = set()
-    result = []
-    queue = deque([(startI,startJ)])
-    while queue:
-        i, j = queue.popleft()
-        if not (0 <= i < m and 0 <= j < n):
-            continue
-        if ((i,j)) in visited:
-            continue
-        visited.add((i,j))
-        result.append(matrix[i][j])  # process the cell
-        # Enqueue neighbors (up, down, left, right)
-        for deltaI, deltaJ in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
-            queue.append((i + deltaI, j + deltaJ))
+using namespace std;
+
+/**
+ * DFS for a matrix, visiting all connected cells.
+ */
+class MatrixDFS {
+private:
+    const vector<vector<int>>& matrix;
+    int m, n;
+    set<pair<int, int>> visited;
+    vector<int> result;
+    vector<pair<int, int>> directions;
     
-    return result
+    void explore(int i, int j) {
+        if (i < 0 || i >= m || j < 0 || j >= n) {
+            return;
+        }
+        if (visited.count({i, j})) {
+            return;
+        }
+        visited.insert({i, j});
+        result.push_back(matrix[i][j]);  // process the cell
+        
+        // Explore neighbors (up, down, left, right)
+        for (auto& dir : directions) {
+            explore(i + dir.first, j + dir.second);
+        }
+    }
+    
+    void dfs_driver() {
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < n; j++) {
+                if (visited.count({i, j}) == 0) {
+                    explore(i, j);
+                }
+            }
+        }
+    }
+    
+public:
+    MatrixDFS(const vector<vector<int>>& mat) 
+        : matrix(mat), m(mat.size()), n(mat[0].size()),
+          directions({{-1, 0}, {1, 0}, {0, -1}, {0, 1}}) {}
+    
+    vector<int> traverse() {
+        visited.clear();
+        result.clear();
+        dfs_driver();
+        return result;
+    }
+};
+
+vector<int> dfs_matrix(const vector<vector<int>>& matrix) {
+    MatrixDFS dfs(matrix);
+    return dfs.traverse();
+}
+
+/**
+ * BFS for a matrix, visiting all connected cells.
+ */
+vector<int> bfs_matrix(const vector<vector<int>>& matrix, int startI, int startJ) {
+    int m = matrix.size();
+    int n = matrix[0].size();
+    set<pair<int, int>> visited;
+    vector<int> result;
+    queue<pair<int, int>> q;
+    
+    // Direction vectors for up, down, left, right
+    vector<pair<int, int>> directions = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}};
+    
+    q.push({startI, startJ});
+    
+    while (!q.empty()) {
+        auto [i, j] = q.front();
+        q.pop();
+        
+        if (i < 0 || i >= m || j < 0 || j >= n) {
+            continue;
+        }
+        if (visited.count({i, j})) {
+            continue;
+        }
+        
+        visited.insert({i, j});
+        result.push_back(matrix[i][j]);  // process the cell
+        
+        // Enqueue neighbors (up, down, left, right)
+        for (auto& dir : directions) {
+            q.push({i + dir.first, j + dir.second});
+        }
+    }
+    
+    return result;
+}
 ```
 
 ### LeetCode Questions
