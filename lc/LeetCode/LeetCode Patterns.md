@@ -439,50 +439,59 @@ For the preorder, inorder, and postorder traversals use recursion (DFS). For the
 
 <img src="../assets/Snip_32.png" width="50%">
 
-```py
-"""
-Preorder traversal: visit node, then left subtree, then right subtree.
-"""
-def preorder_traversal(node):
-    if not node:
-        return
-    # visit node
-    preorder_traversal(node.left)
-    preorder_traversal(node.right)
-
-"""
-Inorder traversal: visit left subtree, then node, then right subtree.
-"""
-def inorder_traversal(node):
-    if not node:
-        return
-    inorder_traversal(node.left)
-    # visit node
-    inorder_traversal(node.right)
-"""
-Postorder traversal: visit left subtree, then right subtree, then node
-"""
-def postorder_traversal(node):
-    if not node:
-        return
-    postorder_traversal(node.left)
-    postorder_traversal(node.right)
-    # visit node
-"""
-BFS traversal: Visit all nodes level by level using a queue
-"""
-from collections import deque
-def bfs_traversal(root):
-    queue = deque([root])
-    while queue:
-        node = queue.popleft()
-        if node:
-            # visit node
-            queue.append(node.left)
-            queue.append(node.right)
-```
-
 ```cpp
+// Tree node structure
+struct TreeNode {
+    int val;
+    TreeNode* left;
+    TreeNode* right;
+    
+    TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+};
+
+/**
+ * Preorder traversal: visit node, then left subtree, then right subtree.
+ */
+void preorder_traversal(TreeNode* node) {
+    if (!node) {
+        return;
+    }
+    // visit node
+    cout << node->val << " ";
+    preorder_traversal(node->left);
+    preorder_traversal(node->right);
+}
+
+/**
+ * Inorder traversal: visit left subtree, then node, then right subtree.
+ */
+void inorder_traversal(TreeNode* node) {
+    if (!node) {
+        return;
+    }
+    inorder_traversal(node->left);
+    // visit node
+    cout << node->val << " ";
+    inorder_traversal(node->right);
+}
+
+/**
+ * Postorder traversal: visit left subtree, then right subtree, then node
+ */
+void postorder_traversal(TreeNode* node) {
+    if (!node) {
+        return;
+    }
+    postorder_traversal(node->left);
+    postorder_traversal(node->right);
+    // visit node
+    cout << node->val << " ";
+}
+
+/**
+ * BFS traversal: Visit all nodes level by level using a queue
+ */
+
 void bfs_traversal(Node* root) {
     if (!root) {
         return;
