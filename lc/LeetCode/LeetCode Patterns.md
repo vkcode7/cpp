@@ -873,23 +873,86 @@ Backtracking is closely related to DFS, but with a focus on finding solutions wh
 **Benefit**: Systematically explores all possibilities while pruning invalid paths to optimize performance.  
 
 ```py
-"""
-Generic backtracking template.
-"""
-def backtrack(candidates, curPath):
-    # Base case: Check if the solution meets the problem's criteria
-    if is_solution(curPath):
-        process_solution(curPath)
-        return
+#include <vector>
+#include <iostream>
+using namespace std;
 
-for candidate in candidates:
-        if is_valid(candidate, curPath):
-            # Take the current candidate
-            curPath.append(candidate)
-            # Recurse to explore further solutions
-            backtrack(candidates, curPath)
-            # Undo the choice (backtrack)
-            curPath.pop()
+class BacktrackingSolver {
+private:
+    // TODO: Add your data members here
+    // Example: vector<int> currentSolution;
+    // Example: vector<vector<int>> allSolutions;
+    // Example: int target;
+    
+public:
+    // Constructor - Initialize your problem-specific data
+    BacktrackingSolver(/* TODO: Add parameters for your problem */) {
+        // TODO: Initialize your data members
+    }
+    
+    // Main backtracking function
+    void backtrack(int level /* TODO: Add other parameters as needed */) {
+        // BASE CASE: Check if we've found a complete solution
+        if (isComplete(level)) { // Check complete ness ==> Example: currentSolution.size() == n; or level == n
+            // TODO: Process the complete solution
+            processSolution();
+           // TODO: processSolution() ==> Handle the complete solution
+           // Example: allSolutions.push_back(currentSolution);
+           // Example: printSolution();
+           // Example: solutionCount++;
+
+            return;
+        }
+        
+        // RECURSIVE CASE: Try all possible choices at this level
+        vector<int> choices = generateChoices(level);
+        // TODO: generateChoices() ==> Generate and return valid choices for this level
+        // Example: return {1, 2, 3, 4, 5}; // for numbers 1-5
+        // Example: return candidates; // from a pre-computed list
+        
+        for (int choice : choices) {
+            // CHOOSE: Make the choice
+            if (isValid(choice, level)) {
+              // TODO: isValid() ==> Implement your validation logic
+              // Example: return choice not already used
+              // Example: return choice satisfies constraints
+
+                makeChoice(choice, level);
+                 // TODO: makeChoice() ==> Update your data structures to reflect the choice / Make a choice (add to current solution)
+                 // Example: currentSolution.push_back(choice);
+                 // Example: used[choice] = true;
+                 // Example: board[row][col] = choice;
+                
+                // EXPLORE: Recursively solve the subproblem
+                backtrack(level + 1);
+                
+                // UNCHOOSE: Backtrack by undoing the choice
+                undoChoice(choice, level);
+
+               // TODO: Undo the changes made in makeChoice
+               // Example: currentSolution.pop_back();
+               // Example: used[choice] = false;
+               // Example: board[row][col] = EMPTY;
+            }
+        }
+    }
+    
+
+
+    
+    // Undo a choice (remove from current solution)
+    void undoChoice(int choice, int level) {
+        // TODO: Undo the changes made in makeChoice
+        // Example: currentSolution.pop_back();
+        // Example: used[choice] = false;
+        // Example: board[row][col] = EMPTY;
+    }
+    
+    // Public interface to start the backtracking
+    void solve() {
+        backtrack(0);
+    }
+};
 ```
 **Example Problems**:  
 - .78. Subsets
@@ -1336,28 +1399,38 @@ sum[i:j]=prefix[j]−prefix[i−1]
 Therefore, we can answer Q queries in O(N) time complexity with a prefix sum.
 ```
 
-```py
-"""
-Builds the prefix sum array
-"""
-def build_prefix_sum(arr):
-    # Initialize prefix sum array
-    n = len(arr)
-    prefix = [0] * n 
+```c++
+#include <vector>
+using namespace std;
 
-# First element is the same as the original array
-    prefix[0] = arr[0]
-    # Build the prefix sum array
-    for i in range(1, n):
-        prefix[i] = prefix[i - 1] + arr[i]
-    return prefix
-"""
-Queries the sum of elements in a subarray [left, right] using prefix sum.
-"""
-def query_subarray_sum(prefix, i, j):
-    if i == 0:
-        return prefix[j]
-    return prefix[j] - prefix[i - 1]
+/**
+ * Builds the prefix sum array
+ */
+vector<int> build_prefix_sum(const vector<int>& arr) {
+    // Initialize prefix sum array
+    int n = arr.size();
+    vector<int> prefix(n);
+    
+    // First element is the same as the original array
+    prefix[0] = arr[0];
+    
+    // Build the prefix sum array
+    for (int i = 1; i < n; i++) {
+        prefix[i] = prefix[i - 1] + arr[i];
+    }
+    
+    return prefix;
+}
+
+/**
+ * Queries the sum of elements in a subarray [left, right] using prefix sum.
+ */
+int query_subarray_sum(const vector<int>& prefix, int i, int j) {
+    if (i == 0) {
+        return prefix[j];
+    }
+    return prefix[j] - prefix[i - 1];
+}
 ```
 
 ### LeetCode Questions
