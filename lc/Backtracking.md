@@ -132,6 +132,287 @@ public:
 };
 ```
 
+```cpp
+#include <vector>
+#include <iostream>
+using namespace std;
+
+class BacktrackingSolver {
+private:
+    // TODO: Add your data members here
+    // Example: vector<int> currentSolution;
+    // Example: vector<vector<int>> allSolutions;
+    // Example: int target;
+    
+public:
+    // Constructor - Initialize your problem-specific data
+    BacktrackingSolver(/* TODO: Add parameters for your problem */) {
+        // TODO: Initialize your data members
+    }
+    
+    // Main backtracking function
+    void backtrack(int level /* TODO: Add other parameters as needed */) {
+        // BASE CASE: Check if we've found a complete solution
+        if (isComplete(level)) {
+            // TODO: Process the complete solution
+            processSolution();
+            return;
+        }
+        
+        // RECURSIVE CASE: Try all possible choices at this level
+        vector<int> choices = generateChoices(level);
+        
+        for (int choice : choices) {
+            // CHOOSE: Make the choice
+            if (isValid(choice, level)) {
+                makeChoice(choice, level);
+                
+                // EXPLORE: Recursively solve the subproblem
+                backtrack(level + 1);
+                
+                // UNCHOOSE: Backtrack by undoing the choice
+                undoChoice(choice, level);
+            }
+        }
+    }
+    
+    // Check if we have a complete solution
+    bool isComplete(int level) {
+        // TODO: Implement your completion condition
+        // Example: return level == targetSize;
+        // Example: return currentSolution.size() == n;
+        return false;
+    }
+    
+    // Generate all possible choices at the current level
+    vector<int> generateChoices(int level) {
+        // TODO: Generate and return valid choices for this level
+        // Example: return {1, 2, 3, 4, 5}; // for numbers 1-5
+        // Example: return candidates; // from a pre-computed list
+        vector<int> choices;
+        return choices;
+    }
+    
+    // Check if a choice is valid at the current level
+    bool isValid(int choice, int level) {
+        // TODO: Implement your validation logic
+        // Example: return choice not already used
+        // Example: return choice satisfies constraints
+        return true;
+    }
+    
+    // Make a choice (add to current solution)
+    void makeChoice(int choice, int level) {
+        // TODO: Update your data structures to reflect the choice
+        // Example: currentSolution.push_back(choice);
+        // Example: used[choice] = true;
+        // Example: board[row][col] = choice;
+    }
+    
+    // Undo a choice (remove from current solution)
+    void undoChoice(int choice, int level) {
+        // TODO: Undo the changes made in makeChoice
+        // Example: currentSolution.pop_back();
+        // Example: used[choice] = false;
+        // Example: board[row][col] = EMPTY;
+    }
+    
+    // Process a complete solution
+    void processSolution() {
+        // TODO: Handle the complete solution
+        // Example: allSolutions.push_back(currentSolution);
+        // Example: printSolution();
+        // Example: solutionCount++;
+    }
+    
+    // Public interface to start the backtracking
+    void solve() {
+        backtrack(0);
+    }
+};
+
+// =============================================================================
+// EXAMPLE IMPLEMENTATIONS
+// =============================================================================
+
+// Example 1: N-Queens Problem
+class NQueensSolver {
+private:
+    int n;
+    vector<int> queens; // queens[i] = column of queen in row i
+    vector<vector<string>> solutions;
+    
+public:
+    NQueensSolver(int boardSize) : n(boardSize) {}
+    
+    void backtrack(int row) {
+        if (row == n) {
+            solutions.push_back(constructBoard());
+            return;
+        }
+        
+        for (int col = 0; col < n; col++) {
+            if (isValid(row, col)) {
+                queens.push_back(col);
+                backtrack(row + 1);
+                queens.pop_back();
+            }
+        }
+    }
+    
+    bool isValid(int row, int col) {
+        for (int i = 0; i < queens.size(); i++) {
+            if (queens[i] == col || // Same column
+                abs(queens[i] - col) == abs(i - row)) { // Same diagonal
+                return false;
+            }
+        }
+        return true;
+    }
+    
+    vector<string> constructBoard() {
+        vector<string> board(n, string(n, '.'));
+        for (int i = 0; i < n; i++) {
+            board[i][queens[i]] = 'Q';
+        }
+        return board;
+    }
+    
+    vector<vector<string>> solve() {
+        backtrack(0);
+        return solutions;
+    }
+};
+
+// Example 2: Subset Sum Problem
+class SubsetSumSolver {
+private:
+    vector<int> nums;
+    int target;
+    vector<int> currentSubset;
+    vector<vector<int>> solutions;
+    
+public:
+    SubsetSumSolver(vector<int> numbers, int targetSum) 
+        : nums(numbers), target(targetSum) {}
+    
+    void backtrack(int index, int currentSum) {
+        if (currentSum == target) {
+            solutions.push_back(currentSubset);
+            return;
+        }
+        
+        if (index >= nums.size() || currentSum > target) {
+            return;
+        }
+        
+        // Include current number
+        currentSubset.push_back(nums[index]);
+        backtrack(index + 1, currentSum + nums[index]);
+        currentSubset.pop_back();
+        
+        // Exclude current number
+        backtrack(index + 1, currentSum);
+    }
+    
+    vector<vector<int>> solve() {
+        backtrack(0, 0);
+        return solutions;
+    }
+};
+
+// Example 3: Permutations
+class PermutationSolver {
+private:
+    vector<int> nums;
+    vector<int> currentPerm;
+    vector<bool> used;
+    vector<vector<int>> solutions;
+    
+public:
+    PermutationSolver(vector<int> numbers) : nums(numbers) {
+        used.resize(nums.size(), false);
+    }
+    
+    void backtrack() {
+        if (currentPerm.size() == nums.size()) {
+            solutions.push_back(currentPerm);
+            return;
+        }
+        
+        for (int i = 0; i < nums.size(); i++) {
+            if (!used[i]) {
+                currentPerm.push_back(nums[i]);
+                used[i] = true;
+                
+                backtrack();
+                
+                currentPerm.pop_back();
+                used[i] = false;
+            }
+        }
+    }
+    
+    vector<vector<int>> solve() {
+        backtrack();
+        return solutions;
+    }
+};
+
+// =============================================================================
+// USAGE EXAMPLES
+// =============================================================================
+
+void printBoard(const vector<string>& board) {
+    for (const string& row : board) {
+        cout << row << endl;
+    }
+    cout << endl;
+}
+
+void printVector(const vector<int>& vec) {
+    cout << "[";
+    for (int i = 0; i < vec.size(); i++) {
+        cout << vec[i];
+        if (i < vec.size() - 1) cout << ", ";
+    }
+    cout << "]" << endl;
+}
+
+int main() {
+    // Example 1: N-Queens
+    cout << "=== N-Queens (4x4) ===" << endl;
+    NQueensSolver nqueens(4);
+    auto queensSolutions = nqueens.solve();
+    cout << "Found " << queensSolutions.size() << " solutions:" << endl;
+    for (const auto& solution : queensSolutions) {
+        printBoard(solution);
+    }
+    
+    // Example 2: Subset Sum
+    cout << "=== Subset Sum ===" << endl;
+    vector<int> numbers = {1, 2, 3, 4, 5};
+    SubsetSumSolver subsetSum(numbers, 5);
+    auto subsetSolutions = subsetSum.solve();
+    cout << "Subsets that sum to 5:" << endl;
+    for (const auto& solution : subsetSolutions) {
+        printVector(solution);
+    }
+    
+    // Example 3: Permutations
+    cout << "=== Permutations ===" << endl;
+    vector<int> permuteNums = {1, 2, 3};
+    PermutationSolver permSolver(permuteNums);
+    auto permSolutions = permSolver.solve();
+    cout << "All permutations:" << endl;
+    for (const auto& solution : permSolutions) {
+        printVector(solution);
+    }
+    
+    return 0;
+}
+```
+
 #### Example
 ![text](assets/s4.png)
 
