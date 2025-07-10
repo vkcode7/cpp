@@ -11,6 +11,272 @@
 # 785. Is Graph Bipartite? [Medium]
 ```
 
+```cpp
+#include <vector>
+#include <iostream>
+using namespace std;
+
+/*
+ADJACENCY MATRIX BASICS:
+
+What is it?
+- A 2D array/matrix to represent connections between nodes in a graph
+- If there are N nodes, matrix size is N×N
+- matrix[i][j] = 1 means there's an edge from node i to node j
+- matrix[i][j] = 0 means no edge from node i to node j
+
+For weighted graphs:
+- matrix[i][j] = weight of edge from i to j
+- matrix[i][j] = 0 or infinity means no edge
+*/
+
+class AdjacencyMatrix {
+private:
+    vector<vector<int>> matrix;
+    int numNodes;
+    bool isDirected;
+    
+public:
+    // Constructor
+    AdjacencyMatrix(int n, bool directed = false) : numNodes(n), isDirected(directed) {
+        // Initialize matrix with all zeros (no edges)
+        matrix.resize(n, vector<int>(n, 0));
+    }
+    
+    // Add an edge between two nodes
+    void addEdge(int from, int to, int weight = 1) {
+        if (from >= numNodes || to >= numNodes || from < 0 || to < 0) {
+            cout << "Invalid node indices!" << endl;
+            return;
+        }
+        
+        matrix[from][to] = weight;
+        
+        // If undirected graph, add edge in both directions
+        if (!isDirected) {
+            matrix[to][from] = weight;
+        }
+        
+        cout << "Added edge: " << from << " -> " << to;
+        if (weight != 1) cout << " (weight: " << weight << ")";
+        cout << endl;
+    }
+    
+    // Remove an edge
+    void removeEdge(int from, int to) {
+        if (from >= numNodes || to >= numNodes || from < 0 || to < 0) {
+            cout << "Invalid node indices!" << endl;
+            return;
+        }
+        
+        matrix[from][to] = 0;
+        
+        if (!isDirected) {
+            matrix[to][from] = 0;
+        }
+        
+        cout << "Removed edge: " << from << " -> " << to << endl;
+    }
+    
+    // Check if edge exists
+    bool hasEdge(int from, int to) {
+        if (from >= numNodes || to >= numNodes || from < 0 || to < 0) {
+            return false;
+        }
+        return matrix[from][to] != 0;
+    }
+    
+    // Get edge weight
+    int getWeight(int from, int to) {
+        if (from >= numNodes || to >= numNodes || from < 0 || to < 0) {
+            return 0;
+        }
+        return matrix[from][to];
+    }
+    
+    // Print the matrix
+    void printMatrix() {
+        cout << "\nAdjacency Matrix:" << endl;
+        cout << "   ";
+        for (int i = 0; i < numNodes; i++) {
+            cout << i << " ";
+        }
+        cout << endl;
+        
+        for (int i = 0; i < numNodes; i++) {
+            cout << i << ": ";
+            for (int j = 0; j < numNodes; j++) {
+                cout << matrix[i][j] << " ";
+            }
+            cout << endl;
+        }
+        cout << endl;
+    }
+    
+    // Get all neighbors of a node
+    vector<int> getNeighbors(int node) {
+        vector<int> neighbors;
+        for (int i = 0; i < numNodes; i++) {
+            if (matrix[node][i] != 0) {
+                neighbors.push_back(i);
+            }
+        }
+        return neighbors;
+    }
+    
+    // Get degree of a node
+    int getDegree(int node) {
+        int degree = 0;
+        for (int i = 0; i < numNodes; i++) {
+            if (matrix[node][i] != 0) degree++;
+        }
+        
+        // For undirected graphs, also count incoming edges (if different)
+        if (!isDirected) {
+            for (int i = 0; i < numNodes; i++) {
+                if (i != node && matrix[i][node] != 0) degree++;
+            }
+        }
+        
+        return degree;
+    }
+};
+
+// Example: Building adjacency matrix step by step
+void demonstrateBuilding() {
+    cout << "=== BUILDING ADJACENCY MATRIX STEP BY STEP ===" << endl;
+    
+    // Create a graph with 5 nodes (0, 1, 2, 3, 4)
+    AdjacencyMatrix graph(5, false); // undirected graph
+    
+    cout << "Step 1: Created empty 5x5 matrix" << endl;
+    graph.printMatrix();
+    
+    cout << "Step 2: Adding edges one by one" << endl;
+    graph.addEdge(0, 1);  // Connect node 0 to node 1
+    graph.printMatrix();
+    
+    graph.addEdge(1, 2);  // Connect node 1 to node 2
+    graph.printMatrix();
+    
+    graph.addEdge(2, 3);  // Connect node 2 to node 3
+    graph.printMatrix();
+    
+    graph.addEdge(0, 4);  // Connect node 0 to node 4
+    graph.printMatrix();
+    
+    graph.addEdge(1, 3);  // Connect node 1 to node 3
+    graph.printMatrix();
+    
+    cout << "Final graph structure:" << endl;
+    cout << "0 -- 1 -- 2" << endl;
+    cout << "|    |    |" << endl;
+    cout << "4    3 ---+" << endl;
+}
+
+// Example: Weighted graph
+void demonstrateWeightedGraph() {
+    cout << "=== WEIGHTED GRAPH EXAMPLE ===" << endl;
+    
+    AdjacencyMatrix weightedGraph(4, true); // directed weighted graph
+    
+    cout << "Building a weighted directed graph:" << endl;
+    weightedGraph.addEdge(0, 1, 5);   // 0 -> 1 with weight 5
+    weightedGraph.addEdge(0, 2, 3);   // 0 -> 2 with weight 3
+    weightedGraph.addEdge(1, 2, 2);   // 1 -> 2 with weight 2
+    weightedGraph.addEdge(1, 3, 4);   // 1 -> 3 with weight 4
+    weightedGraph.addEdge(2, 3, 1);   // 2 -> 3 with weight 1
+    
+    weightedGraph.printMatrix();
+    
+    cout << "Graph visualization:" << endl;
+    cout << "0 --5--> 1 --4--> 3" << endl;
+    cout << "|        |        ^" << endl;
+    cout << "3        2        |" << endl;
+    cout << "|        |        1" << endl;
+    cout << "v        v        |" << endl;
+    cout << "2 ---------------+" << endl;
+}
+
+/*
+STEP-BY-STEP MATRIX BUILDING PROCESS:
+
+1. INITIALIZATION:
+   - Create N×N matrix filled with zeros
+   - All matrix[i][j] = 0 means no edges initially
+
+2. ADDING EDGES:
+   For each edge (u, v):
+   - Set matrix[u][v] = 1 (or weight for weighted graphs)
+   - If undirected: also set matrix[v][u] = 1
+
+3. EXAMPLE WALKTHROUGH:
+   
+   Graph: 0-1-2
+   
+   Step 1: Initialize 3×3 matrix
+   [0 0 0]
+   [0 0 0]
+   [0 0 0]
+   
+   Step 2: Add edge 0-1
+   [0 1 0]
+   [1 0 0]  (undirected, so both directions)
+   [0 0 0]
+   
+   Step 3: Add edge 1-2
+   [0 1 0]
+   [1 0 1]
+   [0 1 0]
+
+MATRIX PROPERTIES:
+
+1. UNDIRECTED GRAPH:
+   - Matrix is symmetric: matrix[i][j] = matrix[j][i]
+   - Diagonal is usually 0 (no self-loops)
+
+2. DIRECTED GRAPH:
+   - Matrix may not be symmetric
+   - matrix[i][j] = 1 doesn't mean matrix[j][i] = 1
+
+3. WEIGHTED GRAPH:
+   - Store weights instead of just 1/0
+   - 0 or infinity typically means no edge
+
+SPACE COMPLEXITY: O(N²) where N is number of nodes
+TIME COMPLEXITY: 
+- Add edge: O(1)
+- Remove edge: O(1)
+- Check edge: O(1)
+- Get all neighbors: O(N)
+*/
+
+int main() {
+    demonstrateBuilding();
+    cout << "\n" << string(50, '=') << "\n" << endl;
+    demonstrateWeightedGraph();
+    
+    // Additional examples
+    cout << "=== CHECKING OPERATIONS ===" << endl;
+    AdjacencyMatrix graph(3, false);
+    graph.addEdge(0, 1);
+    graph.addEdge(1, 2);
+    
+    cout << "Has edge 0->1: " << (graph.hasEdge(0, 1) ? "Yes" : "No") << endl;
+    cout << "Has edge 0->2: " << (graph.hasEdge(0, 2) ? "Yes" : "No") << endl;
+    cout << "Weight of edge 0->1: " << graph.getWeight(0, 1) << endl;
+    
+    vector<int> neighbors = graph.getNeighbors(1);
+    cout << "Neighbors of node 1: ";
+    for (int neighbor : neighbors) {
+        cout << neighbor << " ";
+    }
+    cout << endl;
+    
+    return 0;
+}
+```
+
 # 56. Merge Intervals [Easy]
 
 Given an array of intervals where `intervals[i] = [start_i, end_i]`, merge all overlapping intervals and return an array of the non-overlapping intervals that cover all the intervals in the input.
