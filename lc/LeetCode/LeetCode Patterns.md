@@ -1523,6 +1523,14 @@ public:
         return parent[x];
     }
 
+    int find_simple(int x) {
+       // Keep going up until we find the root (parent of itself)
+       while (parent[x] != x) {
+           x = parent[x];
+       }
+       return x;
+    }
+
     void unionSets(int x, int y) {
         // Union by rank: Attach shorter tree to root of taller tree
         int px = find(x);
