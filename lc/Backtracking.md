@@ -10,6 +10,128 @@ Key point: Undo the change which you did before calling the recursion
 
 Backtracking needs to be done due to - wrong choice or to - try other possibilities
 
+```c++
+/**
+ * Generic backtracking template.
+ * 
+ * Backtracking is a recursive algorithm technique that systematically explores
+ * all possible solutions by building candidates incrementally and abandoning
+ * candidates ("backtracking") as soon as it's determined they cannot lead to
+ * a valid solution.
+ * 
+ * The template follows the standard backtracking pattern:
+ * 1. Check if current path is a complete solution
+ * 2. If not, try each possible candidate
+ * 3. For each valid candidate, add it to the path and recurse
+ * 4. Remove the candidate from the path (backtrack) before trying the next one
+ */
+template<typename T>
+class BacktrackSolver {
+private:
+    vector<T> current_path;
+    
+    // Pure virtual functions that must be implemented by derived classes
+    virtual bool is_solution(const vector<T>& path) = 0;
+    virtual void process_solution(const vector<T>& path) = 0;
+    virtual bool is_valid(const T& candidate, const vector<T>& path) = 0;
+    virtual vector<T> get_candidates(const vector<T>& path) = 0;
+    
+    void backtrack() {
+        // Base case: Check if the current path meets the problem's criteria
+        if (is_solution(current_path)) {
+            process_solution(current_path);
+            return;
+        }
+        
+        // Get all possible candidates for the current state
+        vector<T> candidates = get_candidates(current_path);
+        
+        // Try each candidate
+        for (const T& candidate : candidates) {
+            // Check if this candidate is valid given the current path
+            if (is_valid(candidate, current_path)) {
+                // Make the choice: add candidate to current path
+                current_path.push_back(candidate);
+                
+                // Recurse to explore further solutions with this choice
+                backtrack();
+                
+                // Undo the choice (backtrack): remove the candidate
+                // This is crucial - it allows us to try other candidates
+                current_path.pop_back();
+            }
+        }
+    }
+    
+public:
+    virtual ~BacktrackSolver() = default;
+    
+    // Public interface to start the backtracking process
+    void solve() {
+        current_path.clear();
+        backtrack();
+    }
+    
+    // Alternative interface that allows starting with an initial path
+    void solve(const vector<T>& initial_path) {
+        current_path = initial_path;
+        backtrack();
+    }
+};
+
+/**
+ * Example concrete implementation: N-Queens problem
+ * This demonstrates how to use the backtracking template
+ */
+class NQueensSolver : public BacktrackSolver<int> {
+private:
+    int n;
+    vector<vector<int>> solutions;
+    
+    bool is_solution(const vector<int>& path) override {
+        // Solution is complete when we've placed n queens
+        return path.size() == n;
+    }
+    
+    void process_solution(const vector<int>& path) override {
+        // Store the solution (path[i] represents column of queen in row i)
+        solutions.push_back(path);
+    }
+    
+    bool is_valid(const int& col, const vector<int>& path) override {
+        int row = path.size(); // Current row we're trying to place a queen
+        
+        // Check if placing a queen at (row, col) conflicts with existing queens
+        for (int i = 0; i < path.size(); i++) {
+            // Check column conflict
+            if (path[i] == col) return false;
+            
+            // Check diagonal conflicts
+            if (abs(path[i] - col) == abs(i - row)) return false;
+        }
+        return true;
+    }
+    
+    vector<int> get_candidates(const vector<int>& path) override {
+        // Candidates are all possible columns (0 to n-1)
+        vector<int> candidates;
+        for (int i = 0; i < n; i++) {
+            candidates.push_back(i);
+        }
+        return candidates;
+    }
+    
+public:
+    NQueensSolver(int board_size) : n(board_size) {}
+    
+    vector<vector<int>> get_solutions() {
+        solutions.clear();
+        solve();
+        return solutions;
+    }
+};
+```
+
 #### Example
 ![text](assets/s4.png)
 
