@@ -71,7 +71,7 @@ c++ 11 introduced 3 new types - unique_ptr, shared_ptr and weak_ptr
 These three remain the foundational smart pointers in modern C++.
 However, there were some related additions and improvements:
 C++14:
-
+======
 std::make_unique was added (surprisingly, this was missing from C++11)
 Improved std::make_shared with better exception safety
 
@@ -81,9 +81,8 @@ std::unique_ptr<int> ptr1(new int(42));
 // C++14 - added make_unique for consistency and exception safety
 auto ptr2 = std::make_unique<int>(42);
 
-
 C++17:
-
+======
 std::shared_ptr gained support for arrays (e.g., shared_ptr<int[]>)
 std::weak_ptr also gained array support
 
@@ -94,7 +93,7 @@ std::shared_ptr<int[]> arr_ptr = std::shared_ptr<int[]>(new int[10]);
 std::weak_ptr<int[]> weak_arr = arr_ptr;
 
 C++20:
-
+=====
 std::make_shared and std::make_unique gained support for arrays
 std::atomic<std::shared_ptr> and std::atomic<std::weak_ptr> were added for better concurrent programming
 
