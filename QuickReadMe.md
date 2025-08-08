@@ -67,6 +67,54 @@ delete[] parr;
 ### Smart Pointers
 c++ 11 introduced 3 new types - unique_ptr, shared_ptr and weak_ptr
 
+```bash
+These three remain the foundational smart pointers in modern C++.
+However, there were some related additions and improvements:
+C++14:
+
+std::make_unique was added (surprisingly, this was missing from C++11)
+Improved std::make_shared with better exception safety
+
+// C++11 - had to use new directly
+std::unique_ptr<int> ptr1(new int(42));
+
+// C++14 - added make_unique for consistency and exception safety
+auto ptr2 = std::make_unique<int>(42);
+
+
+C++17:
+
+std::shared_ptr gained support for arrays (e.g., shared_ptr<int[]>)
+std::weak_ptr also gained array support
+
+// C++17 - shared_ptr can now manage arrays
+std::shared_ptr<int[]> arr_ptr = std::shared_ptr<int[]>(new int[10]);
+
+// weak_ptr with arrays too
+std::weak_ptr<int[]> weak_arr = arr_ptr;
+
+C++20:
+
+std::make_shared and std::make_unique gained support for arrays
+std::atomic<std::shared_ptr> and std::atomic<std::weak_ptr> were added for better concurrent programming
+
+The original trio of smart pointers covers the fundamental ownership patterns so well that no replacements have been needed:
+
+unique_ptr for exclusive ownership
+shared_ptr for shared ownership with reference counting
+weak_ptr for non-owning references that can detect when the object is destroyed
+
+// C++20 - make_unique for arrays
+auto unique_arr = std::make_unique<int[]>(10);  // Creates array of 10 ints
+auto unique_arr2 = std::make_unique<int[]>(5, 42);  // 5 ints, all initialized to 42
+
+// C++20 - make_shared for arrays  
+auto shared_arr = std::make_shared<int[]>(10);  // Creates array of 10 ints
+
+// C++20 - atomic operations on shared_ptr
+std::atomic<std::shared_ptr<int>> atomic_ptr;
+```
+
 #### unique_ptr
 ```c++
 #include <iostream>
