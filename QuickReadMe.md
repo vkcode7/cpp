@@ -203,6 +203,22 @@ int main() {
     std::shared_ptr<int> ptr2 = ptr;
 ```
 
+#### weak_ptr
+doesnt do in reference counting, only holds to a shared_ptr that may or may not be valid any more. Accessed via lock() and validness can be checked via expired()
+```c++
+    // Create a weak pointer from the shared pointer
+    std::weak_ptr<int> weakPtr = sharedPtr;
+
+    // Check if the weak pointer is expired
+    if (auto lockedPtr = weakPtr.lock()) {
+        //valid - use *lockedPtr
+    }
+
+    //check if expired
+    if (weakPtr.expired()) { }
+```
+
+
 #### reference_wrapper
 std::reference_wrapper is a class template provided by the C++ Standard Library. It acts as a wrapper around a reference to an object and provides additional functionalities like assignment and comparison. Flexibility:
 
