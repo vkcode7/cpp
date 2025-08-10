@@ -779,22 +779,33 @@ constexpr MyClass obj(42); // Compile-time object construction
 ### friend
 In C++, the friend keyword is used to grant access to private or protected members of a class to functions or other classes that are not members of that class. It allows designated external functions or classes to access the private and protected members of a class as if they were their own members.
 ```c++
-class MyClass {
-private:
-    int privateMember;
-
-public:
-    // Declare an external function as a friend
-    friend void externalFunction(MyClass& obj);
-
-    // Declare an entire class as a friend
-    friend class FriendClass;
-};
 
 // Define the friend function
-void externalFunction(MyClass& obj) {
-    std::cout << "Value of private member accessed by friend function: " << obj.privateMember << std::endl;
+void externalFunction(Box& obj) {
+    std::cout << "Value of private member accessed by friend function: " << obj.width << std::endl;
 }
+
+class Box {
+private:
+    int width;
+    
+public:
+    Box(int w) : width(w) {}
+    
+    // Declare Display as a friend class
+    friend class Display;
+
+    // Declare an external function as a friend
+    friend void externalFunction(Box& obj);
+};
+
+class Display {
+public:
+    void showWidth(Box& b) {
+        // Can access private member of Box
+        cout << "Width: " << b.width << endl;
+    }
+};
 ```
 
 ### Operator Overloading
