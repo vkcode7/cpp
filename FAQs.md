@@ -96,6 +96,22 @@ int main() {
 ```
 
 ### Function template to print elements of an array
+This works only with arrays when size is part of array declaration as: int arr[5]. This WONT work for int pointer arrays. For pointer arrays instead use:
+```c++
+// Option 1: Traditional approach
+void printArray(int* arr, size_t size);
+
+// Option 2: Use std::vector
+std::vector<int> arr(10);
+// Works with range-based loops and algorithms
+
+// Option 3: Wrapper struct
+struct DynamicArray {
+    int* data;
+    size_t size;
+};
+```
+
 ```c++
 // When you pass an array to this function template, the compiler deduces the size of the array based on its type.
 template<typename T, size_t N>
