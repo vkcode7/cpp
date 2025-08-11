@@ -878,6 +878,68 @@ There are many uses of placement new. The simplest use is to place an object at 
 
 You are also solely responsible for destructing the placed object. This is done by explicitly calling the destructor [f->~Fred();].
 
+The main difference between new and placement new is where and how memory is allocated. Let me explain with detailed examples:
+
+What regular new() does:
+
+- Allocates memory from the heap
+- Calls the constructor on that memory
+- Returns pointer to the constructed object
+- Can throw std::bad_alloc if allocation fails
+
+Placement new: What it does:
+
+- Uses existing memory (you provide the address)
+- Only calls the constructor at that address
+- Returns pointer to the constructed object
+- Never allocates - no std::bad_alloc
+- You must manually call the destructor
+
+```cpp
+char buffer[sizeof(MyClass)];           // Pre-allocate memory
+MyClass* obj = new (buffer) MyClass(args); // Only constructs
+obj->~MyClass();                        // Only destructs
+// Memory management is separate
+
+void demonstrateHeapPlacementNew() {
+    cout << "\n=== PLACEMENT NEW WITH HEAP MEMORY ===\n";
+    
+    // Allocate raw memory on heap
+    void* rawMemory = malloc(sizeof(MyClass));
+    cout << "Raw memory allocated at: " << rawMemory << endl;
+    
+    // Use placement new to construct object in that memory
+    MyClass* obj3 = new (rawMemory) MyClass(200, "HeapPlacement");
+    
+    obj3->display();
+    
+    // Manual destructor call
+    obj3->~MyClass();
+    
+    // Free the raw memory
+    free(rawMemory);
+    cout << "Raw memory freed\n";
+}
+```
+
+Use Placement new when:
+
+- Custom allocators (memory pools, stack allocators)
+- Performance critical code (avoid heap allocation)
+- Embedded systems with limited/fixed memory
+- Container implementations (like std::vector)
+- Object recycling (construct/destruct without allocation)
+- Stack-based objects with dynamic construction
+
+
+Important Notes:
+
+- Never use delete with placement new - only call the destructor manually
+- Memory management is your responsibility with placement new
+- Alignment matters - ensure proper alignment for the type
+- Exception safety - be careful with constructor exceptions
+- Destructor order - call destructors in reverse construction order for arrays
+
 ### I’m creating a derived class; should my assignment operators call my base class’s assignment operators?
 
 Yes (if you need to define assignment operators in the first place).
