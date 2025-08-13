@@ -1,17 +1,17 @@
 # Arrays and Strings
 
-### 8. String to Integer (atoi)
-### 13. Roman to Integer
-### 31. Next Permutation
-### 43. Multiply Strings
-### 49. Group Anagrams
-### 67. Add Binary
-### 314. Binary Tree Vertical Order Traversal
-### 157. Read N Characters Given Read4
-### 161. One Edit Distance
-### 340. Longest Substring with At Most K Distinct Characters
-### 468. Validate IP Address
-### 680. Valid Palindrome II
+#### 8. String to Integer (atoi)
+#### 13. Roman to Integer
+#### 31. Next Permutation
+#### 43. Multiply Strings
+#### 49. Group Anagrams
+#### 67. Add Binary
+#### 314. Binary Tree Vertical Order Traversal
+#### 157. Read N Characters Given Read4
+#### 161. One Edit Distance
+#### 340. Longest Substring with At Most K Distinct Characters
+#### 468. Validate IP Address
+#### 680. Valid Palindrome II
 
 ## 8. String to Integer (atoi)
 
