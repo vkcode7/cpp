@@ -1,5 +1,18 @@
 # Arrays and Strings
 
+### 8. String to Integer (atoi)
+### 13. Roman to Integer
+### 31. Next Permutation
+### 43. Multiply Strings
+### 49. Group Anagrams
+### 67. Add Binary
+### 314. Binary Tree Vertical Order Traversal
+### 157. Read N Characters Given Read4
+### 161. One Edit Distance
+### 340. Longest Substring with At Most K Distinct Characters
+### 468. Validate IP Address
+### 680. Valid Palindrome II
+
 ## 8. String to Integer (atoi)
 
 ```
@@ -764,6 +777,7 @@ public:
 ```
 
 ## 161. One Edit Distance
+
 Given two strings s and t, return true if they are both one edit distance apart, otherwise return false.
 
 A string s is said to be one distance apart from a string t if you can:
@@ -874,6 +888,7 @@ public:
 ```
 
 ## 468. Validate IP Address
+
 https://leetcode.com/problems/validate-ip-address/description/
 
 Given a string queryIP, return "IPv4" if IP is a valid IPv4 address, "IPv6" if IP is a valid IPv6 address or "Neither" if IP is not a correct IP of any type.
