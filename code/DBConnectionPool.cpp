@@ -1,11 +1,9 @@
-
 #include <iostream>
 #include <queue>
-#include <mutex>
-#include <condition_variable>
 #include <memory>
+#include <mutex>
 
-// Mock database connection class
+// Mock database connection
 class DBConnection {
 public:
     DBConnection(int id) : connId(id) {
@@ -23,44 +21,41 @@ private:
     int connId;
 };
 
-// Singleton Connection Pool Class
+// Singleton DBConnectionPool without condition_variable
 class DBConnectionPool {
 public:
     static const int INITIAL_CONNECTIONS = 5;
     static const int MAX_CONNECTIONS = 20;
 
-    // Singleton accessor
     static DBConnectionPool& getInstance() {
-        static DBConnectionPool instance;  // Meyers Singleton (thread-safe)
+        static DBConnectionPool instance;
         return instance;
     }
 
-    // Prevent copying
     DBConnectionPool(const DBConnectionPool&) = delete;
     DBConnectionPool& operator=(const DBConnectionPool&) = delete;
 
     std::shared_ptr<DBConnection> acquireConnection() {
-        std::unique_lock<std::mutex> lock(mtx);
+        std::lock_guard<std::mutex> lock(mtx);
 
-        if (connections.empty() && connCounter < MAX_CONNECTIONS) {
-            // Create a new connection if under limit
-            connections.push(std::make_shared<DBConnection>(++connCounter));
+        if (!connections.empty()) {
+            auto conn = connections.front();
+            connections.pop();
+            return conn;
         }
 
-        // Wait until a connection is available
-        cond.wait(lock, [this]() { return !connections.empty(); });
+        if (connCounter < MAX_CONNECTIONS) {
+            return std::make_shared<DBConnection>(++connCounter);
+        }
 
-        auto conn = connections.front();
-        connections.pop();
-        return conn;
+        // No connection available and max reached
+        std::cout << "No available connections. Try again later.\n";
+        return nullptr;
     }
 
     void releaseConnection(std::shared_ptr<DBConnection> conn) {
-        {
-            std::lock_guard<std::mutex> lock(mtx);
-            connections.push(conn);
-        }
-        cond.notify_one();
+        std::lock_guard<std::mutex> lock(mtx);
+        connections.push(conn);
     }
 
 private:
@@ -74,22 +69,20 @@ private:
 
     std::queue<std::shared_ptr<DBConnection>> connections;
     std::mutex mtx;
-    std::condition_variable cond;
     int connCounter = 0;
 };
 
 // Example usage
 int main() {
-    // Get singleton instance
-    DBConnectionPool& pool = DBConnectionPool::getInstance();
+    auto& pool = DBConnectionPool::getInstance();
 
-    // Acquire a connection
-    auto conn = pool.acquireConnection();
-    conn->executeQuery("SELECT * FROM users");
-
-    // Release it back
-    pool.releaseConnection(conn);
+    for (int i = 0; i < 22; i++) {
+        auto conn = pool.acquireConnection();
+        if (conn) {
+            conn->executeQuery("SELECT * FROM test");
+            pool.releaseConnection(conn);
+        }
+    }
 
     return 0;
 }
-
