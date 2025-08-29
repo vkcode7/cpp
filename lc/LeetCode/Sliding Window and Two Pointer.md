@@ -1913,3 +1913,53 @@ public:
 - Smallest height at ends: Correctly handles cases like `[1,1000,1]` by moving pointers inward.
 - Large array: Efficiently processes up to `n = 10^5` within constraints.
 - Monotonic array: Handles increasing or decreasing arrays by checking all valid pairs.
+
+# Candy Crush 1D
+https://leetcode.com/discuss/post/380650/bloomberg-phone-candy-crush-1d-by-suprit-r11f/
+
+Write a function to crush candy in one dimensional board. In candy crushing games, groups of like items are removed from the board. In this problem, any sequence of 3 or more like items should be removed and any items adjacent to that sequence should now be considered adjacent to each other. This process should be repeated as many time as possible. You should greedily remove characters from left to right.
+
+```cpp
+#include <string>
+#include <stack>
+#include <vector>
+
+class Solution {
+public:
+    string removeDuplicates(string s) {
+        // Stack to store pairs of character and their count
+        stack<pair<char, int>> st;
+        
+        for (char c : s) {
+            // If stack is not empty and current char matches top char
+            if (!st.empty() && st.top().first == c) {
+                st.top().second++; // Increment count
+            } else {
+                st.push({c, 1}); // Push new char with count 1
+            }
+            
+            // If count reaches 3, remove the sequence
+            if (!st.empty() && st.top().second >= 3) {
+                st.pop();
+            }
+        }
+        
+        // Build result string from stack
+        string result = "";
+        while (!st.empty()) {
+            auto [c, count] = st.top();
+            st.pop();
+            result = string(count, c) + result; // Prepend count occurrences of char
+        }
+        
+        // Repeat process if result still has sequences of 3 or more
+        string prev = s;
+        while (result != prev) {
+            prev = result;
+            result = removeDuplicates(result); // Recursively apply the same logic
+        }
+        
+        return result;
+    }
+};
+```
