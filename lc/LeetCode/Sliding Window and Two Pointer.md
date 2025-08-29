@@ -945,7 +945,6 @@ public:
                 int currVariance = 0; // Current sum of +1/-1
                 bool hasC2 = false;   // Tracks if c2 is in current substring
                 bool hadC2 = false;   // Tracks if c2 was in a previous substring
-                int firstC2 = 0;      // Tracks variance after first c2
                 
                 for (char c : s) {
                     if (c == c1) {
@@ -961,9 +960,9 @@ public:
                         maxVariance = max(maxVariance, currVariance);
                     }
                     
-                    if (currVariance < firstC2 && hadC2) {
+                    if (currVariance < 0 && hadC2) {
                         // Reset to consider new substring with at least one c2
-                        currVariance = firstC2;
+                        currVariance = 0;
                         hasC2 = false;
                     }
                 }
