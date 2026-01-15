@@ -28,6 +28,9 @@
 | >>           | Right Shift                                | a >> 1 (result: 0010)    |
 ```
 
+Binary to Decimal:
+(1101)₂ = (1 × 2³) + (1 × 2²) + (0 × 2¹) + (1 × 2⁰) = (13)₁₀
+
 Decimal to Binary:
 You can convert a decimal number into binary by repeatedly dividing the decimal number by 2 and keeping track of the remainders. 
 
