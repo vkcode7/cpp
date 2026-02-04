@@ -2250,10 +2250,12 @@ int main() {
 - Max Heap: With highest element on Top =>
   ```
   priority_queue<int> pq;
+  //Above is same as below
+  priority_queue<int, vector<int>, less<int>> largestOnTop; //In decreasing order
   ```
 - Min Heap: With Lowest element on Top =>
   ```
-  priority_queue <int, vector<int>, greater<int>> gq;
+  priority_queue <int, vector<int>, greater<int>> lowestOnTop; //In increasing order
   ```
 
 ```c++
