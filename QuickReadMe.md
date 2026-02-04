@@ -50,6 +50,17 @@ for (auto& [key, value]: myMap) {
 
 #### assert() macro (only works in Debug mode; ignored in Release)
 If this expression evaluates to 0 or false, this causes an assertion failure that terminates the program. It doesnt go into release so there is no performance penalty in released code.
+```c++
+#include <cassert>
+#include <iostream>
+
+int divide(int a, int b)
+{
+    // This should never happen if callers use the function correctly
+    assert(b != 0 && "Denominator must not be zero");
+    return a / b;
+}
+```
 
 #### static_assert
 if a program error is detected at compile time, the error is displayed and compilation will stop.  
