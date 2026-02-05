@@ -12,6 +12,7 @@ using System.Text.RegularExpressions;
 using System.Text;
 using System;
 
+
  public interface IBook
 {
     int Id { get; set; }
@@ -37,7 +38,7 @@ public class Book : IBook
 }
 public class LibrarySystem : ILibrarySystem
 {
-
+  //declare a private _books dictionary to hold book and quantity
 }
        
 
