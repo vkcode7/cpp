@@ -40,7 +40,15 @@ public class LibrarySystem : ILibrarySystem
 {
   //declare a private _books dictionary to hold book and quantity
 }
-       
+
+/*
+Input:
+4
+1 Title-1 Author-1 Category-4 206 14
+2 Title-2 Author-2 Category-2 527 23
+3 Title-3 Author-2 Category-2 734 6
+4 Title-4 Author-1 Category-1 58 29
+*/
 
 class Solution
 {
