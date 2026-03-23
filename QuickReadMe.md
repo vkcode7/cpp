@@ -1,10 +1,10 @@
 C++ is a ***strongly typed langugae*** as every variable is a type that never changes.<br>
 Basic/aka Intrinsic types are:<br>
-<mark>char, short, int, long, long long</mark><br>
+<mark>char, short, int (32b), long (64b), long long (64b)</mark><br>
 unsigned <= unisgned versions of above, with unsigned we can store 2x of signed plus zero<br>
 signed <= signed versions, default except for "char"
 
-other types: float (32b), double (64b), long double (80 bits), bool
+other types: float (32b), double (64b), long double (128 bits), bool
 
 #### RANGE BASED for loop
 
