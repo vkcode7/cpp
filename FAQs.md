@@ -96,7 +96,7 @@ int main() {
 ```
 
 ### Function template to print elements of an array
-This works only with arrays when size is part of array declaration as: int arr[5]. This WONT work for int pointer arrays. For pointer arrays instead use:
+<mark>This works only with arrays when size is part of array declaration as: int arr[5]. This WONT work for int pointer arrays. For pointer arrays instead use:</mark>
 ```c++
 // Option 1: Traditional approach
 void printArray(int* arr, size_t size);
@@ -193,7 +193,7 @@ int main() {
 ```
 
 ### Templates Specialization
-allows you to provide specialized implementations of function templates or class templates for specific types or values.
+<mark>allows you to provide specialized implementations of function templates or class templates for specific types or values.</mark>
 ```c++
 // Generic template function
 template<typename T>
@@ -249,7 +249,7 @@ int main() {
 ```
 
 ### using
-using simplifies the syntax for defining function pointers, and function objects. Can NOT be used with lambdas.
+<mark>using simplifies the syntax for defining function pointers, and function objects. Can NOT be used with lambdas.</mark>
 ```c++
 #include <iostream>
 #include <functional> // Include this header for std::function
