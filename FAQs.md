@@ -1234,7 +1234,7 @@ NOTE: If we had used an array class (e.g., std::array<Derived, 10> from the stan
 
 ### final specifier (since C++11) - How can I set up my class so it won’t be inherited from?
 
-Specifies that a virtual function cannot be overridden in a derived class, or that a class cannot be derived from.
+<mark>Specifies that a virtual function cannot be overridden in a derived class, or that a class cannot be derived from.</mark>
 
 ```c++
 struct Base
