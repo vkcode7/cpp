@@ -1,5 +1,120 @@
 Here's a clear and complete guide on **how to create and run tasks using `std::thread`** in modern C++.
 
+import pandas as pd
+import numpy as np
+from sklearn.cluster import KMeans
+from sklearn.metrics import silhouette_score, completeness_score
+
+
+def cluster_customers(data_train, data_test):
+    """
+    Implements the cluster_customers function as specified in the Codility task.
+    Returns the exact dictionary required by the task.
+    """
+    # Identify the 12 feature columns (account_1 to account_12)
+    feature_cols = [f'account_{i}' for i in range(1, 13)]
+
+    # Step 1: Standardize the 12 variables
+    # Compute mean and std (pandas default ddof=1) from data_train only
+    train_mean = data_train[feature_cols].mean()
+    train_std = data_train[feature_cols].std()
+
+    # Standardize train features and round to 3 decimal places
+    sd_train_features = (data_train[feature_cols] - train_mean) / train_std
+    sd_train_features = sd_train_features.round(3)
+
+    # Build sd_train: keep 'cluster' column unchanged, replace features
+    sd_train = data_train.copy()
+    sd_train[feature_cols] = sd_train_features
+
+    # Standardize test features using the same train statistics and round
+    sd_test_features = (data_test[feature_cols] - train_mean) / train_std
+    sd_test_features = sd_test_features.round(3)
+
+    # Build sd_test: keep 'cluster' column unchanged, replace features
+    sd_test = data_test.copy()
+    sd_test[feature_cols] = sd_test_features
+
+    # Step 2: Find optimal number of clusters (elbow method with WCSS)
+    wcss = []
+    for i in range(2, 11):
+        kmeans_i = KMeans(
+            n_clusters=i,
+            init="k-means++",
+            max_iter=50,
+            n_init=10,
+            random_state=0,
+            tol=0.05
+        )
+        kmeans_i.fit(sd_train[feature_cols])
+        wcss.append(kmeans_i.inertia_)
+
+    # Find opt_cluster: smallest k where wcss[k] - wcss[k+1] < 20
+    # (default to 10 if the decrease never drops below 20)
+    opt_cluster = 10
+    for idx in range(len(wcss) - 1):
+        diff = wcss[idx] - wcss[idx + 1]
+        if diff < 20:
+            opt_cluster = idx + 2
+            break
+
+    # Step 3: Build the two required KMeans models with identical parameters
+    # Optimal model
+    kmeans_opt = KMeans(
+        n_clusters=opt_cluster,
+        init="k-means++",
+        max_iter=50,
+        n_init=10,
+        random_state=0,
+        tol=0.05
+    )
+    kmeans_opt.fit(sd_train[feature_cols])
+
+    # 4-cluster model (previous manual clusters)
+    kmeans_4 = KMeans(
+        n_clusters=4,
+        init="k-means++",
+        max_iter=50,
+        n_init=10,
+        random_state=0,
+        tol=0.05
+    )
+    kmeans_4.fit(sd_train[feature_cols])
+
+    # Silhouette score (on sd_train with optimal clustering)
+    silhouette = silhouette_score(sd_train[feature_cols], kmeans_opt.labels_)
+
+    # Completeness scores (tuple)
+    # Train completeness
+    completeness_train = completeness_score(sd_train["cluster"], kmeans_4.labels_)
+    # Test completeness
+    pred_test_4 = kmeans_4.predict(sd_test[feature_cols])
+    completeness_test = completeness_score(sd_test["cluster"], pred_test_4)
+    completeness = (completeness_train, completeness_test)
+
+    # Predicted labels on sd_test using optimal model
+    labels_predicted = list(kmeans_opt.predict(sd_test[feature_cols]))
+
+    # max_opt: cluster indices sorted by descending Euclidean distance
+    # from the first observation in sd_test to each cluster center
+    first_obs = sd_test[feature_cols].iloc[0].values
+    centers = kmeans_opt.cluster_centers_
+    distances = np.linalg.norm(centers - first_obs, axis=1)
+    # Sort cluster indices (0 to opt_cluster-1) by descending distance
+    max_opt = list(np.argsort(distances)[::-1])
+
+    # Return the exact dictionary required by the task
+    return {
+        "sd_train": sd_train,
+        "sd_test": sd_test,
+        "wcss": wcss,
+        "kmeans_opt": kmeans_opt,
+        "silhouette": silhouette,
+        "completeness": completeness,
+        "labels_predicted": labels_predicted,
+        "max_opt": max_opt
+    }
+
 ### 1. Basic Task Creation with `std::thread`
 
 ```cpp
