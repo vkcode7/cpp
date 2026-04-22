@@ -57,3 +57,54 @@ int main()
     */
     return 0;
 }
+
+#include <iostream>
+#include <vector>
+using namespace std;
+/*
+- args: list of strings
+
+Fond common prefix in all of the strings
+- car, cargo, cash, dash
+- car, cargo, cash => ca
+- car, cargo, => car
+*/
+
+string getCommonPrefix(const vector<string>& vs)
+{
+    string prefix = "";
+    if (vs.empty())
+        return prefix;
+    
+    if (size(vs) == 1)
+        return vs[0];
+    
+    cout<<"Processing: \n";
+    int index = 0;
+    for(auto c: vs[0])
+    {
+        cout << "prefix: "<<prefix <<endl;
+        for(int i = 1; i < vs.size(); i++)
+        {
+            if(index >= vs[i].size() || c != vs[i][index])
+                return prefix;
+        }
+        
+        prefix += c;
+        index++;
+    }
+    
+    return prefix;
+}
+
+int main() {
+    
+    vector<string> data = {"cargo", "car", "caramel", "carpel"};
+    string cp = getCommonPrefix(data);
+    cout << cp<< endl;
+    
+    // Write C++ code here
+    std::cout << "Try programiz.pro";
+
+    return 0;
+}
