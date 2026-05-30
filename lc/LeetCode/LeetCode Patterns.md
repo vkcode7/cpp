@@ -62,6 +62,138 @@ The general steps to solve these questions by following below steps:
 
 In the dynamic sliding window, the size of the window (subarray between i and j) changes throughout the algorithm. In this example, we scan the subarray “bacb” and find that we have a duplicate “b”, so we will move the i pointer to shrink the window and move on to letter “a”, resulting in “acb”, then we start moving j again.
 
+### Generic Maximum Sliding Window Template
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+
+/**
+ * Generic Dynamic Sliding Window - Maximum Length
+ * 
+ * @tparam T Type of elements in the array
+ * @param arr Input array
+ * @param shouldShrink Lambda: returns true if window should shrink (condition violated)
+ * @param add Lambda: add element to window state
+ * @param remove Lambda: remove element from window state
+ * @return Maximum valid window length
+ */
+template<typename T>
+int maxSlidingWindowLength(const vector<T>& arr,
+                           auto shouldShrink,      // bool function(current state)
+                           auto add,               // void function(element)
+                           auto remove)            // void function(element)
+{
+    int n = arr.size();
+    int left = 0;
+    int maxLen = 0;
+    
+    // You can capture state variables using lambdas (e.g., unordered_map, counter, sum, etc.)
+    
+    for (int right = 0; right < n; ++right) {
+        // Expand window: add current element
+        add(arr[right]);
+        
+        // Shrink window from left while condition is violated
+        while (left <= right && shouldShrink()) {
+            remove(arr[left]);
+            ++left;
+        }
+        
+        // Update maximum length
+        maxLen = max(maxLen, right - left + 1);
+    }
+    
+    return maxLen;
+}
+
+// Example Usage 2: Longest Subarray with Sum <= Target
+int longestSubarraySumLE(const vector<int>& nums, int target) {
+    long long currentSum = 0;
+    
+    return maxSlidingWindowLength<int>(
+        nums,
+        
+        // shouldShrink
+        [&]() { return currentSum > target; },
+        
+        // add
+        [&](int x) { currentSum += x; },
+        
+        // remove
+        [&](int x) { currentSum -= x; }
+    );
+}
+```
+
+### Generic Minimum Sliding Window Template
+```cpp
+
+#include <bits/stdc++.h>
+using namespace std;
+
+/**
+ * Generic Dynamic Sliding Window - Minimum Length
+ * 
+ * Finds the smallest window that satisfies a given condition.
+ * 
+ * @tparam T Type of elements in the array
+ * @param arr Input array
+ * @param isValid Lambda: returns true when current window is valid
+ * @param add Lambda: add element to window state
+ * @param remove Lambda: remove element from window state
+ * @return Minimum valid window length (0 if no valid window exists)
+ */
+template<typename T>
+int minSlidingWindowLength(const vector<T>& arr,
+                           auto isValid,           // bool function(current state)
+                           auto add,               // void function(element)
+                           auto remove)            // void function(element)
+{
+    int n = arr.size();
+    int left = 0;
+    int minLen = INT_MAX;
+    bool found = false;
+    
+    for (int right = 0; right < n; ++right) {
+        // Expand window
+        add(arr[right]);
+        
+        // Shrink from left as much as possible while window remains valid
+        while (left <= right && isValid()) {
+            found = true;
+            minLen = min(minLen, right - left + 1);
+            
+            // Try shrinking further
+            remove(arr[left]);
+            ++left;
+        }
+    }
+    
+    return found ? minLen : 0;
+}
+
+### Example Usage: Smallest Subarray with Sum >= Target
+int smallestSubarraySum(const vector<int>& nums, int target) {
+    if (target <= 0) return 0;
+    
+    long long currentSum = 0;
+    
+    return minSlidingWindowLength<int>(
+        nums,
+        
+        // isValid
+        [&]() { return currentSum >= target; },
+        
+        // add
+        [&](int x) { currentSum += x; },
+        
+        // remove
+        [&](int x) { currentSum -= x; }
+    );
+}
+```
+
+
 ```py
 """
 A generic template for dynamic sliding window finding min window length
