@@ -349,3 +349,236 @@ Loop termination: n = 0, return count = 3
 		return numbits;
 	};
 ```
+
+
+# 8. Circular Array Maximum Selection Problem
+
+You are given an array of positive integers arranged in a circular pattern where the first and last elements are considered adjacent. Your task is to select a subset of elements such that no two selected elements are adjacent (including the circular adjacency between first and last elements) while maximizing the sum of selected values.
+
+This constraint creates a circular dependency problem where selecting the first element prevents you from selecting the last element, and vice versa. You need to find the optimal selection strategy that respects the adjacency rules while achieving the maximum possible sum.
+
+This problem tests your understanding of dynamic programming, constraint handling, and algorithmic problem decomposition techniques.
+
+Explanation: You can select element at index 1 (value 3). You cannot select both index 0 and index 2 because they are adjacent in the circular arrangement, and neither alone gives a better result than index 1.
+
+Example
+```
+Input: nums = [1,2,3,1]
+
+
+Output: 4
+
+
+Explanation: Select elements at indices 0 and 2 (values 1 and 3). Total sum = 1 + 3 = 4. This is optimal since you cannot select adjacent elements.
+```
+
+The key insight is to break the circular constraint by considering two separate linear cases: one where you exclude the first element (allowing potential selection of the last), and another where you exclude the last element (allowing potential selection of the first). The optimal solution is the maximum of these two scenarios. This approach transforms the circular problem into two familiar linear dynamic programming problems, making the solution both elegant and efficient.
+
+Strategy to Solve
+Problem decomposition approach - Split the circular problem into two linear subproblems: solve for elements [0...n-2] (excluding last) and [1...n-1] (excluding first). This eliminates the circular constraint by ensuring first and last elements are never both available for selection.
+
+Linear DP for each subproblem - For each linear array, use the classic dynamic programming approach where dp[i] represents the maximum sum possible using elements from index 0 to i. The recurrence relation is: dp[i] = max(dp[i-1], dp[i-2] + nums[i]).
+
+Handle edge cases first - Check for arrays with length 1 (return the single element) and length 2 (return the maximum of the two elements). These cases do not have meaningful circular constraints.
+
+Optimize space complexity - Instead of maintaining full DP arrays, use only two variables to track the previous two states since each state only depends on the two preceding values. This reduces space from O(n) to O(1).
+
+```
+Sample Execution
+Let us trace through Example 2: nums = [1,2,3,1]
+
+Step 1: Handle edge cases
+- Length = 4, not an edge case, proceed with decomposition
+
+Step 2: Case 1 - Exclude last element, solve for [1,2,3]
+Array: [1,2,3] (indices 0,1,2 from original)
+
+Linear DP process:
+- dp[0] = 1 (best using only first element)
+- dp[1] = max(dp[0], nums[1]) = max(1, 2) = 2
+- dp[2] = max(dp[1], dp[0] + nums[2]) = max(2, 1 + 3) = 4
+
+Case 1 result: 4 (select indices 0 and 2 from subarray, which are original indices 0 and 2)
+
+Step 3: Case 2 - Exclude first element, solve for [2,3,1]
+Array: [2,3,1] (indices 1,2,3 from original)
+
+Linear DP process:
+- dp[0] = 2 (best using only first element of subarray)
+- dp[1] = max(dp[0], nums[1]) = max(2, 3) = 3
+- dp[2] = max(dp[1], dp[0] + nums[2]) = max(3, 2 + 1) = 3
+
+Case 2 result: 3 (select index 1 from subarray, which is original index 2)
+
+Step 4: Compare results
+- Case 1: 4 (selecting original indices 0 and 2: values 1 + 3)
+- Case 2: 3 (selecting original index 2: value 3)
+- Maximum: 4
+
+Final answer: 4
+```
+
+# 9. Custom Text-to-Number Parser
+
+You need to implement a robust text parser that extracts the first valid integer from a given string. The parser should handle various edge cases including leading whitespace, optional signs, invalid characters, and overflow conditions.
+
+The parsing algorithm follows these rules:
+```
+Skip all leading whitespace characters (spaces only)
+Check for an optional '+' or '-' sign to determine number polarity
+Read consecutive digit characters and convert them to an integer
+Stop parsing when encountering the first non-digit character
+Return 0 if no valid number can be formed
+Clamp results to 32-bit signed integer range [-2³¹, 2³¹-1]
+This problem tests your string processing skills, edge case handling, and understanding of integer overflow behavior.
+
+Examples
+Example 1
+Input: s = "42"
+
+Output: 42
+
+Explanation: Direct conversion of numeric string to integer.
+
+Example 2
+Input: s = " -42"
+
+Output: -42
+
+Explanation: Skip leading spaces, detect negative sign, parse digits to get -42.
+
+Example 3
+Input: s = "4193 with words"
+
+Output: 4193
+
+Example 6
+Input: s = "+123abc"
+
+Output: 123
+
+Sample Execution
+Let us trace through Example 5: s = "-91283472332"
+
+Initialize:
+- result = 0, sign = 1, index = 0
+- INT_MAX = 2147483647, INT_MIN = -2147483648
+
+Phase 1: Skip whitespace
+- s[0] = '-', not whitespace, proceed to sign detection
+
+Phase 2: Detect sign
+- s[0] = '-', valid negative sign
+- sign = -1, index = 1
+
+Phase 3: Parse digits
+index = 1, s[1] = '9':
+- Check overflow: result = 0, digit = 9
+- New value would be: 0 * 10 + 9 = 9
+- 9 ≤ INT_MAX, no overflow
+- result = 9
+
+[Continue for digits 1,2,8,3,4,7,2...]
+
+index = 10, s[10] = '3':
+- Check overflow: result = 912834723, digit = 3
+- Would be: 912834723 * 10 + 3 = 9128347233
+- Check: 9128347233 > INT_MAX (2147483647) → overflow detected
+- Apply sign: negative overflow → return INT_MIN = -2147483648
+
+Final result: -2147483648 (clamped to lower bound)
+```
+
+
+# 10. FIFO Container Using LIFO Components
+
+You need to design a First-In-First-Out (FIFO) data container using only Last-In-First-Out (LIFO) data containers as building blocks. The FIFO container should support the standard operations: adding elements to the back, removing elements from the front, viewing the front element, and checking if the container is empty.
+
+The constraint is that you can only use LIFO containers with their standard operations:
+```
+push(x) - Add element to the top
+pop() - Remove and return the top element
+top() - View the top element without removing it
+empty() - Check if the container is empty
+
+Your implementation should efficiently simulate FIFO behavior using these LIFO operations. This problem tests your understanding of data structure properties and how to combine simpler structures to create more complex behaviors.
+```
+Conceptual Approach
+
+The key insight is using two LIFO containers: one for input operations and one for output operations. When adding elements, use the input container directly. When removing elements, transfer all elements from input to output (which reverses their order), then use the output container. This transformation converts the LIFO ordering into FIFO ordering. Think of it as having an "inbox" and an "outbox" where you periodically flip the inbox contents into the outbox to reverse the order.
+
+
+Strategy to Solve
+```
+Two-container design - Use two LIFO containers: input_stack for enqueue operations and output_stack for dequeue operations. This separation allows you to manage the ordering transformation efficiently.
+
+Lazy transfer strategy - Only transfer elements from input to output when the output container is empty and you need to perform a dequeue or front operation. This minimizes the number of transfer operations and provides good amortized performance.
+
+Enqueue implementation - Always push new elements onto the input container. This operation is straightforward and maintains O(1) time complexity since no transfers are needed.
+
+Dequeue implementation - If output container has elements, pop from it directly. If output container is empty but input container has elements, transfer all elements from input to output, then pop from output. Return appropriate values or handle empty cases.
+
+Front element access - Similar to dequeue but without removing the element. Use the top of output container if available, otherwise transfer elements and use the top of output container.
+
+Empty check optimization - The container is empty when both input and output containers are empty. This is a simple O(1) check that does not require any transfers.
+
+Sample Execution
+Let us trace through Example 1 operations with input_stack = [] and output_stack = [] initially.
+
+Operation 1: enqueue(1) - We push 1 onto input_stack, making input_stack = [1] and output_stack = []. The container state is conceptually [1] with 1 at front.
+
+Operation 2: enqueue(2) - We push 2 onto input_stack, making input_stack = [1, 2] and output_stack = []. The container state is conceptually [1, 2] with 1 at front and 2 at back.
+
+Operation 3: front() - Since output_stack is empty, we need to transfer elements. We pop from input_stack to get 2 and push to output_stack, then pop from input_stack to get 1 and push to output_stack. After transfer we have input_stack = [] and output_stack = [2, 1]. We return the top of output_stack which is 1.
+
+Operation 4: dequeue() - Since output_stack has elements [2, 1], we pop from output_stack to get 1. Now we have output_stack = [2] and input_stack = []. We return 1.
+
+Operation 5: isEmpty() - We check both containers: input_stack = [] and output_stack = [2]. Since not both are empty, we return false.
+
+The final state shows the container contains [2] with 2 at the front, demonstrating proper FIFO behavior using 
+```
+
+# 11. Azure Resource Efficiency Optimization
+
+Microsoft Azure's Resource Manager tracks performance efficiency for consecutive time intervals throughout the day. Each interval represents a 15-minute window where Azure services either contribute positively to overall system efficiency (positive value) or create resource drain (negative value) based on workload patterns, auto-scaling decisions, and resource utilization.
+
+The Azure optimization team wants to identify the optimal consecutive time window that would yield maximum cumulative efficiency gain. This analysis helps in understanding peak performance periods and optimizing future resource allocation strategies for better cost management and user experience.
+
+Given an array of efficiency values for each time interval, determine the maximum efficiency achievable from any consecutive sequence of time intervals.
+
+Task: Find the maximum sum from any consecutive subsequence of efficiency intervals.
+
+Key Requirements:
+
+Time window must include at least one interval
+Intervals must be consecutive (adjacent time periods)
+Handle large-scale Azure infrastructure data efficiently
+Support both efficiency gains and resource drain scenarios
+Optimize for real-time Azure resource management
+This problem tests your understanding of dynamic programming, cloud resource optimization concepts, and efficient infrastructure data processing using Kadane's algorithm.
+```
+
+Problem Statement
+You need to analyze Azure resource efficiency data to find the consecutive sequence of time intervals that yields maximum cumulative efficiency gain. This involves examining all possible consecutive time windows efficiently and identifying the one with highest efficiency potential. The challenge is processing large-scale cloud infrastructure data while maintaining optimal performance for real-time Azure resource management systems.
+
+Conceptual Approach
+The solution uses Kadane's algorithm adapted for cloud resource data: track the maximum efficiency achievable by either extending your current time window or starting a fresh window at each interval. 
+
+```
+Sample Execution
+Let's analyze efficiency = [500, -1200, 800, 2000, -300, 1000] for Azure optimization:
+```
+
+```python
+curMax = 0
+maxTillNow = 0
+for i in range(len(efficiency)):
+    curMax = max(efficiency[i], curMax + efficiency[i])
+    maxTillNow = max(maxTillNow, curMax)
+return maxTillNow
+```
+Result: 3500 (optimal Azure resource window: intervals 3-6)
+
+DP Efficiency: Each decision uses previously computed optimal values, avoiding redundant calculations for Azure's real-time processing requirements.
+
+
