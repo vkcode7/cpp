@@ -1072,6 +1072,22 @@ public:
 };
 ```
 
+Test it:
+```cpp
+int main() {
+    Excel excel(3, 'C');
+    excel.set(1, 'A', 2);
+    excel.set(1, 'B', 3);
+    excel.sum(3, 'C', {"A1", "B1"});   // 5
+
+    cout << excel.get(3, 'C') << endl; // 5
+
+    excel.set(1, 'A', 10);
+    cout << excel.get(3, 'C') << endl; // 13 (automatically updated via BFS)
+
+    return 0;
+}
+```
 
 # 14 Document Version History Navigator
 
@@ -1165,3 +1181,327 @@ O(1) amortized for both operations - Each version is visited exactly once across
 Space Complexity:
 
 O(1) - Only storing two integer pointers regardless of input size. No additional data structures needed.
+
+
+# 15 Office Add-in Dependency Resolver
+
+Microsoft Office supports third-party add-ins that enhance productivity across Word, Excel, and PowerPoint. When users install multiple add-ins, the Office platform must determine the correct initialization sequence to ensure dependencies are loaded before dependent add-ins attempt to access their functionality.
+
+Each add-in may depend on specific APIs or features provided by other add-ins that must be initialized first. The Office Add-in Manager needs to analyze dependency relationships and determine a valid loading order that satisfies all requirements, or detect when circular dependencies make initialization impossible.
+
+Your task is to implement a dependency resolver that takes a list of add-in names and their dependency relationships, then determines a valid initialization sequence that ensures all dependencies are loaded before dependent add-ins.
+
+Given a list of add-in names and dependency pairs, find a valid loading order for the add-ins, or return an empty result if circular dependencies exist.
+```
+Examples
+Example 1
+Input: addins = ["WordSpell", "ExcelChart", "PowerBI", "Translator"], dependencies = [["WordSpell", "Translator"], ["ExcelChart", "PowerBI"]]
+
+
+Output: ["WordSpell", "ExcelChart", "Translator", "PowerBI"]
+
+
+Explanation: Valid loading order: WordSpell loads first (no dependencies), then ExcelChart (no dependencies), then Translator (depends on WordSpell), finally PowerBI (depends on ExcelChart). All dependencies satisfied in correct sequence.
+
+
+Dependency Analysis:
+WordSpell → Translator
+ExcelChart → PowerBI
+Loading sequence satisfies all constraints ✓
+
+Example 2
+Input: addins = ["Base", "Extended"], dependencies = [["Base", "Extended"]]
+
+
+Output: ["Base", "Extended"]
+
+
+Explanation: Single dependency relationship: Extended add-in requires Base add-in to be loaded first. Valid loading sequence starts with Base, followed by Extended add-in.
+
+
+Load Order:
+
+
+Base (no dependencies)
+
+Extended (depends on Base)
+Sequence satisfies dependency requirement ✓
+
+Example 3
+Input: addins = ["AddinA", "AddinB", "AddinC"], dependencies = [["AddinA", "AddinB"], ["AddinB", "AddinC"], ["AddinC", "AddinA"]]
+
+
+Output: []
+
+Explanation: Circular dependency chain: AddinA → AddinB → AddinC → AddinA creates impossible loading requirements. No valid initialization sequence exists since each add-in depends on another in the cycle.
+
+Circular Chain:
+AddinA needs AddinB
+AddinB needs AddinC
+
+AddinC needs AddinA
+Result: Impossible to resolve ✗
+```
+
+
+Notes
+```
+Build directed graph where edges represent dependency relationships
+Use topological sorting to find valid initialization sequence
+Detect cycles using DFS or in-degree counting to identify circular dependencies
+Handle isolated add-ins (no dependencies) appropriately in loading order
+Optimize for Office real-time add-in management during application startup
+Consider integration with Office extensibility framework and COM interfaces
+```
+
+Problem Explanation
+
+You need to determine a valid initialization sequence for Office add-ins based on their dependency relationships, or detect when circular dependencies make initialization impossible. The challenge involves building a dependency graph from add-in relationships and finding a topological ordering while detecting cycles that indicate unresolvable dependencies. This problem tests your understanding of dependency resolution algorithms crucial to Microsoft Office's add-in management system and extensibility framework.
+
+
+Conceptual Approach
+
+The solution involves creating a directed graph where add-ins are nodes and dependencies are edges pointing from prerequisites to dependent add-ins. A topological sort of this graph yields a valid loading sequence, while cycle detection identifies circular dependencies that make initialization impossible. The key insight is that add-in dependency relationships form a directed acyclic graph (DAG) when resolvable, and topological sorting provides an efficient way to find valid initialization orders for Office's add-in loading system.
+
+
+Strategy to Solve
+
+Build dependency graph from add-in relationships: Create a directed graph where each add-in is a node and each dependency creates an edge from prerequisite to dependent add-in. This graph represents all loading constraints that Office must satisfy during add-in initialization.
+
+Initialize graph data structures efficiently: Set up adjacency lists for the dependency graph and in-degree counters for each add-in. The in-degree represents how many other add-ins must load before the current add-in can be initialized safely.
+
+Identify add-ins with no prerequisites: Find all add-ins with zero in-degree (no dependencies), as these can be loaded immediately when Office starts. These form the starting points for the dependency resolution process.
+
+Apply topological sorting using Kahn's algorithm: Process add-ins with zero in-degree first, then reduce in-degrees of their dependent add-ins. Continue until all add-ins are processed or no more zero in-degree add-ins remain available for processing.
+
+Detect circular dependencies through completion check: If the topological sort doesn't process all add-ins, remaining add-ins form circular dependency cycles that prevent successful initialization. Return empty array to indicate impossible loading configuration.
+
+Return valid loading sequence for Office initialization: If all add-ins are successfully processed, return the topological order as a valid initialization sequence that Office can use to load add-ins without dependency conflicts.
+
+Sample Execution
+```
+Let's trace through addins = ["WordAPI", "ExcelExt", "PowerExt"], dependencies = [["WordAPI", "ExcelExt"], ["WordAPI", "PowerExt"]]:
+
+Step 1: Build dependency graph for Office add-ins
+Nodes: {WordAPI, ExcelExt, PowerExt}
+Dependencies:
+- WordAPI → ExcelExt (WordAPI must load before ExcelExt)
+- WordAPI → PowerExt (WordAPI must load before PowerExt)
+
+Step 2: Initialize in-degree counters
+in_degree = {
+WordAPI: 0, # No dependencies
+ExcelExt: 1, # Depends on WordAPI
+PowerExt: 1 # Depends on WordAPI
+}
+
+Step 3: Find add-ins with no prerequisites
+zero_in_degree = [WordAPI] # Only WordAPI has no dependencies
+
+Step 4: Apply topological sorting (Kahn's algorithm)
+
+Iteration 1:
+- Process: WordAPI
+- Add to result: [WordAPI]
+- Update dependent add-ins:
+- ExcelExt in-degree: 1 → 0 (add to queue)
+- PowerExt in-degree: 1 → 0 (add to queue)
+- Queue: [ExcelExt, PowerExt]
+
+Iteration 2:
+- Process: ExcelExt
+- Add to result: [WordAPI, ExcelExt]
+- No dependent add-ins to update
+- Queue: [PowerExt]
+
+Iteration 3:
+- Process: PowerExt
+- Add to result: [WordAPI, ExcelExt, PowerExt]
+- No dependent add-ins to update
+- Queue: []
+
+Step 5: Validate complete resolution
+Processed add-ins: 3
+Total add-ins: 3
+All add-ins processed successfully ✓
+
+Step 6: Return Office loading sequence
+Valid initialization order: [WordAPI, ExcelExt, PowerExt]
+
+Office Add-in Loading Analysis:
+1. WordAPI loads first (provides base API functionality)
+2. ExcelExt loads second (can safely access WordAPI features)
+3. PowerExt loads third (can safely access WordAPI features)
+```
+This sequence ensures all Office add-ins initialize with their dependencies satisfied.
+
+
+Performance Analysis
+
+Time Complexity
+O(V + E)
+
+Space Complexity
+O(V + E)
+
+
+Time Complexity:
+O(V + E) where V represents the number of add-ins and E represents the number of dependency relationships. The algorithm processes each add-in exactly once and examines each dependency relationship once during graph construction and topological sorting phases.
+
+Space Complexity:
+O(V + E) for storing the dependency graph adjacency lists, in-degree counters for each add-in, and the queue used during topological sorting. The space requirements scale linearly with the number of add-ins and their dependency relationships.
+
+Analysis:
+This approach provides optimal performance for Microsoft Office's add-in dependency resolution requirements. The linear time complexity ensures efficient initialization during Office application startup, even with complex add-in ecosystems. Topological sorting with Kahn's algorithm is the standard efficient method for dependency resolution, and the O(V + E) complexity cannot be improved since all add-ins and dependencies must be examined. This efficiency is crucial for Office's real-time add-in management system that must resolve dependencies quickly during application launch to maintain responsive user experience. The algorithm's performance characteristics support seamless integration with Office's extensibility framework and COM interfaces, enabling rapid dependency validation decisions that directly impact application startup time and add-in compatibility across Word, Excel, and PowerPoint.
+
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+
+class AddinManager {
+public:
+    vector<string> findOrder(vector<string>& addins, vector<vector<string>>& dependencies) {
+        // Build graph and indegree map
+        unordered_map<string, vector<string>> graph;        // prerequisite -> list of dependents
+        unordered_map<string, int> indegree;
+        
+        // Initialize all add-ins with 0 indegree
+        for (const string& addin : addins) {
+            indegree[addin] = 0;
+            graph[addin] = {};
+        }
+        
+        // Build dependency graph: A depends on B → B must come before A
+        for (const auto& dep : dependencies) {
+            string dependent = dep[0];    // add-in that needs something
+            string prereq    = dep[1];    // add-in that must load first
+            
+            graph[prereq].push_back(dependent);
+            indegree[dependent]++;
+        }
+        
+        // Kahn's Algorithm (BFS) for topological sort
+        queue<string> q;
+        vector<string> order;
+        
+        // Start with add-ins that have no dependencies
+        for (const auto& [addin, deg] : indegree) {
+            if (deg == 0) {
+                q.push(addin);
+            }
+        }
+        
+        while (!q.empty()) {
+            string curr = q.front();
+            q.pop();
+            order.push_back(curr);
+            
+            for (const string& next : graph[curr]) {
+                indegree[next]--;
+                if (indegree[next] == 0) {
+                    q.push(next);
+                }
+            }
+        }
+        
+        // If we couldn't process all add-ins → cycle exists
+        if (order.size() == addins.size()) {
+            return order;
+        }
+        return {};
+    }
+};
+
+int main() {
+    AddinManager manager;
+    
+    vector<string> addins = {"WordHelper", "ExcelCore", "PowerPointUI", "DataAnalyzer", "ChartEngine"};
+    
+    vector<vector<string>> dependencies = {
+        {"ExcelCore", "WordHelper"},      // ExcelCore depends on WordHelper
+        {"PowerPointUI", "ExcelCore"},
+        {"DataAnalyzer", "ExcelCore"},
+        {"ChartEngine", "DataAnalyzer"}
+    };
+    
+    vector<string> order = manager.findOrder(addins, dependencies);
+    
+    if (order.empty()) {
+        cout << "Circular dependency detected! Cannot initialize." << endl;
+    } else {
+        cout << "Valid initialization order:" << endl;
+        for (const string& addin : order) {
+            cout << addin << " → ";
+        }
+        cout << "Done" << endl;
+    }
+    
+    return 0;
+}
+```
+output:
+```
+Valid initialization order:
+WordHelper → ExcelCore → PowerPointUI → DataAnalyzer → ChartEngine → Done
+```
+
+# Serialize or Deseialize a tree
+```cpp
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+class Codec {
+public:
+
+    void tree2str(TreeNode* node, string& s)
+    {
+        if(!node)
+            s += "null,";
+        else
+        {
+            s += to_string(node->val);
+            s += ",";
+            tree2str(node->left, s);
+            tree2str(node->right, s);
+        }
+    }
+
+    // Encodes a tree to a single string.
+    string serialize(TreeNode* root) {
+        string str = "";
+        tree2str(root, str);
+        return str;
+    }
+
+    TreeNode *build(string& data){
+        int index = data.find(",");
+        string val = data.substr(0, index);
+
+        data = data.substr(index + 1);
+
+        if(val=="null") 
+            return nullptr;
+
+        TreeNode * curr=new TreeNode(stoi(val));
+
+        curr->left=build(data);
+        curr->right=build(data);
+        return curr;
+    }
+
+    // Decodes your encoded data to tree.
+    TreeNode* deserialize(string data) {
+        return build(data);
+    }
+};
+
+// Your Codec object will be instantiated and called as such:
+// Codec ser, deser;
+// TreeNode* ans = deser.deserialize(ser.serialize(root));
+```
