@@ -581,4 +581,81 @@ Result: 3500 (optimal Azure resource window: intervals 3-6)
 
 DP Efficiency: Each decision uses previously computed optimal values, avoiding redundant calculations for Azure's real-time processing requirements.
 
+# 12. Document Processing Operation Optimizer
+
+Microsoft Office's document processing engine supports batch operations that significantly improve productivity when handling large documents. The engine provides four fundamental operations:
+
+Operation 1 (Type): Add one unit of content to the document. Operation 2 (Select All): Select all current document content. Operation 3 (Copy): Copy the selected content to clipboard buffer. Operation 4 (Paste): Paste the clipboard content, appending it to the current document.
+
+The document processing team needs to optimize operation sequences to maximize content generation within a limited number of operations. This optimization is crucial for features like auto-generation, template expansion, and bulk document creation in Microsoft Word and other Office applications.
+
+Given a limit of N operations, determine the maximum amount of content units that can be generated in a document. Each operation takes exactly one time unit, and the clipboard persists its content until overwritten by a new copy operation.
+
+
+Problem Statement
+You need to find the maximum number of content units that can be generated using N operations. The challenge is determining when to switch from typing to copy-paste operations to maximize output. This optimization problem reflects real-world scenarios in document processing where batch operations can significantly improve efficiency over sequential typing.
+
+Conceptual Approach
+
+The key insight is that copy-paste becomes beneficial only after accumulating enough content to multiply. For any remaining operations k, if you spend 3 operations on (Select All, Copy, Paste), you double your content. The optimal strategy involves finding the right balance between initial typing and subsequent copy-paste sequences. This is a classic dynamic programming problem where each state represents the maximum content achievable with i operations.
+
+Strategy to Solve
+```
+Initialize base cases: With 0 operations, you have 0 content. With 1 operation, you can only type once.
+
+Define state transition: For each number of operations i, consider two choices: - Type one more unit: dp[i] = dp[i-1] + 1 - Copy-paste from a previous state: Try all possible points j where you copy content from dp[j] and paste it multiple times
+
+Copy-paste mechanics: If you copy at position j, you need 2 operations (Select All, Copy), then each paste operation multiplies the content by adding dp[j] units.
+
+Optimization formula: For each i, check all j < i-2: - Remaining operations after copy: i - j - 2 - Number of pastes possible: (i - j - 2) - Total content: dp[j] * (i - j - 1)
+
+Track maximum: At each step, keep the maximum content achievable across all strategies.
+
+Handle edge cases: Ensure copy-paste is only considered when there are enough operations remaining (at least 3 operations needed for one complete copy-paste cycle).
+
+Sample Execution
+Let's trace through N = 7:
+
+Base cases:
+- dp[0] = 0 (no operations, no content)
+- dp[1] = 1 (one type operation)
+- dp[2] = 2 (two type operations)
+
+dp[3] calculation:
+- Option 1: Type → dp[2] + 1 = 3
+- Option 2: Copy from dp[0] → Not beneficial
+- Maximum: dp[3] = 3
+
+dp[4] calculation:
+- Option 1: Type → dp[3] + 1 = 4
+- Option 2: Copy from dp[1] → 1 * (4-1-1) = 2
+- Maximum: dp[4] = 4
+
+dp[5] calculation:
+- Option 1: Type → dp[4] + 1 = 5
+- Option 2: Copy from dp[1] → 1 * 3 = 3
+- Option 3: Copy from dp[2] → 2 * 2 = 4
+- Maximum: dp[5] = 5
+
+dp[6] calculation:
+- Option 1: Type → dp[5] + 1 = 6
+- Option 2: Copy from dp[2] → 2 * 3 = 6
+- Option 3: Copy from dp[3] → 3 * 2 = 6
+- Maximum: dp[6] = 6
+
+dp[7] calculation:
+- Option 1: Type → dp[6] + 1 = 7
+- Option 2: Copy from dp[2] → 2 * 4 = 8
+- Option 3: Copy from dp[3] → 3 * 3 = 9 ✓
+- Option 4: Copy from dp[4] → 4 * 2 = 8
+- Maximum: dp[7] = 9
+
+Final answer: 9 content units
+
+Time Complexity:
+O(n²) - For each of the n operations, we check all previous states as potential copy points, resulting in nested iterations. The outer loop runs n times, and the inner loop runs up to i times for each i.
+
+Space Complexity:
+O(n) - We use a single dynamic programming array of size n+1 to store the maximum content achievable with each number of operations.
+```
 
