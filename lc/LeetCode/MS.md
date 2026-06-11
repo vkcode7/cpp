@@ -1505,3 +1505,100 @@ public:
 // Codec ser, deser;
 // TreeNode* ans = deser.deserialize(ser.serialize(root));
 ```
+
+# Word Search in a Matrix
+```cpp
+class Solution {
+public:
+    bool exist(vector<vector<char>>& board, string word) {
+        int m = board.size();
+        int n = board[0].size();
+        
+        // Try each cell as starting point
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < n; j++) {
+                if (dfs(board, word, 0, i, j)) {
+                    return true;
+                }
+            }
+        }
+        
+        return false;
+    }
+    
+private:
+    bool dfs(vector<vector<char>>& board, string& word, int index, int i, int j) {
+        // If all characters are matched
+        if (index == word.length()) {
+            return true;
+        }
+        
+        // Check bounds and character match
+        if (i < 0 || i >= board.size() || j < 0 || j >= board[0].size() || 
+            board[i][j] != word[index]) {
+            return false;
+        }
+        
+        // Temporarily mark cell as visited
+        char temp = board[i][j];
+        board[i][j] = '#';
+        
+        // Explore all four directions
+        bool found = dfs(board, word, index + 1, i + 1, j) ||
+                     dfs(board, word, index + 1, i - 1, j) ||
+                     dfs(board, word, index + 1, i, j + 1) ||
+                     dfs(board, word, index + 1, i, j - 1);
+        
+        // Restore cell
+        board[i][j] = temp;
+        
+        return found;
+    }
+};
+```
+
+A Trie Node
+```cpp
+class TrieNode {
+public:
+    unordered_map<char, TrieNode*> children;
+    bool isEndOfWord = false;
+    
+    TrieNode() = default;
+};
+
+class Trie {
+private:
+    TrieNode* root;
+    
+public:
+    Trie() {
+        root = new TrieNode();
+    }
+    
+    // Insert a word into the trie
+    void insert(const string& word) {
+        TrieNode* node = root;
+        for (char ch : word) {
+            if (node->children.find(ch) == node->children.end()) {
+                node->children[ch] = new TrieNode();
+            }
+            node = node->children[ch];
+        }
+        node->isEndOfWord = true;
+    }
+    
+    // Search for a complete word
+    bool search(const string& word) {
+        TrieNode* node = root;
+        for (char ch : word) {
+            if (node->children.find(ch) == node->children.end()) {
+                return false;
+            }
+            node = node->children[ch];
+        }
+        return node->isEndOfWord;
+    }
+}
+```
+
