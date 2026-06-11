@@ -1679,7 +1679,7 @@ For BFS solution, final level processed contains deepest escalations
 First meeting in that level represents earliest submission at maximum escalation
 ```
 
-# 19 672. Bulb Switcher II AKA Switchstorm
+# 19 [672]. Bulb Switcher II AKA Switchstorm
 https://leetcode.com/problems/bulb-switcher-ii/description/
 
 There is a room with n bulbs labeled from 1 to n that all are turned on initially, and four buttons on the wall. Each of the four buttons has a different functionality where:
@@ -1718,7 +1718,7 @@ With n=2, Op3 and Op4 are equivalent, leaving 3 independent ops → max 4 states
 Once presses ≥ 3, you've exhausted all reachable states — extra presses just revisit them.
 ```
 
-# 419. Battleships in a Board
+# 20 [419]. Battleships in a Board
 https://leetcode.com/problems/battleships-in-a-board/description/
 
 Microsoft's gaming division is developing a strategic game where an n x n matrix board represents a battlefield, with each cell being a battleship "X" or empty ".". Return the number of the battleships on board.
@@ -1766,7 +1766,7 @@ public:
 };
 ```
 
-# Water Allocation Challenge
+# 21 Water Allocation Challenge
 Microsoft is developing an advanced water management system for its Azure data centers, where water is used for cooling infrastructure. You are given two water jugs with capacities x liters and y liters, with access to an infinite water supply from a central reservoir. Your task is to determine whether it is possible to measure exactly target liters of water as the total amount across both jugs using the following operations: • Fill either jug completely with water from the reservoir. • Empty either jug completely. • Pour water from one jug into another until the receiving jug is full or the transferring jug is empty. This solution is critical for optimizing water usage in Microsoft's sustainable data center operations, ensuring precise allocation for cooling systems under varying demand.
 
 This is the classic **Water and Jug Problem** (LeetCode 365).
@@ -1882,7 +1882,7 @@ x = 2, y = 6, target = 5
 
 This is the optimal mathematical solution and is the expected answer for **LeetCode 365 - Water and Jug Problem**.
 
-# 179. Optimal Resource Distribution Puzzle
+# 22 [179]. Optimal Resource Distribution Puzzle
 
 During a recent Microsoft interview for a new graduate role, candidates were tasked with solving a resource allocation problem inspired by Azure’s cloud resource management. You are given an array representing the resource demands (in units) of n servers in a data center, and an integer k representing the maximum number of servers that can be grouped together for optimal load balancing. The goal is to partition the array into the minimum number of subarrays, where each subarray contains at most k servers, such that the maximum resource demand within each subarray does not exceed a given threshold x. Determine the smallest possible threshold x that allows such a partition.
 
@@ -1957,11 +1957,7 @@ public:
 };
 ```
 
-# Remove Comments problem (LeetCode 722)
-
----
-
-# 🧠 Key Rules
+# 23 Remove Comments problem (LeetCode 722)
 
 We scan character-by-character while maintaining a state:
 
