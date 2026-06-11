@@ -1445,7 +1445,7 @@ Valid initialization order:
 WordHelper → ExcelCore → PowerPointUI → DataAnalyzer → ChartEngine → Done
 ```
 
-# Serialize or Deseialize a tree
+# 16 Azure Resource Dependency Optimization => Serialize or Deseialize a tree
 ```cpp
 /**
  * Definition for a binary tree node.
@@ -1506,7 +1506,7 @@ public:
 // TreeNode* ans = deser.deserialize(ser.serialize(root));
 ```
 
-# Word Search in a Matrix
+# 17 Distributed Dictionary Search => Word Search in a Matrix
 ```cpp
 class Solution {
 public:
@@ -1602,3 +1602,71 @@ public:
 }
 ```
 
+# 18 Teams Meeting Priority Scheduler
+
+Microsoft Teams organizes meeting scheduling requests in a hierarchical priority structure where urgent meetings are escalated through management chains. Each node represents a meeting request with specific urgency levels, and the scheduling system needs to identify the highest-priority urgent meeting at the deepest escalation level for immediate processing.
+
+The meeting scheduler prioritizes requests that have been escalated the most levels through the organizational hierarchy, and when multiple urgent meetings exist at the same escalation depth, it selects the earliest submitted request to maintain fair processing order across Teams users.
+
+Your task is to implement a meeting priority algorithm that traverses the escalation hierarchy and identifies the earliest submitted urgent meeting at the maximum escalation level.
+
+Given a binary tree representing the meeting escalation hierarchy, find the value of the earliest submitted meeting at the deepest escalation level.
+
+Examples
+Example 1
+Input: Tree: [1001, 2001, 3001]
+
+
+Output: 2001
+
+
+Explanation: Meeting escalation: Level 0 has Meeting_1001, Level 1 has Meeting_2001 and Meeting_3001. Deepest escalation level is 1 with two meetings. Earliest submitted meeting at this level is Meeting_2001, scheduled for immediate processing.
+
+
+Notes:
+```
+Implement using level-order traversal (BFS) for efficient escalation level processing
+Process meetings left-to-right at each level to ensure earliest submission priority
+
+For BFS solution, final level processed contains deepest escalations
+First meeting in that level represents earliest submission at maximum escalation
+```
+
+# 19 672. Bulb Switcher II AKA Switchstorm
+https://leetcode.com/problems/bulb-switcher-ii/description/
+
+There is a room with n bulbs labeled from 1 to n that all are turned on initially, and four buttons on the wall. Each of the four buttons has a different functionality where:
+```
+Button 1: Flips the status of all the bulbs.
+Button 2: Flips the status of all the bulbs with even labels (i.e., 2, 4, ...).
+Button 3: Flips the status of all the bulbs with odd labels (i.e., 1, 3, ...).
+Button 4: Flips the status of all the bulbs with a label j = 3k + 1 where k = 0, 1, 2, ... (i.e., 1, 4, 7, 10, ...).
+```
+You must make exactly presses button presses in total. For each press, you may pick any of the four buttons to press.
+
+Given the two integers n and presses, return the number of different possible statuses after performing all presses button presses.
+
+Intuition
+The key insight is recognizing that pressing the same button twice cancels out its effect - each button toggles bulbs, so pressing it an even number of times returns bulbs to their original state. This means we only care about whether each button is pressed an odd or even number of times, not the exact sequence.
+
+```cpp
+class Solution {
+public:
+    int flipLights(int n, int presses) {
+        n = min(n, 3);
+        presses = min(presses, 3);
+
+        if (n == 1) return presses == 0 ? 1 : 2;
+        if (n == 2) return vector<int>{1, 3, 4, 4}[presses];
+        return vector<int>{1, 4, 7, 8}[presses];
+    }
+};
+
+Why this works:
+
+There are 4 operations, but Op1 = Op2 XOR Op3 (flipping all = flip evens + flip odds). So only 3 are linearly independent.
+3 independent binary operations → max 2³ = 8 distinct states.
+With n=1, Op2/Op3/Op4 all behave identically to Op1, so you get just 2 states (on/off).
+With n=2, Op3 and Op4 are equivalent, leaving 3 independent ops → max 4 states.
+Once presses ≥ 3, you've exhausted all reachable states — extra presses just revisit them.
+```
