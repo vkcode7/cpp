@@ -294,3 +294,58 @@ Iteration 3:
 
 Loop termination: n = 0, return count = 3
 ```
+
+```C#
+	static void PrintBits(int num)
+	{
+		const int IntSize = sizeof(int) * 8;
+		for (int i = IntSize - 1; i >= 0; i--)
+		{
+			int mask = 1 << i;
+			int bit = (num & mask) == 0 ? 0 : 1;
+			Console.Write(bit);
+		}
+		Console.WriteLine("");
+	}
+
+	static Func<int, string> printBits = (int k) => {
+		int numsetbits = 0;
+		Stack<int> st = new();
+		while (k > 0)
+		{
+			st.Push(k & 1);
+			k >>= 1; //same as k = k / 2;
+		}
+
+		string bits = "";
+		foreach (var number in st)
+		{
+			bits += number;
+		}
+
+		return bits;
+	};
+
+	static Func<int, int> setBitCounter = (int k) => {
+		int numsetbits = 0;
+		while (k > 0)
+		{
+			if ((k & 1) == 1)
+				numsetbits++;
+
+			k >>= 1; //same as k = k / 2;
+		}
+		return numsetbits;
+	};
+
+	static Func<int, int> allBitCounter = (int k) => {
+		int numbits = 0;
+		while (k > 0)
+		{
+			numbits++;
+
+			k >>= 1;
+		}
+		return numbits;
+	};
+```
