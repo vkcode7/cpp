@@ -127,3 +127,170 @@ Check: rows[0] == 3 → Player 1 wins! → return 1
 
 Final state: Player 1 controls entire row 0
 ```
+
+# 5 Locate Deepest Available Computing Node
+
+Microsoft's Azure cloud infrastructure uses hierarchical node management where computing resources are organized in a tree-like structure based on data center topology. Each node represents a computing resource with specific capabilities, and the system needs to identify the leftmost available resource at the deepest level of the hierarchy for optimal workload placement.
+
+The resource allocation algorithm prioritizes nodes at the deepest level to maximize resource utilization efficiency, and when multiple nodes exist at the same depth, it selects the leftmost node to maintain consistent allocation patterns across the data center infrastructure.
+
+Your task is to implement a resource discovery algorithm that traverses the computing hierarchy and identifies the leftmost resource node at the maximum depth level.
+
+Given a binary tree representing the computing resource hierarchy, find the value of the leftmost node at the deepest level of the tree.
+
+```
+Implement level-order traversal using BFS: Use a queue to process nodes level by level from left to right. For each level, process all nodes currently in the queue before adding their children, ensuring you handle complete levels atomically.
+
+Track level progression and identify deepest level: Maintain awareness of which level you're currently processing. Since BFS processes levels sequentially, the last level you process will be the deepest level of the tree.
+
+Identify leftmost node at deepest level: Within each level, the first node you encounter (leftmost) is the candidate for that level. Since you process levels sequentially, the leftmost node of the final level becomes your answer.
+```
+
+```
+Sample Execution
+Let's trace through BFS approach on the tree:
+1
+/ \
+2 3
+/ / \
+4 5 6
+/
+7
+
+BFS Level-by-Level Processing:
+
+Initialize:
+queue = [1]
+level = 0
+
+Level 0:
+Process queue: [1]
+- Process node 1, add children: queue = [2, 3]
+- Leftmost at level 0: 1
+
+Level 1:
+Process queue: [2, 3]
+- Process node 2, add children: queue = [4]
+- Process node 3, add children: queue = [4, 5, 6]
+- Leftmost at level 1: 2
+
+Level 2:
+Process queue: [4, 5, 6]
+- Process node 4, no children: queue = []
+- Process node 5, add children: queue = [7]
+- Process node 6, no children: queue = [7]
+- Leftmost at level 2: 4
+
+Level 3:
+Process queue: [7]
+- Process node 7, no children: queue = []
+- Leftmost at level 3: 7
+
+Final Result:
+Deepest level reached: Level 3
+Leftmost node at deepest level: 7
+```
+
+# 6. Filter Commands by Terminal Key Zon
+
+Microsoft's terminal application includes an ergonomic typing assistant that helps developers identify commands that can be typed efficiently using keys from a single zone of the keyboard. This feature reduces finger movement and improves typing speed during development workflows, especially for frequently used command sequences.
+
+The terminal organizes keyboard keys into three ergonomic zones based on finger positioning: the upper zone (number row area), middle zone (home row area), and lower zone (bottom row area). The typing assistant filters command lists to show only those commands that require keys from a single zone, promoting better typing ergonomics.
+
+Your task is to implement a command filter that identifies which terminal commands can be typed using keys from only one keyboard zone, helping developers optimize their typing efficiency.
+
+Given an array of terminal command strings, return the commands that can be typed using letters from only one keyboard zone.
+
+Problem Statement
+
+You need to filter a list of words to find those that can be typed using keys from only one row of a QWERTY keyboard. The challenge involves mapping each character to its corresponding keyboard row and then validating that all characters in a word belong to the same row, while handling case-insensitive comparison. This problem tests your understanding of hash map usage, set operations, and string processing with character classification.
+
+Conceptual Approach
+The solution involves creating a mapping from each letter to its keyboard row, then for each word, checking if all characters belong to the same row. You can optimize this by using sets for O(1) lookup or by mapping characters to row numbers and ensuring all characters in a word have the same row number. The key insight is that you need to establish which row a word belongs to (based on its first character) and then validate that all subsequent characters belong to the same row.
+
+
+Sample Execution
+```
+Let's trace through filtering ["Hello", "Alaska", "Dad", "Peace"]:
+
+Step 1: Set up keyboard row mappings
+Row 1 (upper): {q,w,e,r,t,y,u,i,o,p}
+Row 2 (middle): {a,s,d,f,g,h,j,k,l}
+Row 3 (lower): {z,x,c,v,b,n,m}
+
+Character to row mapping:
+q→1, w→1, e→1, r→1, t→1, y→1, u→1, i→1, o→1, p→1
+a→2, s→2, d→2, f→2, g→2, h→2, j→2, k→2, l→2
+z→3, x→3, c→3, v→3, b→3, n→3, m→3
+
+Step 2: Process each word
+
+Word: "Hello"
+- Convert to lowercase: "hello"
+- First character 'h' → row 2
+- Check all characters: h(2), e(1), l(2), l(2), o(1)
+- Mixed rows (1 and 2) → Exclude from result
+
+Word: "Alaska"
+- Convert to lowercase: "alaska"
+- First character 'a' → row 2
+- Check all characters: a(2), l(2), a(2), s(2), k(2), a(2)
+- All characters in row 2 → Include in result
+
+Word: "Dad"
+- Convert to lowercase: "dad"
+- First character 'd' → row 2
+- Check all characters: d(2), a(2), d(2)
+- All characters in row 2 → Include in result
+
+Word: "Peace"
+- Convert to lowercase: "peace"
+- First character 'p' → row 1
+- Check all characters: p(1), e(1), a(2), c(3), e(1)
+- Mixed rows (1, 2, and 3) → Exclude from result
+```
+
+
+
+# 7. Binary Digit Counter Algorithm
+
+You are given a 32-bit integer and need to count how many '1' digits appear in its binary representation. This operation is also known as calculating the population count or Hamming weight of a number.
+
+Your task is to implement an efficient algorithm that examines the binary form of the input number and returns the total count of set bits (bits with value 1). The input is treated as an unsigned 32-bit integer regardless of how it's represented in your programming language.
+
+This problem tests your understanding of bitwise operations, number system conversions, and algorithmic optimization techniques.
+
+
+Strategy to Solve
+
+Basic Bit Checking Approach - Loop through all 32 bit positions, using bitwise AND with powers of 2 to check if each position contains a '1'. This is straightforward but always examines all positions regardless of how many '1' bits exist.
+
+Bit Shifting Method - Use right shift operations to move each bit into the least significant position, then check if it's '1' using bitwise AND with 1. Continue until the number becomes zero.
+
+Brian Kernighan's Algorithm - Use the property that n & (n-1) removes the rightmost '1' bit from n. Repeatedly apply this operation while counting iterations until n becomes zero. This is optimal because it only performs as many operations as there are '1' bits.
+
+```
+Let us trace through Brian Kernighan's algorithm with Example 1: n = 11 (binary: 1011)
+
+Initial: n = 11 (binary: 1011), count = 0
+
+Iteration 1:
+- n = 11 (1011 in binary)
+- n - 1 = 10 (1010 in binary)
+- n & (n-1) = 1011 & 1010 = 1010 (removes rightmost '1')
+- n = 10, count = 1
+
+Iteration 2:
+- n = 10 (1010 in binary)
+- n - 1 = 9 (1001 in binary)
+- n & (n-1) = 1010 & 1001 = 1000 (removes rightmost '1')
+- n = 8, count = 2
+
+Iteration 3:
+- n = 8 (1000 in binary)
+- n - 1 = 7 (0111 in binary)
+- n & (n-1) = 1000 & 0111 = 0000 (removes rightmost '1')
+- n = 0, count = 3
+
+Loop termination: n = 0, return count = 3
+```
