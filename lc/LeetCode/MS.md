@@ -778,8 +778,6 @@ A B C
 
 Sum(3, "C", ["A1", "A1:B2"]) calculation:
 
-
-
 "A1" = 2
 
 "A1:B2" range = A1 + B1 + A2 + B2 = 2 + 0 + 0 + 0 = 2
@@ -813,9 +811,7 @@ After Sum(1, "D"): D1=6
 After Set(1, "A", 5): A1=5
 Get(1, "D") returns: 12
 
-
 Explanation: Dependency chain demonstration:
-
 
 Initial Setup:
 A B C D
@@ -826,7 +822,6 @@ After Sum(1, "C", ["A1", "B1"]):
 C1 = A1 + B1 = 1 + 2 = 3
 A B C D
 1 [ 1][ 2][ 3][ 0]
-
 
 After Sum(1, "D", ["A1:C1"]):
 D1 = A1 + B1 + C1 = 1 + 2 + 3 = 6
@@ -841,8 +836,6 @@ A1 ──→ C1 ──→ D1
 
 When A1 changes to 5:
 
-
-
 C1 updates: 5 + 2 = 7
 
 D1 updates: 5 + 2 + 7 = 12
@@ -851,7 +844,6 @@ D1 updates: 5 + 2 + 7 = 12
 Final State:
 A B C D
 1 [ 5][ 2][ 7][12]
-
 
 This demonstrates Excel cascading update mechanism.
 
@@ -862,7 +854,6 @@ Set(3, "C", 4)
 Set(4, "D", 5)
 Sum(5, "E", ["B2:D4"])
 Get(5, "E")
-
 
 Output: Initial sets create values
 Sum(5, "E", ["B2:D4"]) creates formula
@@ -901,7 +892,7 @@ A ≤ column ≤ W
 Cell values and sums fit in 32-bit integers
 No circular references (Excel would show #REF! error)
 Empty cells default to 0
-
+```
 
 Problem Statement
 You need to implement a simplified version of Microsoft Excel formula engine that supports basic spreadsheet operations and the SUM formula. The key challenge is managing dependencies between cells so that when a cell value changes, all dependent formulas automatically recalculate. This reactive computation model is fundamental to how Excel provides real-time updates across complex spreadsheets.
