@@ -1670,3 +1670,455 @@ With n=1, Op2/Op3/Op4 all behave identically to Op1, so you get just 2 states (o
 With n=2, Op3 and Op4 are equivalent, leaving 3 independent ops → max 4 states.
 Once presses ≥ 3, you've exhausted all reachable states — extra presses just revisit them.
 ```
+
+# 419. Battleships in a Board
+https://leetcode.com/problems/battleships-in-a-board/description/
+
+Microsoft's gaming division is developing a strategic game where an n x n matrix board represents a battlefield, with each cell being a battleship "X" or empty ".". Return the number of the battleships on board.
+
+Battleships can only be placed horizontally or vertically on board. In other words, they can only be made of the shape 1 x k (1 row, k columns) or k x 1 (k rows, 1 column), where k can be of any size. At least one horizontal or vertical cell separates between two battleships (i.e., there are no adjacent battleships).
+
+```
+Examples
+Example 1
+Input: board = [["X",".",".","X"],[".",".",".","X"]]
+
+Output: 2
+```
+
+```cpp
+class Solution {
+public:
+    int countBattleships(vector<vector<char>>& board) {
+        int rows = board.size();
+        int cols = board[0].size();
+        int count = 0;
+
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < cols; j++) {
+
+                if (board[i][j] == '.') {
+                    continue;
+                }
+
+                // Skip if part of a battleship already counted
+                if (i > 0 && board[i - 1][j] == 'X') {
+                    continue;
+                }
+
+                if (j > 0 && board[i][j - 1] == 'X') {
+                    continue;
+                }
+
+                count++;
+            }
+        }
+
+        return count;
+    }
+};
+```
+
+# Water Allocation Challenge
+Microsoft is developing an advanced water management system for its Azure data centers, where water is used for cooling infrastructure. You are given two water jugs with capacities x liters and y liters, with access to an infinite water supply from a central reservoir. Your task is to determine whether it is possible to measure exactly target liters of water as the total amount across both jugs using the following operations: • Fill either jug completely with water from the reservoir. • Empty either jug completely. • Pour water from one jug into another until the receiving jug is full or the transferring jug is empty. This solution is critical for optimizing water usage in Microsoft's sustainable data center operations, ensuring precise allocation for cooling systems under varying demand.
+
+This is the classic **Water and Jug Problem** (LeetCode 365).
+
+### Key Observation (Bézout's Theorem)
+
+It is possible to measure exactly `target` liters iff:
+
+1. `target <= x + y`
+2. `target` is a multiple of `gcd(x, y)`
+
+Mathematically:
+
+target % gcd(x, y) == 0
+
+and
+
+target <= x + y
+
+---
+
+### Why?
+
+Using the allowed operations (fill, empty, pour), you can create any quantity that is a multiple of `gcd(x, y)`.
+
+For example:
+
+* `x = 3`, `y = 5`
+* `gcd(3,5) = 1`
+
+Since every number ≤ 8 is a multiple of 1, you can measure any target from 0 to 8.
+
+---
+
+### C++ Solution
+
+```cpp
+class Solution {
+public:
+    bool canMeasureWater(int x, int y, int target) {
+        if (target == 0)
+            return true;
+
+        if (target > x + y)
+            return false;
+
+        return target % gcd(x, y) == 0;
+    }
+
+private:
+    int gcd(int a, int b) {
+        while (b) {
+            int temp = b;
+            b = a % b;
+            a = temp;
+        }
+        return a;
+    }
+};
+```
+
+### Using STL
+
+```cpp
+#include <numeric>
+
+class Solution {
+public:
+    bool canMeasureWater(int x, int y, int target) {
+        if (target > x + y)
+            return false;
+
+        return target % std::gcd(x, y) == 0;
+    }
+};
+```
+
+---
+
+### Examples
+
+#### Example 1
+
+```text
+x = 3, y = 5, target = 4
+```
+
+* gcd(3,5) = 1
+* 4 ≤ 8
+* 4 % 1 = 0
+
+✅ Answer: `true`
+
+---
+
+#### Example 2
+
+```text
+x = 2, y = 6, target = 5
+```
+
+* gcd(2,6) = 2
+* 5 % 2 = 1
+
+❌ Answer: `false`
+
+---
+
+### Complexity
+
+* **Time:** `O(log(min(x, y)))`
+* **Space:** `O(1)`
+
+This is the optimal mathematical solution and is the expected answer for **LeetCode 365 - Water and Jug Problem**.
+
+# 179. Optimal Resource Distribution Puzzle
+
+During a recent Microsoft interview for a new graduate role, candidates were tasked with solving a resource allocation problem inspired by Azure’s cloud resource management. You are given an array representing the resource demands (in units) of n servers in a data center, and an integer k representing the maximum number of servers that can be grouped together for optimal load balancing. The goal is to partition the array into the minimum number of subarrays, where each subarray contains at most k servers, such that the maximum resource demand within each subarray does not exceed a given threshold x. Determine the smallest possible threshold x that allows such a partition.
+
+This problem was designed to test your ability to optimize resource distribution, a key challenge in Microsoft’s cloud infrastructure.
+
+Examples
+Example 1
+Input: demands = [2, 4, 6], k = 2
+
+Output: 6
+
+Explanation: With demands [2, 4, 6] and k = 2, the minimum threshold is 6. Partition into [2, 4] and [6], where max in each subarray (4 and 6) does not exceed 6.
+
+Algorithm
+```
+Step 1: Binary search range
+low = max(nums) (must fit at least one element)
+high = sum(nums)
+Step 2: Greedy check
+
+For each mid:
+
+simulate grouping
+count required subarrays
+```
+
+```cpp
+class Solution {
+public:
+    bool canPartition(vector<int>& nums, int k, long long x) {
+        int countGroups = 1;
+        long long currSum = 0;
+        int currSize = 0;
+
+        for (int num : nums) {
+            // if single element > x → impossible
+            if (num > x) return false;
+
+            // if adding breaks constraints → new group
+            if (currSize == k || currSum + num > x) {
+                countGroups++;
+                currSum = num;
+                currSize = 1;
+            } else {
+                currSum += num;
+                currSize++;
+            }
+        }
+
+        return true;
+    }
+
+    long long minimumThreshold(vector<int>& nums, int k) {
+        long long low = *max_element(nums.begin(), nums.end());
+        long long high = accumulate(nums.begin(), nums.end(), 0LL);
+
+        long long ans = high;
+
+        while (low <= high) {
+            long long mid = low + (high - low) / 2;
+
+            if (canPartition(nums, k, mid)) {
+                ans = mid;
+                high = mid - 1;
+            } else {
+                low = mid + 1;
+            }
+        }
+
+        return ans;
+    }
+};
+```
+
+# Remove Comments problem (LeetCode 722)
+
+---
+
+# 🧠 Key Rules
+
+We scan character-by-character while maintaining a state:
+
+### States
+
+* `inBlock = true/false`
+
+### Tokens
+
+* `//` → ignore rest of line
+* `/*` → enter block comment
+* `*/` → exit block comment
+
+### Important behavior
+
+* Everything inside `/* ... */` is ignored (even `//`)
+* Everything after `//` is ignored (even `/*`)
+* Block comments can span multiple lines
+* Output lines are formed only from visible characters
+
+---
+
+# 💡 Approach
+
+We:
+
+1. Iterate line by line
+2. Use a buffer for current output line
+3. Scan each character
+4. Handle:
+
+   * block comment state
+   * line comment break
+5. Push non-empty results
+
+---
+
+# 💻 C++ Solution
+
+```cpp id="sdl_remove_comments"
+class Solution {
+public:
+    vector<string> removeComments(vector<string>& config_lines) {
+        vector<string> result;
+        string current;
+        bool inBlock = false;
+
+        for (string &line : config_lines) {
+            int i = 0;
+            int n = line.size();
+
+            while (i < n) {
+
+                if (!inBlock && i + 1 < n && line[i] == '/' && line[i + 1] == '/') {
+                    // Line comment starts → ignore rest of line
+                    break;
+                }
+
+                if (!inBlock && i + 1 < n && line[i] == '/' && line[i + 1] == '*') {
+                    // Block comment starts
+                    inBlock = true;
+                    i += 2;
+                    continue;
+                }
+
+                if (inBlock && i + 1 < n && line[i] == '*' && line[i + 1] == '/') {
+                    // Block comment ends
+                    inBlock = false;
+                    i += 2;
+                    continue;
+                }
+
+                if (!inBlock) {
+                    current.push_back(line[i]);
+                }
+
+                i++;
+            }
+
+            // If not inside block comment, line ends here
+            if (!inBlock && !current.empty()) {
+                result.push_back(current);
+                current.clear();
+            }
+        }
+
+        return result;
+    }
+};
+```
+
+---
+
+# 📊 Complexity
+
+* Time: **O(total characters)**
+* Space: **O(output size)**
+
+---
+
+# 🧠 Intuition Summary
+
+We are basically simulating a **stream parser**:
+
+* `//` = kill rest of line
+* `/* ... */` = toggle “ignore mode”
+* Everything else = keep
+
+The tricky part is:
+
+> block comments can merge lines logically
+
+So we only push to result when we are **not inside a block comment**.
+
+---
+
+# 🏠 LeetCode 198 — House Robber
+
+### Problem
+
+You are given an array `nums` where `nums[i]` represents money in the i-th house.
+
+You cannot rob **two adjacent houses**.
+
+Return the **maximum amount of money** you can rob.
+
+---
+
+At each house, you have 2 choices:
+
+### 1. Rob it
+
+You cannot rob previous house:
+
+nums[i] + dp[i-2]
+
+
+### 2. Skip it
+
+
+dp[i-1]
+
+
+So recurrence:
+
+
+dp[i] = max(dp[i-1], nums[i] + dp[i-2])
+
+
+---
+
+# ⚡ Optimized Insight
+
+We only need:
+
+* prev1 = dp[i-1]
+* prev2 = dp[i-2]
+
+So we reduce space to **O(1)**.
+
+---
+
+# 💻 C++ Solution (Optimized)
+
+```cpp
+class Solution {
+public:
+    int rob(vector<int>& nums) {
+        int prev2 = 0; // dp[i-2]
+        int prev1 = 0; // dp[i-1]
+
+        for (int num : nums) {
+            int take = num + prev2;
+            int skip = prev1;
+
+            int curr = max(take, skip);
+
+            prev2 = prev1;
+            prev1 = curr;
+        }
+
+        return prev1;
+    }
+};
+```
+
+---
+
+# 📊 Example
+
+```text
+nums = [2, 7, 9, 3, 1]
+```
+
+| House | Take | Skip | Best |
+| ----- | ---- | ---- | ---- |
+| 2     | 2    | 0    | 2    |
+| 7     | 7    | 2    | 7    |
+| 9     | 11   | 7    | 11   |
+| 3     | 10   | 11   | 11   |
+| 1     | 12   | 11   | 12   |
+
+✅ Answer = **12**
+
+---
+
+
