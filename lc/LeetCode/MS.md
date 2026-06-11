@@ -694,14 +694,13 @@ public:
     long long maxRecords(int N) {
         vector<long long> dp(N + 1, 0);
 
-        int j = 1; // best breakpoint
-
         for (int i = 1; i <= N; i++) {
 
             // Option 1: linear build
             dp[i] = dp[i - 1] + 1;
 
             // Option 2: try current best breakpoint
+			int j = 1;
             while (j <= i - 3) {
                 long long val = dp[j] * (i - j - 2);
                 dp[i] = max(dp[i], val);
