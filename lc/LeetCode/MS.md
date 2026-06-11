@@ -579,7 +579,7 @@ Given an array of efficiency values for each time interval, determine the maximu
 Task: Find the maximum sum from any consecutive subsequence of efficiency intervals.
 
 Key Requirements:
-
+```
 Time window must include at least one interval
 Intervals must be consecutive (adjacent time periods)
 Handle large-scale Azure infrastructure data efficiently
