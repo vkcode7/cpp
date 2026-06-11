@@ -8,6 +8,36 @@ The replication system supports four operations, each consuming exactly one exec
 		REPLICATE: Copy all cached records to the target database and append them to the working buffer
 Find the optimal sequence of these operations that maximizes the total number of records processed within exactly N execution steps. The system starts with an empty working buffer and cache.
 
+```cpp
+class Solution {
+public:
+    long long maxRecords(int N) {
+        vector<long long> dp(N + 1, 0);
+
+        for (int i = 1; i <= N; i++) {
+            // Option 1: FETCH (linear growth)
+            dp[i] = dp[i - 1] + 1;
+
+            // Try switching point for replication
+            for (int j = 1; j <= i - 3; j++) {
+                long long base = dp[j];
+
+                // remaining steps after j:
+                int rem = i - j;
+
+                // cost: SELECT_ALL + CACHE = 2 steps, then REPLICATE cycles
+                long long cycles = rem - 2;
+
+                if (cycles > 0) {
+                    dp[i] = max(dp[i], base * cycles);
+                }
+            }
+        }
+
+        return dp[N];
+    }
+};
+```
 
 # 2 Elastic Capacity Balancer
 Find the VM memory configuration in Azure resource tree that most closely matches a customer memory request. The VM configurations are organized in a binary search tree where smaller memory sizes branch left and larger sizes branch right. Given a customer floating-point memory requirement, efficiently traverse this tree and return the configuration that minimizes the absolute difference with the requested amount.
