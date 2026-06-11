@@ -659,3 +659,509 @@ Space Complexity:
 O(n) - We use a single dynamic programming array of size n+1 to store the maximum content achievable with each number of operations.
 ```
 
+
+# 13 Excel Formula Engine
+
+Microsoft Excel processes billions of formulas daily across millions of spreadsheets worldwide. The formula engine is the heart of Excel, enabling users to create complex calculations that automatically update when dependent cells change. Your task is to design and implement a simplified version of Excel core formula engine focusing on the SUM function.
+
+Design a system that supports:
+
+Grid Initialization: Create a spreadsheet with specified dimensions. Excel uses letters for columns (A-Z) and numbers for rows, maintaining this familiar addressing system.
+
+Cell Operations:
+```
+Set: Directly assign a value to a cell
+Get: Retrieve the current value of a cell
+Sum: Create a formula that calculates the sum of specified cells or ranges
+Dependency Management: When a cell value changes, all formulas depending on it must automatically recalculate - this is Excel reactive computation model.
+
+Range Support: Handle both individual cells (e.g., "A1") and rectangular ranges (e.g., "A1:B2") in formulas.
+
+Implement the following functions:
+
+Excel(int H, char W): Initialize a spreadsheet with H rows and width from column A to column W.
+
+void Set(int row, char column, int val): Set the value of cell at (row, column).
+
+int Get(int row, char column): Get the current value of cell at (row, column).
+
+int Sum(int row, char column, List numbers): Create a SUM formula at (row, column) that adds values from cells/ranges specified in numbers.
+
+Examples
+Example 1
+Input: Excel(3, "C")
+Set(1, "A", 2)
+Sum(3, "C", ["A1", "A1:B2"])
+Set(2, "B", 2)
+Get(3, "C")
+
+
+Output: After Excel(3, "C"): 3x3 grid initialized
+After Set(1, "A", 2): A1 = 2
+After Sum(3, "C", ...): C3 = 4
+After Set(2, "B", 2): B2 = 2
+Get(3, "C") returns: 6
+
+
+Explanation: Initial state: 3x3 grid with all zeros
+
+
+Grid State After Excel(3, "C"):
+A B C
+1 [ 0][ 0][ 0]
+2 [ 0][ 0][ 0]
+3 [ 0][ 0][ 0]
+
+
+After Set(1, "A", 2):
+A B C
+1 [ 2][ 0][ 0]
+2 [ 0][ 0][ 0]
+3 [ 0][ 0][ 0]
+
+
+Sum(3, "C", ["A1", "A1:B2"]) calculation:
+
+
+
+"A1" = 2
+
+"A1:B2" range = A1 + B1 + A2 + B2 = 2 + 0 + 0 + 0 = 2
+
+Total: 2 + 2 = 4, stored in C3
+
+
+After Set(2, "B", 2):
+A B C
+1 [ 2][ 0][ 0]
+2 [ 0][ 2][ 0]
+3 [ 0][ 0][ 6]
+
+
+C3 automatically updates to 6 because B2 changed:
+New calculation: 2 + (2+0+0+2) = 6
+
+Example 2
+Input: Excel(4, "D")
+Set(1, "A", 1)
+Set(1, "B", 2)
+Sum(1, "C", ["A1", "B1"])
+Sum(1, "D", ["A1:C1"])
+Set(1, "A", 5)
+Get(1, "D")
+
+
+Output: After initial sets: A1=1, B1=2
+After Sum(1, "C"): C1=3
+After Sum(1, "D"): D1=6
+After Set(1, "A", 5): A1=5
+Get(1, "D") returns: 12
+
+
+Explanation: Dependency chain demonstration:
+
+
+Initial Setup:
+A B C D
+1 [ 1][ 2][ 0][ 0]
+
+
+After Sum(1, "C", ["A1", "B1"]):
+C1 = A1 + B1 = 1 + 2 = 3
+A B C D
+1 [ 1][ 2][ 3][ 0]
+
+
+After Sum(1, "D", ["A1:C1"]):
+D1 = A1 + B1 + C1 = 1 + 2 + 3 = 6
+A B C D
+1 [ 1][ 2][ 3][ 6]
+
+
+Dependency Graph:
+A1 ──→ C1 ──→ D1
+└──────────→ D1
+
+
+When A1 changes to 5:
+
+
+
+C1 updates: 5 + 2 = 7
+
+D1 updates: 5 + 2 + 7 = 12
+
+
+Final State:
+A B C D
+1 [ 5][ 2][ 7][12]
+
+
+This demonstrates Excel cascading update mechanism.
+
+Example 3
+Input: Excel(5, "E")
+Set(2, "B", 3)
+Set(3, "C", 4)
+Set(4, "D", 5)
+Sum(5, "E", ["B2:D4"])
+Get(5, "E")
+
+
+Output: Initial sets create values
+Sum(5, "E", ["B2:D4"]) creates formula
+Get(5, "E") returns: 12
+
+
+Explanation: Range B2:D4 forms a 3x3 rectangle:
+
+
+Grid Layout:
+A B C D E
+1 [ 0][ 0][ 0][ 0][ 0]
+2 [ 0][ 3][ 0][ 0][ 0]
+3 [ 0][ 0][ 4][ 0][ 0]
+4 [ 0][ 0][ 0][ 5][ 0]
+5 [ 0][ 0][ 0][ 0][12]
+
+
+Range B2:D4 contains:
+B2=3, C2=0, D2=0
+B3=0, C3=4, D3=0
+B4=0, C4=0, D4=5
+
+
+Sum calculation:
+3 + 0 + 0 + 0 + 4 + 0 + 0 + 0 + 5 = 12
+
+
+Excel efficiently calculates rectangular ranges, a common operation in financial modeling and data analysis.
+
+Constraints
+1 ≤ H ≤ 26 (number of rows)
+A ≤ W ≤ Z (rightmost column)
+1 ≤ row ≤ H
+A ≤ column ≤ W
+Cell values and sums fit in 32-bit integers
+No circular references (Excel would show #REF! error)
+Empty cells default to 0
+
+
+Problem Statement
+You need to implement a simplified version of Microsoft Excel formula engine that supports basic spreadsheet operations and the SUM formula. The key challenge is managing dependencies between cells so that when a cell value changes, all dependent formulas automatically recalculate. This reactive computation model is fundamental to how Excel provides real-time updates across complex spreadsheets.
+
+Conceptual Approach
+The solution requires two main components: a grid to store cell values and a dependency graph to track formula relationships. When a cell is updated, use topological traversal of the dependency graph to update all dependent cells in the correct order. Each cell can either store a direct value or a formula. Formula cells must maintain references to their dependencies and notify dependent cells when they change, implementing the observer pattern that Excel uses internally.
+
+Strategy to Solve
+```
+Data Structure Design: Use 2D array for cell values, HashMap to store formula definitions, Graph structure for dependencies (adjacency list), Set to track which cells contain formulas.
+
+Cell Addressing: Convert between (row, column_char) and internal indices, Parse cell references like "A1" and ranges like "A1:B2", Handle column letters (A=0, B=1, ..., Z=25).
+
+Formula Storage: Store formula metadata - target cell and source cells/ranges, Maintain bidirectional dependency links, Differentiate between value cells and formula cells.
+
+Update Propagation: When Set() is called, check if cell has dependents, Use BFS/DFS to find all affected formulas, Recalculate in dependency order (topological sort), Update each formula cell value.
+
+Range Parsing: Split range string on colon delimiter, Extract row/column from each cell reference, Calculate all cells within rectangular bounds, Handle single cells as 1x1 ranges.
+
+Sum Calculation: Parse each element in the numbers list, For each cell/range retrieve current values, Aggregate sum and store in target cell, Register dependencies for future updates.
+
+Sample Execution
+Let us trace through a complex example:
+
+Step 1: Excel(4, "D") - Create 4x4 grid
+
+Step 2: Set values
+Set(1, "A", 10) → A1 = 10
+Set(2, "A", 20) → A2 = 20
+Set(1, "B", 30) → B1 = 30
+
+Step 3: Sum(3, "A", ["A1", "A2"])
+- Parse formula: A3 = A1 + A2
+- Calculate: 10 + 20 = 30
+- Store dependencies: A1→A3, A2→A3
+
+Dependency Graph State:
+A1 ──→ A3
+A2 ──→ A3
+
+Step 4: Sum(3, "B", ["A1:B2"])
+- Parse range A1:B2 = {A1, B1, A2, B2}
+- Calculate: 10 + 30 + 20 + 0 = 60
+- Store dependencies: A1→B3, B1→B3, A2→B3, B2→B3
+
+Updated Dependency Graph:
+A1 ──→ A3
+A1 ──→ B3
+A2 ──→ A3
+A2 ──→ B3
+B1 ──→ B3
+
+Step 5: Sum(4, "C", ["A3", "B3"])
+- Calculate: 30 + 60 = 90
+- Dependencies: A3→C4, B3→C4
+
+Final Dependency Graph:
+A1 ──→ A3 ──→ C4
+A1 ──→ B3 ──→ C4
+A2 ──→ A3
+A2 ──→ B3
+B1 ──→ B3
+
+Step 6: Set(1, "A", 50)
+- Direct update: A1 = 50
+- Find dependents: {A3, B3}
+- Update A3: 50 + 20 = 70
+- Update B3: 50 + 30 + 20 + 0 = 100
+- Find C4 depends on A3, B3
+- Update C4: 70 + 100 = 170
+```
+
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+
+using Pos = pair<int, char>;  // (row, column)
+
+struct Cell {
+    int value = 0;
+    vector<string> formula;   // stores the raw list like {"A1", "B2:C3"}
+    bool isFormula = false;
+};
+
+class Excel {
+private:
+    int rows, cols;
+    vector<vector<Cell>> sheet;
+    
+    // Dependency Graph: cell -> list of cells that depend on it
+    unordered_map<int, unordered_set<int>> dependents;
+    
+    // Flatten position for graph: row*100 + (col-'A')
+    int getId(int r, char c) {
+        return (r * 100) + (c - 'A');
+    }
+
+    Pos parsePos(const string& s) {
+        return {stoi(s.substr(1)), s[0]};
+    }
+
+    // Parse range "A1:B3" into list of positions
+    vector<Pos> getAllCellsInRange(const string& s) {
+        vector<Pos> cells;
+        if (s.find(':') == string::npos) {
+            cells.push_back(parsePos(s));
+        } else {
+            size_t colon = s.find(':');
+            string start = s.substr(0, colon);
+            string end = s.substr(colon + 1);
+            int r1 = stoi(start.substr(1)), r2 = stoi(end.substr(1));
+            char c1 = start[0], c2 = end[0];
+            for (int r = r1; r <= r2; ++r) {
+                for (char c = c1; c <= c2; ++c) {
+                    cells.emplace_back(r, c);
+                }
+            }
+        }
+        return cells;
+    }
+
+    // Calculate current sum of a formula
+    int calculateSum(const vector<string>& formula) {
+        int sum = 0;
+        for (const string& s : formula) {
+            for (Pos p : getAllCellsInRange(s)) {
+                int r = p.first;
+                char c = p.second;
+                if (r >= 1 && r <= rows && c >= 'A' && c < 'A' + cols) {
+                    sum += sheet[r-1][c-'A'].value;
+                }
+            }
+        }
+        return sum;
+    }
+
+    // Update all dependent cells using BFS
+    void updateDependents(int startRow, char startCol) {
+        queue<Pos> q;
+        unordered_set<int> visited;
+        
+        q.emplace(startRow, startCol);
+        visited.insert(getId(startRow, startCol));
+
+        while (!q.empty()) {
+            auto [r, c] = q.front(); q.pop();
+            int id = getId(r, c);
+            
+            // Update this cell if it has a formula
+            Cell& cell = sheet[r-1][c-'A'];
+            if (cell.isFormula) {
+                cell.value = calculateSum(cell.formula);
+            }
+
+            // Propagate to cells that depend on this one
+            for (int depId : dependents[id]) {
+                if (visited.find(depId) == visited.end()) {
+                    visited.insert(depId);
+                    int depR = depId / 100;
+                    char depC = (depId % 100) + 'A';
+                    q.emplace(depR, depC);
+                }
+            }
+        }
+    }
+
+    // Remove old dependencies when setting new value or formula
+    void removeOldDependencies(int row, char col) {
+        int myId = getId(row, col);
+        for (auto& [_, deps] : dependents) {
+            deps.erase(myId);
+        }
+    }
+
+public:
+    Excel(int height, char widthChar) {
+        rows = height;
+        cols = widthChar - 'A' + 1;
+        sheet.assign(height, vector<Cell>(cols));
+    }
+
+    void set(int row, char column, int val) {
+        if (row < 1 || row > rows || column < 'A' || column >= 'A' + cols) return;
+        
+        removeOldDependencies(row, column);
+        
+        Cell& cell = sheet[row-1][column-'A'];
+        cell.value = val;
+        cell.isFormula = false;
+        cell.formula.clear();
+
+        updateDependents(row, column);
+    }
+
+    int get(int row, char column) {
+        if (row < 1 || row > rows || column < 'A' || column >= 'A' + cols) return 0;
+        return sheet[row-1][column-'A'].value;
+    }
+
+    int sum(int row, char column, vector<string> numbers) {
+        if (row < 1 || row > rows || column < 'A' || column >= 'A' + cols) return 0;
+
+        Cell& cell = sheet[row-1][column-'A'];
+        
+        // Remove old dependencies
+        removeOldDependencies(row, column);
+        
+        cell.formula = numbers;
+        cell.isFormula = true;
+        cell.value = calculateSum(numbers);
+
+        // Build new dependency graph
+        int myId = getId(row, column);
+        for (const string& s : numbers) {
+            for (Pos p : getAllCellsInRange(s)) {
+                int depId = getId(p.first, p.second);
+                dependents[depId].insert(myId);
+            }
+        }
+
+        updateDependents(row, column);  // Propagate if needed
+        return cell.value;
+    }
+};
+```
+
+
+# 14 Document Version History Navigator
+
+Problem Description
+
+You need to implement a VersionHistoryNavigator that can sequentially traverse all document versions across all users in chronological order. The navigator should provide functionality to check if more versions exist and retrieve the next version ID efficiently without loading the entire version history into memory at once.
+
+Your implementation must handle the streaming nature of version data - you cannot assume all version histories are loaded upfront, and you should process versions lazily to optimize memory usage for documents with extensive edit histories.
+
+
+Example
+```python
+Input: userVersions = [[501, 502], [503], [504]]
+VersionHistoryNavigator navigator = new VersionHistoryNavigator(userVersions);
+
+
+Output: navigator.getNext(); // return 501
+navigator.getNext(); // return 502
+navigator.getNext(); // return 503
+navigator.hasMoreVersions(); // return true
+navigator.getNext(); // return 504
+navigator.hasMoreVersions(); // return false
+
+
+Explanation: The navigator sequentially returns versions from user 0 (501, 502), then user 1 (503), then user 2 (504). After all versions are processed, hasMoreVersions() returns false.
+```
+
+
+Problem Statement
+
+You need to build a navigator that traverses document version histories from multiple users sequentially. Each user has a chronological list of version IDs (which could be empty), and you must provide a way to retrieve the next version across all users in order, plus check if more versions exist. The key challenge is handling this efficiently without loading all version histories into memory at once.
+
+
+Conceptual Approach
+
+The core insight is implementing a stateful iterator using two pointers - one tracking the current user and another tracking the position within that user's version history. You maintain these pointers to know exactly where you are in the 2D structure at any given time. When you exhaust one user's versions, you advance to the next user with a non-empty history. This approach processes data lazily, making it memory-efficient for documents with extensive histories.
+
+Strategy to Solve
+
+Initialize tracking pointers: Set up currentUser and currentVersionIndex to track your location in the 2D structure. Start both at 0.
+
+Implement smart advancement logic: Create a helper method that skips users with empty histories and positions you at the next valid version. This handles cases where multiple consecutive users might have no edits.
+
+Build hasMoreVersions() efficiently: Use your advancement logic to check if there's a next valid version without actually consuming it. This requires careful state management to avoid side effects.
+
+Implement getNext() with validation: First ensure there's a next version available, then return the current version and advance your pointers to the next position.
+
+Handle edge cases gracefully: Account for documents where no users made edits, single-version scenarios, and boundary conditions when transitioning between users.
+
+Maintain state consistency: Ensure your pointers always reflect the correct position, especially after consuming versions or checking availability.
+```
+Sample Execution
+Let's trace through `userVersions = [[601], [], [602, 603], []]`:
+
+Initialization:
+- `currentUser = 0`, `currentVersionIndex = 0`
+- `userVersions[0] = [601]` (valid)
+
+First `hasMoreVersions()` call:
+- Current position points to `userVersions[0][0] = 601`
+- Returns `true`
+
+First `getNext()` call:
+- Returns `601`
+- Advances: `currentVersionIndex = 1`
+- Since `currentVersionIndex >= userVersions[0].length`, move to next user
+- `currentUser = 1`, `currentVersionIndex = 0`
+- `userVersions[1] = []` (empty), so advance again
+- `currentUser = 2`, `currentVersionIndex = 0`
+
+Second `getNext()` call:
+- Returns `userVersions[2][0] = 602`
+- Advances: `currentVersionIndex = 1`
+
+Third `getNext()` call:
+- Returns `userVersions[2][1] = 603`
+- Advances: `currentVersionIndex = 2`
+- Since `currentVersionIndex >= userVersions[2].length`, advance user
+- `currentUser = 3`, but `userVersions[3] = []` (empty)
+- `currentUser = 4` (out of bounds)
+
+Final `hasMoreVersions()` call:
+- `currentUser >= userVersions.length`, so return `false`
+```
+Performance Analysis
+
+Time Complexity:
+
+O(1) amortized for both operations - Each version is visited exactly once across all calls. The advancement logic might skip users with no edits, but total work is bounded by the number of users.
+
+Space Complexity:
+
+O(1) - Only storing two integer pointers regardless of input size. No additional data structures needed.
