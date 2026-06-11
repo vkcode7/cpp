@@ -630,7 +630,7 @@ Conceptual Approach
 The key insight is that copy-paste becomes beneficial only after accumulating enough content to multiply. For any remaining operations k, if you spend 3 operations on (Select All, Copy, Paste), you double your content. The optimal strategy involves finding the right balance between initial typing and subsequent copy-paste sequences. This is a classic dynamic programming problem where each state represents the maximum content achievable with i operations.
 
 Strategy to Solve
-```
+
 Initialize base cases: With 0 operations, you have 0 content. With 1 operation, you can only type once.
 
 Define state transition: For each number of operations i, consider two choices: - Type one more unit: dp[i] = dp[i-1] + 1 - Copy-paste from a previous state: Try all possible points j where you copy content from dp[j] and paste it multiple times
@@ -642,7 +642,7 @@ Optimization formula: For each i, check all j < i-2: - Remaining operations afte
 Track maximum: At each step, keep the maximum content achievable across all strategies.
 
 Handle edge cases: Ensure copy-paste is only considered when there are enough operations remaining (at least 3 operations needed for one complete copy-paste cycle).
-
+```
 Sample Execution
 Let's trace through N = 7:
 
@@ -687,6 +687,33 @@ O(n²) - For each of the n operations, we check all previous states as potential
 
 Space Complexity:
 O(n) - We use a single dynamic programming array of size n+1 to store the maximum content achievable with each number of operations.
+```
+```cpp
+class Solution {
+public:
+    long long maxRecords(int N) {
+        vector<long long> dp(N + 1, 0);
+
+        int j = 1; // best breakpoint
+
+        for (int i = 1; i <= N; i++) {
+
+            // Option 1: linear build
+            dp[i] = dp[i - 1] + 1;
+
+            // Option 2: try current best breakpoint
+            while (j <= i - 3) {
+                long long val = dp[j] * (i - j - 2);
+                dp[i] = max(dp[i], val);
+
+                // heuristic: move j forward if it improves growth trend
+                j++;
+            }
+        }
+
+        return dp[N];
+    }
+};
 ```
 
 
