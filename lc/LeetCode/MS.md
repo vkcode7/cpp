@@ -2164,4 +2164,51 @@ nums = [2, 7, 9, 3, 1]
 
 ---
 
+# Microsoft Interview Process: 
+Interview panelists
+- Coding + Behavioral
+- System Design + Behavioral
 
+ 
+The goal of the Microsoft interview process is twofold: It’s not only an opportunity for us to get to know you, but also for you to know us. The interviews will include competency-based questions, as well as questions about your resume/experience.
+
+Keep our Four Core Competencies in mind. Think of examples you can share or incorporate into your conversation.  
+
+## Microsoft Core Competencies: 
+
+### Adaptability
+Demonstrates curiosity and actively explores options. Responds efficiently to changing demands and circumstances. Functions effectively in ambiguous situations. Maintains a constructive attitude in times of stress. 
+ 
+### Collaboration
+Drives alignment and teamwork within a team, department, or across organizational boundaries. Combines resources and joins efforts to achieve company-wide goals. 
+ 
+### Customer Focus
+Anticipates customer needs, and proactively meets and exceeds customer expectations. Recognizes the issues that customers want to resolve, and creates, or facilitates the creation of, products and services to address customer needs. 
+ 
+### Drive for Results
+Tenaciously pursues positive outcomes by using effective approaches to solve problems. Delivers on commitments and seeks increasingly challenging work. Takes responsibility and holds others accountable for actions, decisions, and goals. 
+ 
+## Accelerate Our Culture: 
+At Microsoft, we believe that living our culture is key to achieving our mission. Selecting people who have the right skills and mindset is important, not only for the company we are today, but also for the company we aspire to be. Our growth-mindset culture is designed to drive innovation and collaboration. Being a learn-it-all instead of a know-it-all fosters curiosity and prompts us to be inclusive and seek new and diverse perspectives. 
+
+ 
+For our interview process, we focus on these key aspects of our culture: 
+
+​​​​​​- Growth Mindset – True learners who can acquire new skills rapidly and connect with others to help bring big ideas to life. 
+- Diverse & Inclusive – Being open to learning about your own biases and changing behaviors accordingly. Value differences, seek them out, and invite them in. 
+- One Microsoft –  Actively seeks collaboration with others and looks for common ground across differences, contributes to and builds on success of others, and prioritizes for customer and team within their role. 
+- Customer Obsession – The ability to learn about customers' perspectives, show empathy to their experiences, and incorporate these insights into their decisions and deliverables. 
+- Values – When we come together, we treat each other with respect, we act with integrity, and we are accountable to one another for our words and actions. 
+ 
+
+**Tips for your interview: **
+
+Using the competencies and culture attributes listed above, prepare 1-2 examples that you can share with the interviewers that demonstrates how you’ve exemplified these traits in the past. 
+
+ 
+
+Review the Job Description, what are the requirements of the role.  Are you able to articulate work you have done in that space? 
+
+ 
+
+We use Behavioral Based interviewing.  This means we will focus on work that you have done historically as the best predictor of the work you will do in the future.  
