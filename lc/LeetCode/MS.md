@@ -2194,10 +2194,24 @@ At Microsoft, we believe that living our culture is key to achieving our mission
  
 For our interview process, we focus on these key aspects of our culture: 
 
-​​​​​​- Growth Mindset – True learners who can acquire new skills rapidly and connect with others to help bring big ideas to life. 
-- Diverse & Inclusive – Being open to learning about your own biases and changing behaviors accordingly. Value differences, seek them out, and invite them in. 
-- One Microsoft –  Actively seeks collaboration with others and looks for common ground across differences, contributes to and builds on success of others, and prioritizes for customer and team within their role. 
-- Customer Obsession – The ability to learn about customers' perspectives, show empathy to their experiences, and incorporate these insights into their decisions and deliverables. 
+​​​​​​- Growth Mindset: True learners who can acquire new skills rapidly and connect with others to help bring big ideas to life. 
+>> Learned Machine Learning and Generative AI, worked on projects such as Stress Scenarios and Soft/Hard dollar
+
+- Diverse & Inclusive: Being open to learning about your own biases and changing behaviors accordingly. Value differences, seek them out, and invite them in.
+  >> Biased towards ex-CS vs New Employer during brainstorming and task allocations
+  >> Inclusive: Explicitly giving chance to people who rarely speaks, look for whose voice is missing and why?
+  >> Including people from other functions such as a Project Manager.
+  >> I caught myself discounting an engineer's idea because of one early miss. I reset by evaluating each proposal on its own merits using a shared rubric
+
+- One Microsoft: Actively seeks collaboration with others and looks for common ground across differences, contributes to and builds on success of others, and prioritizes for customer and team within their role.
+Our team had a conflict with a partner team over the solution. Instead of escalating, I set up a joint working team, mapped out each team's constraints, and found a phased approach that unblocked both teams.
+Key angle: You initiated the bridge — didn't wait for someone else to fix it.
+
+"I had a high-visibility project ARORA I wanted to own, but another teammate was better positioned. I handed it off, supported them instead, and went back to doing the earlier project where I had expertise -LOCKS."
+
+Shows you subordinate personal gain to collective success.
+  
+- Customer Obsession: The ability to learn about customers' perspectives, show empathy to their experiences, and incorporate these insights into their decisions and deliverables. 
 - Values – When we come together, we treat each other with respect, we act with integrity, and we are accountable to one another for our words and actions. 
  
 
