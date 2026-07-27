@@ -256,6 +256,16 @@ int main()
 EOF
 ```
 
+cat > ~/projects/tcp-server/tests/server_test.cpp << 'EOF'
+#include <iostream>
+
+int main()
+{
+    std::cout << "C++ Dev Environment TESTS Ready\n";
+    return 0;
+}
+EOF
+
 Build and run:
 
 ```bash
