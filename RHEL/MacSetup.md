@@ -1068,3 +1068,366 @@ gdb ./build/tcp_server /tmp/core-tcp_server-12345
 ```
 
 Both approaches work — use VS Code for comfort, raw GDB when you need full power or speed.
+
+
+Great question to ask before diving in. Here are the things that will genuinely surprise or slow you down if you don't know them upfront:
+
+---
+
+### 1. The Compilation Model — How C++ Actually Builds
+
+Unlike Python/JavaScript where you just run a file, C++ has a multi-stage build process. Understanding this saves hours of confusion:
+
+```
+Source files (.cpp)
+      ↓  Preprocessor  — expands #include, #define macros
+      ↓  Compiler      — translates C++ to assembly
+      ↓  Assembler     — translates assembly to machine code (.o object files)
+      ↓  Linker        — combines .o files + libraries into final executable
+Final binary
+```
+
+```bash
+# These all do the same thing — just different stages exposed:
+g++ main.cpp                        # full pipeline in one shot
+g++ -E main.cpp                     # stop after preprocessor — see expanded code
+g++ -S main.cpp                     # stop after compiler — see assembly (.s file)
+g++ -c main.cpp                     # stop after assembler — produces main.o
+g++ main.o server.o -o tcp_server   # just the linker step
+```
+
+Why this matters: when you get a **linker error** (`undefined reference to...`) it's different from a **compiler error** (`expected ';'`) and needs a different fix. Beginners often confuse the two.
+
+---
+
+### 2. Header Files vs Source Files — The Most Common Source of Confusion
+
+```
+.h  / .hpp  — declarations  — "this thing exists"
+.cpp        — definitions   — "here's what it actually does"
+```
+
+```cpp
+// server.h — declaration only
+class Server
+{
+public:
+    void start(int port);   // just declared here
+    void stop();
+};
+
+// server.cpp — definition
+#include "server.h"
+
+void Server::start(int port)    // actually implemented here
+{
+    // ...
+}
+```
+
+The rule that trips everyone up: **never put function definitions in header files** (unless they're `inline` or template functions — those must be in headers). If you define a function in a header and include that header in two `.cpp` files, the linker sees two definitions and errors with `multiple definition of...`.
+
+---
+
+### 3. The ODR — One Definition Rule
+
+Every function, variable, and class must be **defined exactly once** across your entire program:
+
+```cpp
+// BAD — defining a function in a header included by multiple .cpp files
+// utils.h
+int add(int a, int b) { return a + b; }   // ❌ linker error if included twice
+
+// GOOD — declare in header, define in .cpp
+// utils.h
+int add(int a, int b);                     // ✅ declaration
+
+// utils.cpp
+int add(int a, int b) { return a + b; }   // ✅ definition — once
+```
+
+---
+
+### 4. Include Guards / `#pragma once` — Always Use Them
+
+Without these, including a header twice causes redefinition errors:
+
+```cpp
+// Traditional include guard
+#ifndef SERVER_H
+#define SERVER_H
+
+class Server { };
+
+#endif
+
+// Modern — simpler, does the same thing
+#pragma once
+
+class Server { };
+```
+
+Every header file you write should start with `#pragma once`. No exceptions.
+
+---
+
+### 5. Undefined Behavior — C++'s Most Dangerous Feature
+
+C++ has a concept that doesn't exist in most other languages — **undefined behavior (UB)**. When you do something illegal (null pointer dereference, signed integer overflow, reading past array bounds), the standard says the compiler can do literally anything — including appearing to work correctly most of the time, then failing randomly in production:
+
+```cpp
+// All of these are undefined behavior:
+int* p = nullptr;
+*p = 5;                  // null dereference
+
+int arr[5];
+arr[10] = 1;             // out of bounds write
+
+int x = INT_MAX;
+x = x + 1;              // signed integer overflow
+
+int uninit;
+std::cout << uninit;     // reading uninitialised variable
+
+// The terrifying part — these often appear to "work" in debug builds
+// then corrupt memory silently in release builds
+```
+
+This is why the sanitizers (`-fsanitize=address`, `-fsanitize=undefined`) are so important — they catch UB at runtime during testing before it reaches production.
+
+---
+
+### 6. Stack vs Heap — You Manage Memory Yourself
+
+```cpp
+// Stack — automatic, managed for you, fast, limited size (~8MB default)
+void foo()
+{
+    int x = 5;           // on stack
+    int arr[1000];       // on stack — 4KB, fine
+    int big[10000000];   // on stack — 40MB, stack overflow!
+}                        // x and arr automatically freed here
+
+// Heap — manual, you manage it, large, slower
+void foo()
+{
+    int* p = new int(5);          // on heap
+    int* arr = new int[10000000]; // on heap — fine, GBs available
+    // ...
+    delete p;                     // YOU must free it
+    delete[] arr;                 // forget this = memory leak
+}
+```
+
+In modern C++ you should almost never use raw `new`/`delete`. Use smart pointers instead:
+
+```cpp
+#include <memory>
+
+// unique_ptr — single owner, automatically deleted
+auto p = std::make_unique<int>(5);
+// no delete needed — freed when p goes out of scope
+
+// shared_ptr — multiple owners, reference counted
+auto p = std::make_shared<Server>();
+// freed when last shared_ptr to it is destroyed
+```
+
+---
+
+### 7. Compiler Flags You Must Know
+
+```bash
+# Debug build — what you use during development
+g++ -g -O0 main.cpp
+
+# Release build — what goes to production
+g++ -O2 -DNDEBUG main.cpp
+
+# What the flags mean:
+# -g          include debug symbols (needed for GDB)
+# -O0         no optimisation (predictable behaviour for debugging)
+# -O2         optimise aggressively (production speed)
+# -O3         even more aggressive (sometimes used in HFT)
+# -DNDEBUG    disables assert() checks in release
+# -Wall       enable common warnings
+# -Wextra     enable extra warnings
+# -Werror     treat warnings as errors (common in banking codebases)
+# -std=c++17  use C++17 standard (specify always — don't rely on defaults)
+```
+
+A critical gotcha: **behaviour can differ between debug and release builds** because of optimisation. A bug that's invisible in release (`-O2`) might only show up in debug (`-O0`), or vice versa. Always test both.
+
+---
+
+### 8. The `errno` Pattern — How Linux Reports Errors
+
+Unlike exceptions, Linux system calls report errors through a global variable called `errno`:
+
+```cpp
+#include <errno.h>
+#include <cstring>
+
+int fd = socket(AF_INET, SOCK_STREAM, 0);
+if (fd == -1)   // system calls return -1 on failure
+{
+    // errno is set to indicate what went wrong
+    std::cerr << "socket() failed: " << strerror(errno) << "\n";
+    // strerror converts errno number to human readable string
+}
+```
+
+Common errno values you'll see constantly in socket programming:
+
+| errno | Meaning |
+|---|---|
+| `EAGAIN` / `EWOULDBLOCK` | No data available right now (non-blocking socket) |
+| `ECONNREFUSED` | Nothing listening on that port |
+| `EADDRINUSE` | Port already in use |
+| `EBADF` | Bad file descriptor — fd was closed or never opened |
+| `EINTR` | System call interrupted by a signal — usually retry |
+| `EPIPE` | Writing to a socket whose other end closed |
+
+---
+
+### 9. Signals — Linux's Async Notification System
+
+Linux can interrupt your program at any time with a signal. In a TCP server, you'll encounter these:
+
+```cpp
+#include <signal.h>
+
+// SIGPIPE — sent when you write to a disconnected socket
+// Default behaviour: kills your program silently!
+// Fix — ignore it and check send() return values instead:
+signal(SIGPIPE, SIG_IGN);   // put this early in main()
+
+// SIGINT  — Ctrl+C — user wants to stop
+// SIGTERM — kill command — OS wants to stop your process
+// Handle these for graceful shutdown:
+std::atomic<bool> running{true};
+
+signal(SIGINT,  [](int){ running = false; });
+signal(SIGTERM, [](int){ running = false; });
+
+// In your main loop:
+while (running)
+{
+    // epoll_wait etc.
+}
+// clean shutdown here — close sockets, free resources
+```
+
+SIGPIPE is the most common surprise for people new to socket programming — your server silently dies the first time a client disconnects while you're writing to it, and you have no idea why.
+
+---
+
+### 10. Object Files and Libraries
+
+You'll encounter two types of libraries:
+
+```bash
+# Static library (.a) — code is copied into your binary at link time
+g++ -c mylib.cpp -o mylib.o
+ar rcs libmylib.a mylib.o          # create static library
+g++ main.cpp -L. -lmylib -o app    # link against it
+# result: one self-contained binary, larger size
+
+# Dynamic/shared library (.so) — code lives separately, loaded at runtime
+g++ -shared -fPIC mylib.cpp -o libmylib.so   # create shared library
+g++ main.cpp -L. -lmylib -o app              # link against it
+# result: smaller binary, but .so must be present at runtime
+```
+
+In banking, static linking is often preferred for production — one self-contained binary with no runtime dependency issues.
+
+---
+
+### 11. Reading Compiler Errors — A Skill in Itself
+
+GCC/Clang errors look intimidating at first. Rules for reading them:
+
+```
+src/main.cpp:42:15: error: no matching function for call to 'Server::start()'
+                           ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+src/server.h:8:10: note: candidate: 'void Server::start(int)'
+```
+
+Always read:
+- **Filename and line number first** (`src/main.cpp:42`) — go there
+- **The actual error** (`no matching function`) — what went wrong
+- **The `note:` lines** — the compiler is hinting at the fix
+
+With template errors, GCC can produce pages of output. The real error is almost always at the **top** of the error output — scroll up, not down.
+
+```bash
+# Pipe through head to see just the first error
+make 2>&1 | head -50
+
+# Or stop after first error
+make -j$(nproc) 2>&1 | grep "error:" | head -5
+```
+
+---
+
+### 12. The C++ Standard Versions — Know Which One You're Using
+
+```cpp
+C++98 / C++03  — the old standard, avoid
+C++11          — huge update: move semantics, lambdas, smart pointers, threads
+C++14          — small improvements on C++11
+C++17          — structured bindings, if constexpr, std::optional, std::variant
+C++20          — concepts, ranges, coroutines, modules
+```
+
+Always specify the standard explicitly in CMakeLists.txt:
+
+```cmake
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)   # error if compiler doesn't support it
+set(CMAKE_CXX_EXTENSIONS OFF)         # disable GCC extensions — use pure standard
+```
+
+In banking codebases you'll commonly see C++11 or C++14 in legacy code, C++17 in newer code. C++20 is still being adopted.
+
+---
+
+### 13. `man` Pages — Documentation Is Always There
+
+Every Linux system call has built-in documentation:
+
+```bash
+man 2 socket      # socket() system call
+man 2 epoll_wait  # epoll_wait() system call
+man 2 recv        # recv() system call
+man 3 strerror    # strerror() C library function
+
+# Section numbers:
+# 1 = shell commands
+# 2 = system calls (kernel interface)
+# 3 = C library functions
+# 7 = overview/concepts
+man 7 tcp         # TCP overview — explains SO_REUSEADDR, TIME_WAIT etc.
+man 7 epoll       # epoll overview — excellent reference
+```
+
+These are always accurate and always available offline on the server. Senior engineers use `man` pages constantly — get comfortable with them early.
+
+---
+
+### Summary — The Things That Will Actually Trip You Up
+
+| Pitfall | What Happens | Fix |
+|---|---|---|
+| Definition in header file | Linker error: multiple definition | Declare in `.h`, define in `.cpp` |
+| Missing `#pragma once` | Redefinition errors | Add to every header |
+| Forgetting debug symbols | GDB shows no source, just addresses | Always compile with `-g` in dev |
+| Ignoring `SIGPIPE` | Server silently dies on client disconnect | `signal(SIGPIPE, SIG_IGN)` in `main()` |
+| Not checking `errno` | Silent failures, wrong error messages | Always check return values |
+| Raw `new`/`delete` | Memory leaks, double frees | Use `unique_ptr` / `shared_ptr` |
+| Not specifying C++ standard | Compiler uses default, behaviour varies | Always set `-std=c++17` |
+| Undefined behavior | Works in debug, corrupts memory in release | Run sanitizers regularly |
+| Stack overflow | Crash with no clear error | Large allocations go on heap |
+| Debug vs release behaviour differences | Bug only in one build type | Always test both |
+
+The single most important habit to build early: **always compile with warnings enabled and always fix them**. Warnings are the compiler telling you something is probably wrong. In banking codebases `-Werror` (warnings as errors) is standard — the build simply refuses to succeed if there are any warnings.
