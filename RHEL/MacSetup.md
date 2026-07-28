@@ -866,3 +866,205 @@ This creates `build/compile_commands.json`. clangd reads it automatically becaus
    Left sidebar Watch         — expressions you want to monitor
    Left sidebar Call Stack    — how you got to this point
 ```
+
+
+Yes — the `launch.json` we created already has a core dump configuration in it. Here's the full walkthrough:
+
+---
+
+### How Core Dump Analysis Works in VS Code
+
+The third configuration in `launch.json` handles this:
+
+```json
+{
+    "type": "lldb",
+    "request": "custom",
+    "name": "Analyse Core Dump",
+    "targetCreateCommands": [
+        "target create ${workspaceFolder}/build/tcp_server",
+        "target modules load --file ${workspaceFolder}/build/tcp_server"
+    ],
+    "processCreateCommands": [
+        "core /tmp/core-tcp_server-*"
+    ]
+}
+```
+
+---
+
+### Step by Step
+
+**Step 1 — Make sure your binary is compiled with debug symbols**
+
+```bash
+cd ~/projects/tcp-server/build
+cmake .. -DCMAKE_BUILD_TYPE=Debug
+make -j$(nproc)
+```
+
+Without `-DCMAKE_BUILD_TYPE=Debug`, the binary has no debug symbols and the core dump analysis will just show raw memory addresses — useless.
+
+---
+
+**Step 2 — Enable core dumps on the VM**
+
+```bash
+# Already done in the setup guide — verify it's still set
+ulimit -c
+# Should show: unlimited
+
+# If it shows 0, re-enable it
+ulimit -c unlimited
+```
+
+---
+
+**Step 3 — Crash your program to generate a core dump**
+
+Either your program crashes naturally in production, or you can force one for testing:
+
+```bash
+# Run your program
+./build/tcp_server
+
+# If it doesn't crash naturally, force a crash from another terminal:
+kill -SIGSEGV <pid>        # sends segfault signal
+kill -SIGABRT <pid>        # sends abort signal
+
+# Or add a deliberate crash in code for testing:
+```
+
+```cpp
+// Temporary test crash in main.cpp
+int* p = nullptr;
+*p = 42;   // segfault — generates core dump
+```
+
+---
+
+**Step 4 — Find the core dump file**
+
+```bash
+ls /tmp/core-*
+# Example output:
+# /tmp/core-tcp_server-12345-1690000000
+```
+
+---
+
+**Step 5 — Update `launch.json` with the exact core file path**
+
+Open `.vscode/launch.json` and update the core file path:
+
+```json
+"processCreateCommands": [
+    "core /tmp/core-tcp_server-12345-1690000000"
+]
+```
+
+Or keep the wildcard `*` if there's only one core file in `/tmp`.
+
+---
+
+**Step 6 — Open the Debug panel in VS Code**
+
+```
+Click the bug icon in the left sidebar (or Ctrl+Shift+D)
+```
+
+From the dropdown at the top, select **"Analyse Core Dump"** instead of the normal debug configuration:
+
+```
+▶ Debug tcp_server          ← normal debugging
+▶ Debug Tests               ← run tests with debugger
+▶ Analyse Core Dump         ← select this one
+```
+
+Press **F5** to start.
+
+---
+
+**Step 7 — What you see in VS Code**
+
+VS Code loads the core dump and immediately shows you:
+
+```
+Call Stack panel (left sidebar):
+  #0  main() at src/main.cpp:42        ← exact line that crashed
+  #1  __libc_start_main()
+  #2  _start()
+
+Variables panel:
+  p = 0x0                              ← null pointer — cause of crash
+
+Source view:
+  src/main.cpp opens automatically
+  red arrow points to line 42          ← the crashing line highlighted
+```
+
+You can then:
+- Click any frame in the call stack to jump to that point in the source
+- Hover over variables to see their values at the time of crash
+- Inspect the entire call chain that led to the crash
+
+---
+
+### What if the core dump is from a multi-threaded crash
+
+This is the common scenario in a TCP server. In VS Code's Call Stack panel you'll see all threads listed:
+
+```
+Call Stack:
+  Thread 1 (crashed)
+    #0  epoll_wait() at epoll_loop.cpp:87
+    #1  EventLoop::run() at epoll_loop.cpp:45
+    #2  main() at main.cpp:12
+
+  Thread 2
+    #0  pthread_cond_wait()
+    #1  ThreadPool::workerLoop()
+
+  Thread 3
+    #0  send() at server.cpp:134
+    #1  Server::pushToClients()
+```
+
+Click any thread to switch to it, then click any frame within that thread to jump to that source location. This is exactly the workflow used in banking for production crash analysis.
+
+---
+
+### Limitations of VS Code Core Dump Analysis vs Raw GDB
+
+| Feature | VS Code (CodeLLDB) | Raw GDB in terminal |
+|---|---|---|
+| Visual call stack | ✅ | ❌ text only |
+| Click to navigate source | ✅ | ❌ manual |
+| Variable inspection | ✅ | ✅ |
+| Multi-thread inspection | ✅ | ✅ |
+| Custom GDB commands | ⚠️ limited | ✅ full |
+| Scripting / automation | ❌ | ✅ via GDB Python API |
+| Works over slow SSH | ⚠️ can lag | ✅ always fast |
+
+For straightforward crashes VS Code is faster and more comfortable. For complex production crashes — especially in banking where you might be running GDB scripts or analysing very large core files — experienced engineers often drop to the terminal and use raw GDB directly, which is why learning both is worthwhile.
+
+---
+
+### Quick GDB Alternative (Terminal)
+
+If VS Code feels slow with a large core file, the terminal is always there:
+
+```bash
+# In VS Code's integrated terminal (Ctrl+`)
+gdb ./build/tcp_server /tmp/core-tcp_server-12345
+
+(gdb) bt                    # backtrace — see call stack
+(gdb) info threads          # list all threads
+(gdb) thread apply all bt   # backtrace every thread at once
+(gdb) frame 2               # jump to frame #2 in call stack
+(gdb) print myVariable      # inspect a variable
+(gdb) list                  # show source code around crash point
+(gdb) quit
+```
+
+Both approaches work — use VS Code for comfort, raw GDB when you need full power or speed.
