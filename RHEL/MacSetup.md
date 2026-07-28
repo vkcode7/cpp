@@ -513,3 +513,109 @@ az vm deallocate --resource-group <RG> --name <VM>
         │   └── server_test.cpp
         └── build/          ← cmake + make output (never commit this)
 ```
+
+
+
+### Core Tools
+
+**`gcc-c++`** — the actual C++ compiler. Translates your `.cpp` source code into a binary executable the CPU can run. When you type `g++ main.cpp -o myprogram`, this is what does the work. GCC stands for GNU Compiler Collection.
+
+**`gdb`** — GNU Debugger. Lets you pause a running program, inspect variables, step through code line by line, and analyse crash dumps. The tool you use when your program crashes and you need to find out why. In banking you'll use it constantly for analysing core dumps in production.
+
+**`make`** — a build automation tool. Reads a `Makefile` and figures out which files need recompiling based on what changed — so you don't recompile everything from scratch every time. CMake generates Makefiles, then `make` actually does the building.
+
+**`cmake`** — a build system generator. You write a `CMakeLists.txt` describing your project, and CMake generates the actual Makefiles for your platform. It handles things like finding libraries, setting compiler flags, and managing multi-file projects. The standard for modern C++ projects.
+
+**`git`** — version control. Tracks changes to your code over time, lets you create branches, revert mistakes, and collaborate with others. Universal in every software team.
+
+---
+
+### Clang Tools
+
+**`clang`** — an alternative C++ compiler to GCC, developed by LLVM. Produces similar binaries but often gives clearer error messages. Also the foundation for the sanitizers (AddressSanitizer, ThreadSanitizer etc.) and static analysis tools. Many developers compile with GCC for production and Clang for development/debugging.
+
+**`clang-tools-extra`** — a suite of tools built on top of Clang:
+- `clangd` — the language server that powers autocomplete, go-to-definition, and inline errors in VS Code. Without this, VS Code's C++ intelligence doesn't work properly on your VM
+- `clang-tidy` — static analyser that catches bugs and enforces coding standards without running the code
+- `clang-format` — automatically formats your code to a consistent style
+
+---
+
+### Development Tools Group
+
+This is a meta-package that installs a collection of lower-level tools you need indirectly:
+
+**`binutils`** — tools for working with compiled binaries: `objdump` (inspect compiled code), `nm` (list symbols), `strip` (remove debug info for smaller binaries), `ar` (create static libraries). You rarely call these directly but the compiler uses them constantly.
+
+**`autoconf` / `automake`** — older build systems predating CMake. Many open source libraries still use them. You'll need these when compiling third-party dependencies from source.
+
+**`glibc-devel`** — headers and libraries for the C standard library. Required to compile virtually any C or C++ program — things like `printf`, `malloc`, file I/O all live here.
+
+**`kernel-headers`** — header files describing the Linux kernel's interface. Needed for low-level system programming — socket programming, epoll, file descriptors — all the TCP server code you'll write.
+
+---
+
+### Additional Tools
+
+**`valgrind`** — a memory analysis tool. Runs your program in a virtual machine and detects memory errors: leaks (memory you allocated but never freed), reading uninitialised memory, buffer overflows, use-after-free bugs. Much slower than running normally but catches bugs the compiler misses. Used heavily in testing environments in banking.
+
+```bash
+valgrind --leak-check=full ./tcp_server
+# reports exactly which line leaked memory
+```
+
+**`perf`** — Linux performance profiling tool. Measures where your program spends its CPU time, cache miss rates, branch mispredictions, system call overhead. Essential for low-latency work in banking — you use it to find bottlenecks and optimise them.
+
+```bash
+perf stat ./tcp_server        # high level CPU stats
+perf record ./tcp_server      # record detailed profile
+perf report                   # interactive viewer of results
+```
+
+**`tmux`** — terminal multiplexer, as discussed in the previous message. Keeps sessions alive across disconnections and lets you split your terminal into multiple panes.
+
+**`wget`** — command-line tool for downloading files from the internet. `wget https://example.com/file.tar.gz` downloads that file to your current directory. Used in scripts to fetch dependencies or datasets.
+
+**`curl`** — similar to wget but more versatile. Can send HTTP requests with custom headers, POST data, authentication — making it useful for testing REST APIs and downloading files. In your TCP server work you'll use it to test HTTP endpoints.
+
+```bash
+curl http://localhost:8080/status   # test your server is responding
+```
+
+**`tree`** — displays directory structure as a visual tree. Purely a convenience tool:
+
+```bash
+tree ~/projects/tcp-server
+# tcp-server/
+# ├── CMakeLists.txt
+# ├── src/
+# │   └── main.cpp
+# ├── tests/
+# │   └── server_test.cpp
+# └── build/
+```
+
+---
+
+### How they all fit together in your daily workflow
+
+```
+You write code
+      ↓
+cmake — reads CMakeLists.txt, generates Makefiles
+      ↓
+make — calls g++ (gcc-c++) to compile changed files
+      ↓
+Program runs — crashes or misbehaves
+      ↓
+gdb — debug the crash / analyse core dump
+      ↓
+valgrind — check for memory leaks
+      ↓
+perf — profile performance bottlenecks
+      ↓
+clangd — gives you autocomplete and errors while editing in VS Code
+clang-tidy — catches bugs statically before you even run anything
+```
+
+The tools you'll use every single day are `cmake`, `make`, `gdb`, and `clangd` (indirectly via VS Code). The others you reach for when you hit specific problems.
