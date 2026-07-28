@@ -619,3 +619,250 @@ clang-tidy — catches bugs statically before you even run anything
 ```
 
 The tools you'll use every single day are `cmake`, `make`, `gdb`, and `clangd` (indirectly via VS Code). The others you reach for when you hit specific problems.
+
+
+When you connect to your RHEL VM via VS Code Remote SSH, extensions need to be installed **on the remote side** (the VM), not locally on your Mac. VS Code handles this automatically — when you install an extension while connected to the VM, it installs it there.
+
+---
+
+### VSCode Extensions to Install
+
+#### 1. C/C++ Extension Pack (Microsoft)
+```
+Name:      C/C++ Extension Pack
+Publisher: Microsoft
+ID:        ms-vscode.cpptools-extension-pack
+```
+This is a bundle that installs several extensions at once — install this one and it pulls in everything else you need. It includes the core C/C++ extension, CMake Tools, and themes.
+
+---
+
+#### 2. clangd
+```
+Name:      clangd
+Publisher: LLVM
+ID:        llvm-vs-code-extensions.vscode-clangd
+```
+This is the **most important one for IntelliSense**. It uses the `clangd` binary you already installed on the VM to power:
+- Autocomplete
+- Go-to-definition (F12)
+- Find all references
+- Inline error squiggles as you type
+- Header file navigation
+- Automatic `#include` suggestions
+
+> **Important:** After installing clangd extension, VS Code will ask if you want to disable the IntelliSense engine from the Microsoft C/C++ extension. Say **Yes** — clangd and the Microsoft IntelliSense engine conflict with each other. clangd is superior for Linux C++ development.
+
+---
+
+#### 3. CMake Tools
+```
+Name:      CMake Tools
+Publisher: Microsoft
+ID:        ms-vscode.cmake-tools
+```
+Comes included in the Extension Pack but worth knowing what it does:
+- Detects your `CMakeLists.txt` automatically
+- Adds a toolbar at the bottom of VS Code for build/run/debug
+- Lets you switch between Debug/Release build types with one click
+- Runs `cmake` and `make` for you without touching the terminal
+
+---
+
+#### 4. CodeLLDB
+```
+Name:      CodeLLDB
+Publisher: Vadim Chugunov
+ID:        vadimchugunov.codelldb
+```
+This is the **debugger extension**. It lets you:
+- Set breakpoints by clicking in the gutter (left of line numbers)
+- Step through code (F10 step over, F11 step into)
+- Inspect variables in a sidebar panel
+- See the call stack
+- Watch expressions
+- Debug core dump files
+
+> Why CodeLLDB over the Microsoft C/C++ debugger? CodeLLDB uses LLDB under the hood, is faster, handles C++ types (STL containers, smart pointers) better, and works more reliably over Remote SSH.
+
+---
+
+#### 5. GitLens
+```
+Name:      GitLens
+Publisher: GitKraken
+ID:        eamodio.gitlens
+```
+Supercharges Git inside VS Code:
+- Shows who last changed each line (inline blame)
+- File history
+- Branch comparison
+- Commit explorer
+
+---
+
+### Setting Up the Debugger — `launch.json`
+
+After installing CodeLLDB, you need to tell VS Code how to launch your program for debugging. Create this file on the VM:
+
+```bash
+mkdir -p ~/projects/tcp-server/.vscode
+```
+
+Create `~/projects/tcp-server/.vscode/launch.json`:
+
+```json
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug tcp_server",
+            "program": "${workspaceFolder}/build/tcp_server",
+            "args": [],
+            "cwd": "${workspaceFolder}",
+            "preLaunchTask": "Build"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug Tests",
+            "program": "${workspaceFolder}/build/tests",
+            "args": [],
+            "cwd": "${workspaceFolder}",
+            "preLaunchTask": "Build"
+        },
+        {
+            "type": "lldb",
+            "request": "custom",
+            "name": "Analyse Core Dump",
+            "targetCreateCommands": [
+                "target create ${workspaceFolder}/build/tcp_server",
+                "target modules load --file ${workspaceFolder}/build/tcp_server"
+            ],
+            "processCreateCommands": [
+                "core /tmp/core-tcp_server-*"
+            ]
+        }
+    ]
+}
+```
+
+---
+
+### Setting Up the Build Task — `tasks.json`
+
+This lets VS Code run `cmake` and `make` automatically before debugging:
+
+Create `~/projects/tcp-server/.vscode/tasks.json`:
+
+```json
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Build",
+            "type": "shell",
+            "command": "cd ${workspaceFolder}/build && cmake .. -DCMAKE_BUILD_TYPE=Debug -DCMAKE_EXPORT_COMPILE_COMMANDS=ON && make -j$(nproc)",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "presentation": {
+                "reveal": "always",
+                "panel": "shared"
+            },
+            "problemMatcher": "$gcc"
+        }
+    ]
+}
+```
+
+---
+
+### Setting Up clangd — `settings.json`
+
+Tell VS Code where to find clangd and the compile commands:
+
+Create `~/projects/tcp-server/.vscode/settings.json`:
+
+```json
+{
+    "clangd.path": "/usr/bin/clangd",
+    "clangd.arguments": [
+        "--background-index",
+        "--clang-tidy",
+        "--completion-style=detailed",
+        "--header-insertion=iwyu",
+        "--compile-commands-dir=${workspaceFolder}/build"
+    ],
+    "cmake.buildDirectory": "${workspaceFolder}/build",
+    "cmake.installPrefix": "${workspaceFolder}/install",
+    "editor.formatOnSave": true,
+    "C_Cpp.intelliSenseEngine": "disabled"
+}
+```
+
+The key line is `"C_Cpp.intelliSenseEngine": "disabled"` — this turns off Microsoft's IntelliSense so clangd takes over exclusively.
+
+---
+
+### Generate `compile_commands.json` — Required for clangd
+
+clangd needs this file to understand your project's include paths and compiler flags:
+
+```bash
+cd ~/projects/tcp-server/build
+cmake .. -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+```
+
+This creates `build/compile_commands.json`. clangd reads it automatically because of the `--compile-commands-dir` argument in `settings.json`. You only need to rerun this when you add new files or change `CMakeLists.txt`.
+
+---
+
+### Final File Structure
+
+```
+~/projects/tcp-server/
+├── .vscode/
+│   ├── launch.json     ← debugger config
+│   ├── tasks.json      ← build task
+│   └── settings.json   ← clangd + cmake settings
+├── CMakeLists.txt
+├── src/
+│   └── main.cpp
+├── tests/
+│   └── server_test.cpp
+└── build/
+    └── compile_commands.json   ← generated by cmake, read by clangd
+```
+
+---
+
+### Daily Debugging Workflow
+
+```
+1. Open project in VS Code (already connected to VM via Remote SSH)
+
+2. Build
+   Ctrl+Shift+B    runs the Build task from tasks.json
+
+3. Set a breakpoint
+   Click in the gutter left of a line number — red dot appears
+
+4. Start debugger
+   F5              launches tcp_server with debugger attached
+
+5. When breakpoint hits:
+   F10             step over (next line, don't enter functions)
+   F11             step into (enter the function)
+   Shift+F11       step out (finish current function)
+   F5              continue to next breakpoint
+
+6. Inspect state
+   Hover over any variable    — shows its current value
+   Left sidebar Variables     — all local variables
+   Left sidebar Watch         — expressions you want to monitor
+   Left sidebar Call Stack    — how you got to this point
+```
